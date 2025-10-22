@@ -1,0 +1,16 @@
+{
+  "string": [
+    {
+      "name": "app_name",
+      "value": "flutter政务新闻模板"
+    },
+    {
+      "name": "agcit_flutter_huawei_news",
+      "value": "1.0.0"
+    },
+    {
+      "name": "agcittype_flutter_huawei_news",
+      "value": "industryTemplate"
+    }
+  ]
+}

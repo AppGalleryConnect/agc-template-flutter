@@ -1,0 +1,16 @@
+{
+  "string": [
+    {
+      "name": "app_name",
+      "value": "ohflutter_news_sticky_header"
+    },
+    {
+      "name": "agcit_flutter_news_sticky_header",
+      "value": "1.0.0"
+    },
+    {
+      "name": "agcittype_flutter_news_sticky_header",
+      "value": "serviceComponent"
+    }
+  ]
+}

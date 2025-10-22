@@ -1,0 +1,29 @@
+name: ohflutter_news_sticky_header
+description: "flutter news sticky header"
+
+publish_to: 'none' # Remove this line if you wish to publish to pub.dev
+
+version: 1.0.0+1
+
+
+environment:
+  # flutter SDK 基于 https://gitcode.com/openharmony-tpc/flutter_flutter/tags/3.22.1-ohos-1.0.1
+  sdk: '>=3.4.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  cupertino_icons: ^1.0.6
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^3.0.0
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/images/intro.jpg
+    - assets/images/news.jpeg
+    - assets/string.json
