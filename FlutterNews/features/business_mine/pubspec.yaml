@@ -1,0 +1,82 @@
+name: business_mine
+description: "A new Flutter module project."
+publish_to: none
+version: 0.0.1
+homepage:
+
+environment:
+  sdk: '>=3.4.0 <4.0.0'
+  flutter: '>=3.3.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  
+  lib_common:
+    path: '../../commons/lib_common'
+  
+  lib_widget:
+    path: '../../commons/lib_widget'
+  
+  module_feedback:
+    path: '../../components/module_feedback'
+    
+  # 添加对 module_setfontsize 的依赖
+  module_setfontsize:
+    path: '../../components/module_setfontsize'
+    
+  module_post:
+    path: '../../components/module_post'
+  
+  # 添加对 lib_account 的依赖
+  lib_account:
+    path: '../../commons/lib_account'
+
+  module_flutter_feedcomment:
+    path: '../../components/module_flutter_feedcomment'
+
+  module_newsfeed:
+    path: '../../components/module_newsfeed'
+      
+  lib_news_api:
+    path: '../../commons/lib_news_api'
+
+  business_profile:
+    path: '../business_profile'
+
+  image_picker:
+   git:
+      url: "https://gitcode.com/openharmony-tpc/flutter_packages.git"
+      path: "packages/image_picker/image_picker"
+  business_video:
+    path: '../business_video'
+    
+  provider: ^6.1.2
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^3.0.0
+
+# For information on the generic Dart part of this file, see the
+# following page: https://dart.dev/tools/pub/pubspec
+
+# The following section is specific to Flutter packages.
+# 完全删除以下插件配置部分
+# flutter:
+#   plugin:
+#     platforms:
+#       android:
+#         package: com.example.business_mine
+#         pluginClass: BusinessMinePlugin
+#     ohos:
+#       pluginClass: BusinessMinePlugin
+#     ios:
+#       pluginClass: BusinessMinePlugin
+
+# 只保留标准的flutter配置
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/
+
+

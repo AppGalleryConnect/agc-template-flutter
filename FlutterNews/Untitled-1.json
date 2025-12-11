@@ -1,0 +1,12 @@
+{
+  "enable-web": false,
+  "enable-linux-desktop": false,
+  "enable-macos-desktop": false,
+  "enable-windows-desktop": true,
+  "enable-android": true,
+  "enable-ios": true,
+  "enable-ohos": true,
+  "dart-defines": [
+    "FLUTTER_STORAGE_BASE_URL=https://storage.flutter-io.cn"
+  ]
+}

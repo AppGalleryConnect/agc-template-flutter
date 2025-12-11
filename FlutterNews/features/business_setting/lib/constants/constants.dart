@@ -1,0 +1,64 @@
+import 'package:flutter/material.dart';
+
+class Constants {
+  static const String packageName = 'business_setting';
+  static const double SPACE_0 = 0.0;
+  static const double SPACE_0_5 = 0.5;
+  static const double SPACE_1 = 1.0;
+  static const double SPACE_2 = 2.0;
+  static const double SPACE_3 = 3.0;
+  static const double SPACE_4 = 4.0;
+  static const double SPACE_5 = 5.0;
+  static const double SPACE_6 = 6.0;
+  static const double SPACE_8 = 8.0;
+  static const double SPACE_9 = 9.0;
+  static const double SPACE_10 = 10.0;
+  static const double SPACE_12 = 12.0;
+  static const double SPACE_14 = 14.0;
+  static const double SPACE_15 = 15.0;
+  static const double SPACE_16 = 16.0;
+  static const double SPACE_18 = 18.0;
+  static const double SPACE_20 = 20.0;
+  static const double SPACE_22 = 22.0;
+  static const double SPACE_24 = 24.0;
+  static const double SPACE_25 = 25.0;
+  static const double SPACE_30 = 30.0;
+  static const double SPACE_32 = 32.0;
+  static const double SPACE_36 = 36.0;
+  static const double SPACE_40 = 40.0;
+  static const double SPACE_41 = 41.0;
+  static const double SPACE_44 = 44.0;
+  static const double SPACE_45 = 45.0;
+  static const double SPACE_48 = 48.0;
+  static const double SPACE_50 = 50.0;
+  static const double SPACE_55 = 55.0;
+  static const double SPACE_56 = 56.0;
+  static const double SPACE_59 = 59.0;
+  static const double SPACE_60 = 60.0;
+  static const double SPACE_70 = 70.0;
+  static const double SPACE_72 = 72.0;
+  static const double SPACE_80 = 80.0;
+  static const double SPACE_100 = 100.0;
+  static const double SPACE_150 = 150.0;
+  static const double SPACE_200 = 200.0;
+  static const double SPACE_224 = 224.0;
+  static const double SPACE_260 = 260.0;
+  static const double SPACE_290 = 290.0;
+  static const double SPACE_335 = 335.0;
+  static const double SPACE_400 = 400.0;
+  static const double SPACE_480 = 480.0;
+  static const double SPACE_670 = 670.0;
+
+  static const double FONT_10 = 10.0;
+  static const double FONT_12 = 12.0;
+  static const double FONT_14 = 14.0;
+  static const double FONT_16 = 16.0;
+  static const double FONT_18 = 18.0;
+  static const double FONT_20 = 20.0;
+
+  static const Color activeTrackColor = Color.fromARGB(255, 92, 121, 216);
+  static const Color backButtonBackgroundDarkColor = Color(0xFF2C2C2C);
+  static const Color backButtonBackgroundColor = Color(0xFFE6E8E9);
+  static const Color backButtonPressedBackgroundDarkColor = Color(0xFF3A3A3A);
+  static const Color backButtonPressedBackgroundColor = Color(0xFFD1D3D4);
+}

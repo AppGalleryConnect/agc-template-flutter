@@ -1,0 +1,148 @@
+import '../../database/author_type.dart';
+
+/// 用户模拟数据类
+class MockUser {
+  /// 新闻涉及的所有用户列表
+  static List<BaseAuthor> list = [
+    BaseAuthor(
+      authorId: 'author_1',
+      authorNickName: '1号选手',
+      authorIcon:
+          'https://agc-storage-drcn.platform.dbankcloud.cn/v0/news-hnp2d/avatar%2Favatar_1.jpg',
+      authorDesc: '',
+      authorIp: '北京',
+      watchers: ['001', 'author_2'],
+      followers: ['001', 'author_6', 'author_7'],
+      likeNum: 12,
+    ),
+    BaseAuthor(
+      authorId: 'author_2',
+      authorNickName: '2号选手',
+      authorIcon:
+          'https://agc-storage-drcn.platform.dbankcloud.cn/v0/news-hnp2d/avatar%2Favatar_2.jpg',
+      authorDesc: '',
+      authorIp: '南京',
+      watchers: ['001'],
+      followers: ['001', 'author_1'],
+      likeNum: 24,
+    ),
+    BaseAuthor(
+      authorId: 'author_3',
+      authorNickName: '3号选手',
+      authorIcon:
+          'https://agc-storage-drcn.platform.dbankcloud.cn/v0/news-hnp2d/avatar%2Favatar_3.jpg',
+      authorDesc: '',
+      authorIp: '成都',
+      watchers: ['001', 'author_4'],
+      followers: [],
+      likeNum: 36,
+    ),
+    BaseAuthor(
+      authorId: 'author_4',
+      authorNickName: '4号选手',
+      authorIcon:
+          'https://agc-storage-drcn.platform.dbankcloud.cn/v0/news-hnp2d/avatar%2Favatar_4.jpg',
+      authorDesc: '',
+      authorIp: '福建',
+      watchers: ['001'],
+      followers: ['author_3'],
+      likeNum: 36,
+    ),
+    BaseAuthor(
+      authorId: 'author_5',
+      authorNickName: '5号选手',
+      authorIcon:
+          'https://agc-storage-drcn.platform.dbankcloud.cn/v0/news-hnp2d/avatar%2Favatar_5.jpg',
+      authorDesc: '',
+      authorIp: '深圳',
+      watchers: ['001', 'author_6'],
+      followers: [],
+      likeNum: 36,
+    ),
+    BaseAuthor(
+      authorId: 'author_6',
+      authorNickName: '6号选手',
+      authorIcon:
+          'https://agc-storage-drcn.platform.dbankcloud.cn/v0/news-hnp2d/avatar%2Favatar_6.jpg',
+      authorDesc: '',
+      authorIp: '连云港',
+      watchers: ['1'],
+      followers: ['001', 'author_5'],
+      likeNum: 36,
+    ),
+    BaseAuthor(
+      authorId: 'author_7',
+      authorNickName: '7号选手',
+      authorIcon:
+          'https://agc-storage-drcn.platform.dbankcloud.cn/v0/news-hnp2d/avatar%2Favatar_7.jpg',
+      authorDesc: '',
+      authorIp: '济南',
+      watchers: ['author_1'],
+      followers: ['001'],
+      likeNum: 36,
+    ),
+    BaseAuthor(
+      authorId: 'author_8',
+      authorNickName: '8号选手',
+      authorIcon:
+          'https://agc-storage-drcn.platform.dbankcloud.cn/v0/news-hnp2d/avatar%2Favatar_8.jpg',
+      authorDesc: '',
+      authorIp: '济南',
+      watchers: ['author_1'],
+      followers: ['001'],
+      likeNum: 36,
+    ),
+    BaseAuthor(
+      authorId: 'author_9',
+      authorNickName: '9号选手',
+      authorIcon:
+          'https://agc-storage-drcn.platform.dbankcloud.cn/v0/news-hnp2d/avatar%2Favatar_9.jpg',
+      authorDesc: '',
+      authorIp: '济南',
+      watchers: ['author_1'],
+      followers: ['001'],
+      likeNum: 36,
+    ),
+    BaseAuthor(
+      authorId: 'author_10',
+      authorNickName: '10号选手',
+      authorIcon:
+          'https://agc-storage-drcn.platform.dbankcloud.cn/v0/news-hnp2d/avatar%2Favatar_10.jpg',
+      authorDesc: '',
+      authorIp: '济南',
+      watchers: ['author_1'],
+      followers: ['001'],
+      likeNum: 36,
+    ),
+    BaseAuthor(
+      authorId: 'author_11',
+      authorNickName: '11号选手',
+      authorIcon:
+          'https://agc-storage-drcn.platform.dbankcloud.cn/v0/news-hnp2d/avatar%2Favatar_11.jpg',
+      authorDesc: '',
+      authorIp: '济南',
+      watchers: ['author_1'],
+      followers: ['001'],
+      likeNum: 36,
+    ),
+  ];
+
+  /// 当前登录用户的信息模型
+  static MyAuthor myself = MyAuthor(
+    authorId: '001',
+    authorNickName: '华为用户',
+    authorIcon:
+        'https://agc-storage-drcn.platform.dbankcloud.cn/v0/news-hnp2d/avatar%2Favatar_12.jpg',
+    authorDesc:
+        '在自己的小世界里，做一个快乐的普通人，把节奏放慢，享受生活！十六岁的青春张扬 十八岁的未来可期，携零零碎碎的美好奔赴未知的将来！',
+    authorPhone: '177******96',
+    authorIp: '南京',
+    watchers: ['author_1', 'author_2', 'author_6', 'author_7'],
+    followers: ['author_1', 'author_2', 'author_3', 'author_4', 'author_5'],
+    likeNum: 12,
+    myLikes: ['author_1', 'author_3', 'video1', 'post_1'],
+    myMarks: ['author_2', 'author_4', 'video2', 'post_1'],
+    myComments: [],
+    myHistory: ['author_1', 'video1', 'post_1'],
+  );
+}

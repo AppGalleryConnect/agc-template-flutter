@@ -1,0 +1,12 @@
+{
+  "string": [
+     {
+      "name": "agcit_huawei_flutter_module_share",
+      "value": "1.0.0"
+    },
+    {
+      "name": "agcittype_huawei_flutter_module_share",
+      "value": "serviceComponent"
+    }
+  ]
+}

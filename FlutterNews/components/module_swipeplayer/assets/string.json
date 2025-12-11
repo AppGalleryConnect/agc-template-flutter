@@ -1,0 +1,12 @@
+{
+  "string": [
+     {
+      "name": "agcit_huawei_flutter_module_swipeplayer",
+      "value": "1.0.0"
+    },
+    {
+      "name": "agcittype_huawei_flutter_module_swipeplayer",
+      "value": "serviceComponent"
+    }
+  ]
+}
