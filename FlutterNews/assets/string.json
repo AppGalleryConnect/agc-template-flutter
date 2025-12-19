@@ -3,6 +3,14 @@
     {
       "name": "app_name",
       "value": "新闻Flutter模板"
+    },
+    {
+      "name": "agcit_huawei_flutter_news_fp",
+      "value": "1.0.0"
+    },
+    {
+      "name": "agcittype_huawei_flutter_news_fp",
+      "value": "industryTemplate"
     }
   ]
 }
