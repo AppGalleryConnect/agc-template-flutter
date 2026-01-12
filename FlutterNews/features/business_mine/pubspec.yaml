@@ -21,14 +21,12 @@ dependencies:
   module_feedback:
     path: '../../components/module_feedback'
     
-  # 添加对 module_setfontsize 的依赖
   module_setfontsize:
     path: '../../components/module_setfontsize'
     
   module_post:
     path: '../../components/module_post'
   
-  # 添加对 lib_account 的依赖
   lib_account:
     path: '../../commons/lib_account'
 
@@ -51,11 +49,11 @@ dependencies:
   business_video:
     path: '../business_video'
     
-  provider: ^6.1.2
+  provider: 6.1.2
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  flutter_lints: ^3.0.0
+  flutter_lints: 3.0.2
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

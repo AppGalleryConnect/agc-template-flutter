@@ -1,0 +1,10 @@
+{
+  "module": {
+    "name": "business_setting",
+    "type": "har",
+    "deviceTypes": [
+      "default",
+      "tablet"
+    ]
+  }
+}

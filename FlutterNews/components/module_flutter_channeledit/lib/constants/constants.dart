@@ -8,14 +8,18 @@ class Constants {
   static const double SPACE_8 = 8.0;
   static const double SPACE_10 = 10.0;
   static const double SPACE_12 = 12.0;
+  static const double SPACE_13 = 13.0;
+  static const double SPACE_14 = 14.0;
   static const double SPACE_15 = 15.0;
   static const double SPACE_16 = 16.0;
   static const double SPACE_20 = 20.0;
   static const double SPACE_24 = 24.0;
   static const double SPACE_25 = 25.0;
   static const double SPACE_40 = 40.0;
+  static const double SPACE_50 = 50.0;
   static const double SPACE_56 = 56.0;
   static const double SPACE_60 = 60.0;
+  static const double SPACE_65 = 65.0;
   static const double SPACE_80 = 80.0;
 
   static const double FONT_12 = 12.0;

@@ -39,6 +39,19 @@ class _ChannelEditState extends State<ChannelEdit> {
   @override
   void initState() {
     super.initState();
+    _updateChannelLists();
+  }
+
+  @override
+  void didUpdateWidget(covariant ChannelEdit oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    // 当父组件传递的channelsList更新时，重新计算选中和未选中的频道列表
+    if (oldWidget.channelsList != widget.channelsList) {
+      _updateChannelLists();
+    }
+  }
+
+  void _updateChannelLists() {
     selectChannelList =
         widget.channelsList.where((element) => element.selected).toList();
     unselectChannelList =

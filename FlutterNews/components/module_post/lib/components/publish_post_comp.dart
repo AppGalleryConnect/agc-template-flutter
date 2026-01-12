@@ -75,18 +75,21 @@ class PublishPostCompState extends State<PublishPostComp> {
       );
     }
 
-    return Image.file(
-      File(url),
-      fit: BoxFit.cover,
-      errorBuilder: (context, error, stackTrace) {
-        return Container(
-          color: Colors.grey.shade200,
-          child: const Center(
-            child: Icon(Icons.video_library,
-                size: Constants.SPACE_48, color: Colors.grey),
-          ),
-        );
-      },
+    return SizedBox(
+      child: Image.file(
+        File(url),
+        fit: BoxFit.cover,
+        width: double.infinity,
+        errorBuilder: (context, error, stackTrace) {
+          return Container(
+            color: Colors.grey.shade200,
+            child: const Center(
+              child: Icon(Icons.video_library,
+                  size: Constants.SPACE_48, color: Colors.grey),
+            ),
+          );
+        },
+      ),
     );
   }
 

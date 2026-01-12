@@ -78,7 +78,7 @@ module_flutter_feedcomment/
 - DevEco Studio版本：DevEco Studio 5.1.0 Release及以上
 - HarmonyOS SDK版本：HarmonyOS 5.1.0 Release SDK及以上
 - 设备类型：华为手机（包括双折叠）
-- 系统版本：HarmonyOS 5.1.0(18)及以上
+- 系统版本：HarmonyOS 5.1.0(18)及以上（模板配置编译版本需要和DevEco Studio侧版本一致）
 - Flutter版本：Flutter 3.22.1-ohos-1.0.4
 - Dart版本：Dart 3.4.0及以上
 
@@ -103,11 +103,14 @@ export PATH=$TOOL_HOME/tools/node/bin:$PATH
 
 ![img_1.png](screenshots/img_1.png)
 
-2. 通过代码工具下载flutter sdk仓库代码，tag 为 3.22.1-ohos-1.0.1。
-```
-git clone -b 3.22.1-ohos-1.0.1 https://gitcode.com/openharmony-tpc/flutter_flutter.git
-```
-3. 并配置如下环境：
+1. 通过代码工具下载flutter sdk仓库代码，tag 为 3.22.1-ohos-1.0.1。
+
+   ```
+   git clone -b 3.22.1-ohos-1.0.1 https://gitcode.com/openharmony-tpc/flutter_flutter.git
+   ```
+
+2. 并配置如下环境：
+
 ```
 export PUB_CACHE=D:/PUB(自定义路径)
 export PATH=<flutter_flutter path>/bin:$PATH
@@ -119,7 +122,7 @@ export FLUTTER_STORAGE_BASE_URL=https://storage.flutter-io.cn//暂用国内镜�
 Windows 环境变量配置示例如下（请按照实际安装目录配置）：
 
 - 系统变量
-  ​![img_2.png](screenshots/img_2.png)
+  ![img_2.png](screenshots/img_2.png)
 - 环境变量
   ![img_3.png](screenshots/img_3.png)
 
@@ -157,7 +160,7 @@ Windows 环境变量配置示例如下（请按照实际安装目录配置）：
    在当前新建的 Flutter 工程目录下，编译运行的详细步骤请参考 [运行调试工程](#运行调试工程) 的方式一。### 安装组件
 
 #### 步骤 1：添加依赖
-   
+
    完成以上步骤后从生态市场下载组件，请参考以下步骤安装组件。
 
    a. 解压下载的组件包，将包中所有文件夹拷贝至您工程根目录的components目录下。
@@ -181,14 +184,14 @@ a. 运行以下命令安装依赖：
 b. 引入组件：
 
    ```
-   import 'package:module_flutter_feedcomment/module_feedcomment.dart';
+   import import 'package:module_flutter_feedcomment/views/feed_comment.dart';
    ```
 
 c. 调用组件，详细组件调用参见[示例代码](#示例代码)：
 
    ```
    import 'package:flutter/material.dart';
-   import 'package:module_flutter_feedcomment/module_feedcomment.dart';
+   import 'package:module_flutter_feedcomment/views/feed_comment.dart';
 
    class CommentScreen extends StatelessWidget {
      @override
@@ -215,46 +218,46 @@ FeedComment(option: [FeedCommentOptions](#FeedCommentOptions对象说明))
 
 **参数：**
 
-| 参数名 | 类型 | 是否必填 | 说明         |
-|:--------|:----------------|:-----|:-----------|
-| options | [FeedCommentOptions](#FeedCommentOptions对象说明) | 否 | 配置评论组件的参数。 |
+| 参数名     | 类型                                       | 是否必填 | 说明         |
+| :------ | :--------------------------------------- | :--- | :--------- |
+| options | [FeedCommentOptions](#FeedCommentOptions对象说明) | 否    | 配置评论组件的参数。 |
 
 
 ### FeedCommentOptions对象说明
 
-| 参数名                   | 类型                            | 是否必填 | 说明       |
-|:---------------------|:-----------------------------|:-----|:--------|
-| commentList           | List<[CommentInfo](#commentinfo类说明)>             | 是    | 评论列表     |
-| author                | [AuthorInfo](#authorinfo类说明)                    | 是    | 当前用户信息   |
-| fontSizeRatio         | double                        | 否    | 字体缩放比例   |
-| isDark                | bool                          | 否    | 是否暗色模式   |
+| 参数名                   | 类型                                       | 是否必填 | 说明       |
+| :-------------------- | :--------------------------------------- | :--- | :------- |
+| commentList           | List<[CommentInfo](#commentinfo类说明)>     | 是    | 评论列表     |
+| author                | [AuthorInfo](#authorinfo类说明)             | 是    | 当前用户信息   |
+| fontSizeRatio         | double                                   | 否    | 字体缩放比例   |
+| isDark                | bool                                     | 否    | 是否暗色模式   |
 | addComment            | Function([CommentInfo](#commentinfo类说明), String) | 是    | 回复评论回调   |
-| giveLike              | Function([CommentInfo](#commentinfo类说明), bool)   | 是    | 点赞评论回调   |
-| onGoAuthorInfo        | Function(String)              | 是    | 跳转作者主页回调 |
-| onInterceptLogin      | Function(Function(bool))      | 是    | 拦截登录回调   |
-| onDeleteComment       | Function(String)              | 是    | 删除评论回调   |
-| onFirstComment        | Function(String)              | 是    | 首次评论回调   |
-| commentTopViewBuilder | WidgetBuilder                 | 是    | 顶部视图构建器  |
+| giveLike              | Function([CommentInfo](#commentinfo类说明), bool) | 是    | 点赞评论回调   |
+| onGoAuthorInfo        | Function(String)                         | 是    | 跳转作者主页回调 |
+| onInterceptLogin      | Function(Function(bool))                 | 是    | 拦截登录回调   |
+| onDeleteComment       | Function(String)                         | 是    | 删除评论回调   |
+| onFirstComment        | Function(String)                         | 是    | 首次评论回调   |
+| commentTopViewBuilder | WidgetBuilder                            | 是    | 顶部视图构建器  |
 
 ### CommentInfo类说明
 
-| 属性名            | 类型                | 是否必填 | 说明     |
-|:-------------|:----------------|:-----|:--------|
-| commentId      | String            | 是    | 评论id   |
-| newsId         | String            | 是    | 新闻id   |
+| 属性名            | 类型                                   | 是否必填 | 说明     |
+| :------------- | :----------------------------------- | :--- | :----- |
+| commentId      | String                               | 是    | 评论id   |
+| newsId         | String                               | 是    | 新闻id   |
 | parentComment  | [CommentInfo](#commentinfo类说明)       | 否    | 父评论信息  |
-| author         | [AuthorInfo](#authorinfo类说明)        | 是    | 评论用户信息 |
-| commentBody    | String            | 是    | 评论内容   |
-| commentLikeNum | int               | 是    | 评论点赞数量 |
-| createTime     | int              |   | 是    | 创建时间   |
-| isLiked        | bool              | 是    | 是否点赞   |
-| likeCount      | int               | 否    | 点赞数量   |
+| author         | [AuthorInfo](#authorinfo类说明)         | 是    | 评论用户信息 |
+| commentBody    | String                               | 是    | 评论内容   |
+| commentLikeNum | int                                  | 是    | 评论点赞数量 |
+| createTime     | int                                  |      | 是      |
+| isLiked        | bool                                 | 是    | 是否点赞   |
+| likeCount      | int                                  | 否    | 点赞数量   |
 | replyComments  | List<[CommentInfo](#commentinfo类说明)> | 否    | 子评论列表  |
 
 ### AuthorInfo类说明
 
 | 属性名            | 类型     | 是否必填 | 说明   |
-|:-------------|:-----|:-----|:----|
+| :------------- | :----- | :--- | :--- |
 | authorId       | String | 是    | 用户ID |
 | authorNickName | String | 是    | 昵称   |
 | authorIcon     | String | 是    | 头像   |
@@ -269,7 +272,8 @@ FeedComment(option: [FeedCommentOptions](#FeedCommentOptions对象说明))
 ```
 // 引入必要的包
 import 'package:flutter/material.dart';
-import 'package:module_flutter_feedcomment/module_feedcomment.dart';
+import 'package:module_flutter_feedcomment/model/model.dart';
+import 'package:module_flutter_feedcomment/views/feed_comment.dart';
 import 'package:module_flutter_feedcomment/utils/common_toast_dialog.dart';
 import 'package:module_flutter_feedcomment/utils/utils.dart';
 

@@ -25,16 +25,16 @@ dependencies:
     sdk: flutter
 
 
-  cupertino_icons: ^1.0.6
-  flutter_svg: ^2.0.7
-  event_bus: ^2.0.1
-  qr_flutter: ^4.0.0  # 二维码生成库
-  json_annotation: ^4.8.1  # JSON 序列化注解
-  plugin_platform_interface: ^2.0.2
-  image_gallery_saver: ^2.0.1
-  fluwx_no_pay: ^3.6.1+5
+  cupertino_icons: 1.0.6
+  flutter_svg: 2.1.0
+  event_bus: 2.0.1
+  qr_flutter: 4.0.0  # 二维码生成库
+  json_annotation: 4.8.1  # JSON 序列化注解
+  plugin_platform_interface: 2.1.8
+  image_gallery_saver: 2.0.1
+  fluwx_no_pay: 3.6.1+5
 
-  flutter_html: ^3.0.0-beta.2
+  flutter_html: 3.0.0-beta.2
 
   lib_common:
     path: '../../commons/lib_common'
@@ -70,8 +70,8 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  flutter_lints: ^3.0.0
-  intl: ^0.18.1
+  flutter_lints: 3.0.0
+  intl: 0.18.1
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

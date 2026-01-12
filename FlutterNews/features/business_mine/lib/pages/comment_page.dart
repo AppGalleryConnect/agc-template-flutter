@@ -3,6 +3,7 @@ import 'package:lib_common/constants/common_constants.dart';
 import 'package:lib_common/utils/time_utils.dart';
 import 'package:lib_common/models/window_model.dart';
 import 'package:lib_widget/components/nav_header_bar.dart';
+import 'package:lib_widget/components/custom_image.dart';
 import 'package:module_setfontsize/utils/font_scale_utils.dart';
 import '../components/uniform_news_card.dart';
 import '../viewmodels/comment_vm.dart';
@@ -189,21 +190,12 @@ class _CommentPageState extends State<CommentPage> {
       children: [
         Row(
           children: [
-            CircleAvatar(
-              radius: MineConstants.Constants.commentAvatarRadius,
-              backgroundImage: v.author?.authorIcon != null
-                  ? NetworkImage(v.author!.authorIcon)
-                  : null,
-              child: v.author?.authorIcon == null
-                  ? Text(
-                      v.author?.authorNickName != null
-                          ? v.author!.authorNickName.substring(0, 1)
-                          : '',
-                      style: TextStyle(
-                          fontSize: MineConstants.Constants.textSecondarySize *
-                              FontScaleUtils.fontSizeRatio),
-                    )
-                  : null,
+            CustomImage(
+              imageUrl: v.author?.authorIcon ?? '',
+              width: MineConstants.Constants.commentAvatarRadius * 2,
+              height: MineConstants.Constants.commentAvatarRadius * 2,
+              borderRadius: BorderRadius.circular(
+                  MineConstants.Constants.commentAvatarRadius),
             ),
             const SizedBox(width: CommonConstants.SPACE_S),
             Text(

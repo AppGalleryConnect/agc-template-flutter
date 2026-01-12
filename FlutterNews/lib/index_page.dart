@@ -51,7 +51,7 @@ class _IndexPageState extends State<IndexPage>
         if (event is ShowTabbarEvent) isShowTabbar = event.isShow;
         if (event is VideoIsBlackEvent) isBlack = event.isBlack;
         if (event is IsVideoItemEvent) isVideo = event.isVideo;
-        if (event is IsCommendEvent) isComment = true;
+        if (event is IsCommendEvent) isComment = event.isCommend;
       });
     });
 

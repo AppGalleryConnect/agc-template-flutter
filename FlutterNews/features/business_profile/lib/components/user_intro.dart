@@ -46,8 +46,7 @@ class UserIntro extends StatelessWidget {
   ImageProvider getAvatarProvider(String iconPath) {
     try {
       if (iconPath.isEmpty) {
-        return const AssetImage(
-            Constants.DEFAULT_USER_ICON_PATH);
+        return const AssetImage(Constants.DEFAULT_USER_ICON_PATH);
       }
       if (iconPath.startsWith('http://') || iconPath.startsWith('https://')) {
         return NetworkImage(iconPath);
@@ -60,11 +59,9 @@ class UserIntro extends StatelessWidget {
       if (file.existsSync()) {
         return FileImage(file);
       }
-      return const AssetImage(
-          Constants.DEFAULT_USER_ICON_PATH);
+      return const AssetImage(Constants.DEFAULT_USER_ICON_PATH);
     } catch (e) {
-      return const AssetImage(
-          Constants.DEFAULT_USER_ICON_PATH);
+      return const AssetImage(Constants.DEFAULT_USER_ICON_PATH);
     }
   }
 
@@ -81,17 +78,9 @@ class UserIntro extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // 用户头像
-              GestureDetector(
-                onTap: () {
-                  RouterUtils.of.pushPathByName(
-                    Constants.PROFILE_HOME_PATH,
-                    param: userInfo.authorId,
-                  );
-                },
-                child: CircleAvatar(
-                  backgroundImage: getAvatarProvider(userInfo.authorIcon),
-                  radius: Constants.userIconWidth / 2,
-                ),
+              CircleAvatar(
+                backgroundImage: getAvatarProvider(userInfo.authorIcon),
+                radius: Constants.userIconWidth / 2,
               ),
               const SizedBox(width: CommonConstants.SPACE_M),
               Expanded(
@@ -109,7 +98,8 @@ class UserIntro extends StatelessWidget {
                           child: Text(
                             userInfo.authorNickName,
                             style: TextStyle(
-                              fontSize: Constants.authorNameFontSize * fontSizeRatio,
+                              fontSize:
+                                  Constants.authorNameFontSize * fontSizeRatio,
                               color:
                                   Theme.of(context).textTheme.bodyLarge?.color,
                               fontWeight: FontWeight.w500,

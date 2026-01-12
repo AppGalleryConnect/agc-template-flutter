@@ -284,12 +284,29 @@ class UniformNewsCard extends StatelessWidget {
     return ClipRRect(
       borderRadius:
           BorderRadius.circular(MineConstants.Constants.newsCardBorderRadius),
-      child: Image.network(
-        imgUrl,
-        width: width,
-        height: height,
-        fit: BoxFit.cover,
-      ),
+      child: imgUrl.startsWith('file://')
+          ? Image.file(
+              File(imgUrl.substring(7)),
+              width: width,
+              height: height,
+              fit: BoxFit.cover,
+              errorBuilder: (context, error, stackTrace) {
+                return Container(
+                  color: MineConstants.Constants.newsCardPlaceholderBgColor,
+                );
+              },
+            )
+          : Image.network(
+              imgUrl,
+              width: width,
+              height: height,
+              fit: BoxFit.cover,
+              errorBuilder: (context, error, stackTrace) {
+                return Container(
+                  color: MineConstants.Constants.newsCardPlaceholderBgColor,
+                );
+              },
+            ),
     );
   }
 }

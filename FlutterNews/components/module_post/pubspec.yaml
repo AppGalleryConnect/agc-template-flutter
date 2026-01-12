@@ -23,9 +23,9 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  uuid: ^4.2.2
-  path: ^1.8.3
-  flutter_svg: ^2.0.7 
+  uuid: 4.2.2
+  path: 1.9.0
+  flutter_svg: 2.1.0 
   image_picker:
     git:
       url: "https://gitcode.com/openharmony-tpc/flutter_packages.git"
@@ -41,8 +41,8 @@ dependencies:
   video_thumbnail:
     git:
       url: "https://gitcode.com/openharmony-sig/fluttertpc_video_thumbnail.git"
-  video_thumbnail_ohos: ^1.0.0
-  cupertino_icons: ^1.0.6
+  video_thumbnail_ohos: 1.0.0
+  cupertino_icons: 1.0.6
   permission_handler:
     git:
       url: "https://gitcode.com/openharmony-sig/flutter_permission_handler.git"
@@ -54,7 +54,7 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  flutter_lints: ^3.0.0
+  flutter_lints: 3.0.2
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

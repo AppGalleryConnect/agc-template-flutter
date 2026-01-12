@@ -17,11 +17,11 @@
 
 此模板提供如下组件，所有组件存放在工程根目录的components下，如果您仅需使用组件，可参考对应组件的指导链接；如果您使用此模板，请参考本文档。
 
-| 组件                         | 描述                     | 使用指导                                     |
-| :------------------------- | :--------------------- | :--------------------------------------- |
+| 组件                                       | 描述                     | 使用指导                                     |
+| :--------------------------------------- | :--------------------- | :--------------------------------------- |
 | 频道编辑Flutter组件（module_flutter_channeledit） | 支持频道添加、删除              | [使用指导](components/module_flutter_channeledit/README.md) |
-| 评论Flutter组件（module_flutter_feedcomment）   | 支持评论列表、发表评论、点赞回复       | [使用指导](components/module_flutter_feedcomment/README.md) |
-| 高亮Flutter组件（module_flutter_highlight）     | 支持根据关键字高亮显示文本中命中关键词的部分 | [使用指导](components/module_flutter_highlight/README.md) |
+| 评论Flutter组件（module_flutter_feedcomment）  | 支持评论列表、发表评论、点赞回复       | [使用指导](components/module_flutter_feedcomment/README.md) |
+| 高亮Flutter组件（module_flutter_highlight）    | 支持根据关键字高亮显示文本中命中关键词的部分 | [使用指导](components/module_flutter_highlight/README.md) |
 
 本模板为新闻类应用提供了常用功能的开发样例，模板主要分首页、视频、互动和我的四大模块：
 
@@ -398,7 +398,7 @@ newsflutter
 - DevEco Studio版本：DevEco Studio 5.1.0 Release及以上
 - HarmonyOS SDK版本：HarmonyOS  5.1.0 Release SDK及以上
 - 设备类型：华为手机（包括双折叠）
-- 系统版本：HarmonyOS 5.1.0(18)及以上
+- 系统版本：HarmonyOS 5.1.0(18)及以上（模板配置编译版本需要flutter和DevEco Studio侧版本一致）
 - Flutter SDK版本：基于Flutter 3.22.1适配的OpenHarmony发行版本，tag:3.22.1-ohos-1.0.4
 - Dart版本：Dart 3.4.0及以上
 
@@ -411,59 +411,49 @@ newsflutter
 - 相册权限：用于选择图片、视频上传
 - 相机权限：用于拍照、录像功能
 
+### 限制
+
+- 仅支持HarmonyOS 5.1.0(18)及以上系统版本。
+- 部分功能不支持模拟器运行（如相机、相册、定位、语音播报等）。
+
+
+
 ## 快速入门
 
 ### 配置环境
 
-以下环境变量配置，类似Unix系统（Linux、Mac），可参照配置，Windows下环境变量配置请在“编辑系统环境变量”中设置。
+下列环境变量配置，类Unix系统（Linux、Mac），下可直接参照配置，Windows下环境变量配置请在‘编辑系统环境变量’中设置*
 
-1. 配置HarmonyOS环境变量 (HarmonyOS SDK、node、ohpm、hvigor)。
+1. 配置HarmonyOS SDK和环境变量
 
-   ```
-   export TOOL_HOME=/Applications/DevEco-Studio.app/Contents # mac环境
-   export DEVECO_SDK_HOME=$TOOL_HOME/sdk 
-   export PATH=$TOOL_HOME/tools/ohpm/bin:$PATH 
-   export PATH=$TOOL_HOME/tools/hvigor/bin:$PATH 
-   export PATH=$TOOL_HOME/tools/node/bin:$PATH
-   ```
+   - API18, deveco-studio-5.1 或 command-line-tools-5.1 (推荐使用5.1.0 Beta1或更新版本)
+   - 配置 Java17
+   - 配置环境变量 (SDK, node, ohpm, hvigor)
 
-   在 Windows 上还需要配置一个名为HOS_SDK_HOME的系统变量，值为DevEco Studio sdk的安装路径，示例如下：
-
-   ![img_1.png](screenshots/img_1.png)
-
-
-2. 通过代码工具下载flutter sdk仓库代码，tag为 `3.22.1-ohos-1.0.1`。
-
-   ```
-    git clone -b 3.22.1-ohos-1.0.1 https://gitcode.com/openharmony-tpc/flutter_flutter.git
+   ```shell
+    export TOOL_HOME=/Applications/DevEco-Studio.app/Contents # mac环境
+    export DEVECO_SDK_HOME=$TOOL_HOME/sdk # command-line-tools/sdk
+    export PATH=$TOOL_HOME/tools/ohpm/bin:$PATH # command-line-tools/ohpm/bin
+    export PATH=$TOOL_HOME/tools/hvigor/bin:$PATH # command-line-tools/hvigor/bin
+    export PATH=$TOOL_HOME/tools/node/bin:$PATH # command-line-tools/tool/node/bin
    ```
 
-   并配置如下环境：
+2. 通过代码工具下载当前仓库代码`git clone https://gitcode.com/openharmony-tpc/flutter_flutter.git`，指定3.22.0-ohos分支，并配置环境
 
+   ```SHELL
+   export PUB_CACHE=D:/PUB
+   export PATH=<flutter_flutter path>/bin:$PATH
+   export PUB_HOSTED_URL=https://pub.flutter-io.cn
+   export FLUTTER_STORAGE_BASE_URL=https://storage.flutter-io.cn
    ```
-    export PUB_CACHE=D:/PUB(自定义路径)
-    export PATH=<flutter_flutter path>/bin:$PATH
-    export FLUTTER_GIT_URL=https://gitcode.com/openharmony-tpc/flutter_flutter.git
-    export PUB_HOSTED_URL=https://pub.flutter-io.cn #国内的镜像，也可以使用其他镜像，比如清华镜像源
-    export FLUTTER_STORAGE_BASE_URL=https://storage.flutter-io.cn #国内的镜像，也可以使用其他镜像，比如清华镜像源
-   ```
-
-   Windows 环境变量配置示例如下（请按照实际安装目录配置）：
-
-   - 系统变量
-
-     ![img_2.png](screenshots/img_2.png)
-
-   - 环境变量
-
-     ![img_3.png](screenshots/img_3.png)
-
 
 ### 检查环境
 
-运行 `flutter doctor -v` 检查环境变量配置是否正确，**Futter**与**OpenHarmony**应都为ok标识，若两处提示缺少环境，按提示补充相应环境即可（**Futter**处为感叹号标识无影响）。
+1. 运行 `flutter doctor -v` 检查环境变量配置是否正确，**Futter**与**OpenHarmony**应都为ok标识，若两处提示缺少环境，按提示补上相应环境即可。
 
-<img src="screenshots/img_4.png" width="700">
+![img_4](screenshots/img_4.png)
+
+
 
 ### 配置工程
 

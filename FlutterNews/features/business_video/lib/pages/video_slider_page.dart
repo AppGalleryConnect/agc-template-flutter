@@ -120,26 +120,30 @@ class _VideoSliderPageState extends State<VideoSliderPage>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        color: Colors.black,
-        child: Column(
-          children: [
-            Container(
-              height: widget.isCommend
-                  ? MediaQuery.of(context).size.height * 0.3
-                  : MediaQuery.of(context).size.height,
-              color: Colors.black,
-              child:
-                  widget.type == PageType.RECOMMEND && widget.videoInfo != null
-                      ? _buildvideoListWidget()
-                      : _buildReloadWidget(),
-            ),
-            if (widget.isCommend)
-              const SizedBox(
-                height: Constants.SPACE_30,
+      body: SingleChildScrollView(
+        physics: const NeverScrollableScrollPhysics(),
+        child: Container(
+          color: Colors.black,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                height: widget.isCommend
+                    ? MediaQuery.of(context).size.height * 0.3
+                    : MediaQuery.of(context).size.height,
+                color: Colors.black,
+                child: widget.type == PageType.RECOMMEND &&
+                        widget.videoInfo != null
+                    ? _buildvideoListWidget()
+                    : _buildReloadWidget(),
               ),
-            if (widget.isCommend) _showCommondSheet(),
-          ],
+              if (widget.isCommend)
+                const SizedBox(
+                  height: Constants.SPACE_30,
+                ),
+              if (widget.isCommend) _showCommondSheet(),
+            ],
+          ),
         ),
       ),
     );

@@ -11,7 +11,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  plugin_platform_interface: ^2.0.2
+  plugin_platform_interface: 2.1.8
   lib_common:
     path: ../../commons/lib_common
   
@@ -28,12 +28,12 @@ dependencies:
     path: ../../commons/lib_account
   module_imagepreview:
     path: ../../components/module_imagepreview
-  flutter_svg: ^2.0.7
+  flutter_svg: 2.1.0
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  flutter_lints: ^3.0.0
+  flutter_lints: 3.0.2
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

@@ -7,6 +7,7 @@ import 'package:video_player/video_player.dart';
 import 'package:module_swipeplayer/model/video_model.dart';
 import 'package:flutter/services.dart';
 import 'package:module_swipeplayer/constants/contants.dart';
+import 'package:lib_common/models/setting_model.dart';
 
 class VideoPage extends StatefulWidget {
   final VideoModel videoModel;
@@ -64,16 +65,27 @@ class _VideoPageState extends State<VideoPage> {
   Duration _currentDuration = Duration.zero;
   Duration _totalDuration = Duration.zero;
 
+  bool _isBrightnessChange = false;
+  double _brightness = 0.5;
+  bool _isVolumeChange = false;
+  double _volume = 1.0;
+
   String videoUrl = '';
   Timer? _timer;
   bool _lastVideoIsPalying = true;
-  // bool _showPlaybackStatus = false;
+  SettingModel settingInfo = SettingModel.getInstance();
 
   @override
   void initState() {
     super.initState();
 
     videoUrl = widget.videoModel.videoUrl;
+    settingInfo.initPreferences().then((_) {
+      setState(() {
+        _volume = settingInfo.volume;
+      });
+    });
+    settingInfo.addListener(_onSettingChanged);
     _onLoadVideo();
   }
 
@@ -82,7 +94,15 @@ class _VideoPageState extends State<VideoPage> {
     _controller.removeListener(_onVideoInfo);
     _controller.dispose();
     _stopTimer();
+    settingInfo.removeListener(_onSettingChanged);
     super.dispose();
+  }
+
+  void _onSettingChanged() {
+    setState(() {
+      _volume = settingInfo.volume;
+      _controller.setVolume(_volume);
+    });
   }
 
   void _onLoadVideo() {
@@ -98,14 +118,18 @@ class _VideoPageState extends State<VideoPage> {
                   Duration(milliseconds: widget.videoModel.currentDuration));
             }
 
+            // 设置视频音量为全局音量
+            _controller.setVolume(_volume);
             if (widget.canPlayVideo) _onPlay();
           });
         }).catchError((e) {});
     } else {
       if (widget.videoModel.videoUrl.length > 8) {
         _controller = VideoPlayerController.file(
-            File(widget.videoModel.videoUrl.substring(8)))
-          ..initialize().then((_) {
+          File(
+            widget.videoModel.videoUrl.substring(8),
+          ),
+        )..initialize().then((_) {
             setState(() {
               if (widget.videoModel.currentDuration != 0) {
                 _controller.seekTo(
@@ -114,6 +138,8 @@ class _VideoPageState extends State<VideoPage> {
                     Duration(milliseconds: widget.videoModel.currentDuration));
               }
 
+              // 设置视频音量为全局音量
+              _controller.setVolume(_volume);
               if (widget.canPlayVideo) _onPlay();
             });
           }).catchError((e) {});
@@ -260,6 +286,99 @@ class _VideoPageState extends State<VideoPage> {
             _startTimer();
           });
         },
+        // 只在全屏模式下处理水平手势，非全屏模式下让父组件处理标签切换
+        onHorizontalDragStart: _isFullScreen
+            ? (details) {
+                setState(() {
+                  _isSliderChange = true;
+                  _stopTimer();
+                });
+              }
+            : null,
+        onHorizontalDragUpdate: _isFullScreen
+            ? (details) {
+                if (!_isLock &&
+                    _isInitialized &&
+                    _totalDuration.inMilliseconds > 0) {
+                  double dragDistance = details.delta.dx;
+                  double secondsPer100Pixels = 5.0;
+                  double secondsChange =
+                      (dragDistance / 100.0) * secondsPer100Pixels;
+                  int millisecondsChange = (secondsChange * 1000).toInt();
+                  int newPosition =
+                      _currentDuration.inMilliseconds + millisecondsChange;
+                  newPosition =
+                      newPosition.clamp(0, _totalDuration.inMilliseconds);
+                  setState(() {
+                    _currentDuration = Duration(milliseconds: newPosition);
+                  });
+                }
+              }
+            : null,
+        onHorizontalDragEnd: _isFullScreen
+            ? (details) {
+                if (!_isLock && _isInitialized) {
+                  setState(() {
+                    _controller.seekTo(_currentDuration);
+                    _isSliderChange = false;
+                    _startTimer();
+                  });
+                }
+              }
+            : null,
+        // 只在全屏模式下处理垂直手势，非全屏模式下让PageView处理
+        onVerticalDragStart: _isFullScreen
+            ? (details) {
+                if (!_isLock && _isInitialized) {
+                  setState(() {
+                    _stopTimer();
+                    double screenWidth = MediaQuery.of(context).size.width;
+                    double touchX = details.localPosition.dx;
+                    if (touchX < screenWidth / 2) {
+                      _isBrightnessChange = true;
+                    } else {
+                      _isVolumeChange = true;
+                    }
+                  });
+                }
+              }
+            : null,
+        onVerticalDragUpdate: _isFullScreen
+            ? (details) {
+                if (!_isLock && _isInitialized) {
+                  double dragDistance = details.delta.dy;
+                  double changePer50Pixels = 0.1;
+                  double valueChange =
+                      -(dragDistance / 50.0) * changePer50Pixels;
+
+                  if (_isBrightnessChange) {
+                    setState(() {
+                      _brightness += valueChange;
+                      _brightness = _brightness.clamp(0.0, 1.0);
+                    });
+                  } else if (_isVolumeChange) {
+                    setState(() {
+                      _volume += valueChange;
+                      _volume = _volume.clamp(0.0, 1.0);
+                      _controller.setVolume(_volume);
+                      // 保存音量到全局设置
+                      settingInfo.volume = _volume;
+                    });
+                  }
+                }
+              }
+            : null,
+        onVerticalDragEnd: _isFullScreen
+            ? (details) {
+                if (!_isLock && _isInitialized) {
+                  setState(() {
+                    _isBrightnessChange = false;
+                    _isVolumeChange = false;
+                    _startTimer();
+                  });
+                }
+              }
+            : null,
         child: Container(
           color: Colors.black,
           width: MediaQuery.of(context).size.width,
@@ -269,6 +388,9 @@ class _VideoPageState extends State<VideoPage> {
               _videoBuilder(),
               if (_isBuffering) _buildBufferBuilder(),
               if (_isSpeed && !widget.isCommend) _buildSpeedBuilder(),
+              if (_isBrightnessChange && _isFullScreen)
+                _buildBrightnessIndicator(),
+              if (_isVolumeChange && _isFullScreen) _buildVolumeIndicator(),
               if (!((_isPlaying && !_isFullScreen) ||
                   ((!_isShowUI || _isLock) && _isFullScreen) ||
                   _isBuffering))
@@ -305,30 +427,35 @@ class _VideoPageState extends State<VideoPage> {
                 Radius.circular(Constants.SPACE_5),
               ),
               child: Container(
-                  color: Colors.grey,
-                  child: const Center(
-                    child: Text(
-                      '广告',
-                      style: TextStyle(
-                          color: Colors.white, fontSize: Constants.FONT_12),
+                color: Colors.grey,
+                child: const Center(
+                  child: Text(
+                    '广告',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: Constants.FONT_12,
                     ),
-                  )),
+                  ),
+                ),
+              ),
             )
           : ClipRRect(
               borderRadius: const BorderRadius.all(
                 Radius.circular(Constants.SPACE_5),
               ),
               child: Container(
-                  color: Colors.red,
-                  child: const Center(
-                    child: Text(
-                      '直播',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: Constants.FONT_12,
-                      ),
+                color: Colors.red,
+                child: const Center(
+                  child: Text(
+                    '直播',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: Constants.FONT_12,
                     ),
-                  ))),
+                  ),
+                ),
+              ),
+            ),
     );
   }
 
@@ -345,8 +472,19 @@ class _VideoPageState extends State<VideoPage> {
             _isInitialized
                 ? AspectRatio(
                     aspectRatio: _controller.value.aspectRatio,
-                    child: VideoPlayer(
-                      _controller,
+                    child: Stack(
+                      children: [
+                        VideoPlayer(
+                          _controller,
+                        ),
+                        if (_isFullScreen)
+                          Container(
+                            width: double.infinity,
+                            height: double.infinity,
+                            color: Colors.black.withOpacity(
+                                (1.0 - _brightness).clamp(0.0, 0.8)),
+                          ),
+                      ],
                     ),
                   )
                 : (widget.videoModel.coverUrl.contains('http')
@@ -371,7 +509,9 @@ class _VideoPageState extends State<VideoPage> {
             ? EdgeInsets.only(top: MediaQuery.of(context).padding.top)
             : (_isFullScreen
                 ? const EdgeInsets.only(bottom: Constants.SPACE_0)
-                : const EdgeInsets.only(bottom: Constants.SPACE_100)),
+                : const EdgeInsets.only(
+                    bottom: Constants.SPACE_100,
+                  )),
         child: const Center(
           child: CircularProgressIndicator(),
         ),
@@ -381,28 +521,28 @@ class _VideoPageState extends State<VideoPage> {
 
   Widget _buildSpeedBuilder() {
     return Positioned(
-        left: Constants.SPACE_0,
-        right: Constants.SPACE_0,
-        top: _isFullScreen ? Constants.SPACE_100 : Constants.SPACE_200,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            SvgPicture.asset(
-              Constants.icRateImage,
-              width: Constants.SPACE_7,
-              height: Constants.SPACE_8,
-              fit: BoxFit.contain,
-            ),
-            const SizedBox(
-              width: Constants.SPACE_5,
-            ),
-            const Text(
-              '2.0X快进中',
-              style:
-                  TextStyle(color: Colors.white, fontSize: Constants.FONT_12),
-            ),
-          ],
-        ));
+      left: Constants.SPACE_0,
+      right: Constants.SPACE_0,
+      top: _isFullScreen ? Constants.SPACE_100 : Constants.SPACE_200,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          SvgPicture.asset(
+            Constants.icRateImage,
+            width: Constants.SPACE_7,
+            height: Constants.SPACE_8,
+            fit: BoxFit.contain,
+          ),
+          const SizedBox(
+            width: Constants.SPACE_5,
+          ),
+          const Text(
+            '2.0X快进中',
+            style: TextStyle(color: Colors.white, fontSize: Constants.FONT_12),
+          ),
+        ],
+      ),
+    );
   }
 
   Widget _buildPlayBuilder() {
@@ -454,178 +594,180 @@ class _VideoPageState extends State<VideoPage> {
 
   Widget _buildFullScreenBuilder() {
     return Positioned(
-        left: MediaQuery.of(context).size.width / 2 - Constants.SPACE_50,
-        width: Constants.SPACE_100,
-        bottom: MediaQuery.of(context).size.height / 2 - Constants.SPACE_110,
-        height: Constants.SPACE_40,
-        child: GestureDetector(
-          onTap: () => {
-            SystemChrome.setPreferredOrientations(
-                [DeviceOrientation.landscapeLeft]),
-            setState(() {
-              _isShowUI = true;
-              _isFullScreen = true;
-              _onPlay();
-            }),
-          },
-          child: Container(
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(Constants.SPACE_30),
-              border: Border.all(
-                  color: Constants.BORDER_COLOR, width: Constants.SPACE_1),
-            ),
-            child: Flex(
-              direction: Axis.horizontal,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                SvgPicture.asset(
-                  Constants.icExpandFullImage,
-                  width: Constants.SPACE_13,
-                  height: Constants.SPACE_13,
-                  fit: BoxFit.contain,
-                ),
-                const SizedBox(
-                  width: Constants.SPACE_8,
-                ),
-                const Text(
-                  '全屏播放',
-                  style: TextStyle(
-                      fontSize: Constants.FONT_14, color: Colors.white),
-                ),
-              ],
-            ),
+      left: MediaQuery.of(context).size.width / 2 - Constants.SPACE_50,
+      width: Constants.SPACE_100,
+      bottom: MediaQuery.of(context).size.height / 2 - Constants.SPACE_110,
+      height: Constants.SPACE_40,
+      child: GestureDetector(
+        onTap: () => {
+          SystemChrome.setPreferredOrientations(
+              [DeviceOrientation.landscapeLeft]),
+          setState(() {
+            _isShowUI = true;
+            _isFullScreen = true;
+            _onPlay();
+          }),
+        },
+        child: Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(Constants.SPACE_30),
+            border: Border.all(
+                color: Constants.BORDER_COLOR, width: Constants.SPACE_1),
           ),
-        ));
+          child: Flex(
+            direction: Axis.horizontal,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              SvgPicture.asset(
+                Constants.icExpandFullImage,
+                width: Constants.SPACE_13,
+                height: Constants.SPACE_13,
+                fit: BoxFit.contain,
+              ),
+              const SizedBox(
+                width: Constants.SPACE_8,
+              ),
+              const Text(
+                '全屏播放',
+                style:
+                    TextStyle(fontSize: Constants.FONT_14, color: Colors.white),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 
   Widget _buildSideBarBuilderr() {
     return Positioned(
-        top: MediaQuery.of(context).size.height / 2 - Constants.SPACE_30,
-        right: Constants.SPACE_20,
-        width: Constants.SPACE_50,
-        child: SizedBox(
-          width: MediaQuery.of(context).size.width,
-          height: MediaQuery.of(context).size.height,
-          child: Column(
-            children: [
-              Stack(
-                clipBehavior: Clip.none,
-                children: [
-                  GestureDetector(
-                      onTap: () {
-                        widget.onClick();
-                      },
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(Constants.SPACE_20),
-                        child: widget.videoModel.authorIcon.contains('http')
-                            ? Image.network(
-                                widget.videoModel.authorIcon,
-                                fit: BoxFit.cover,
-                                width: Constants.SPACE_40,
-                                height: Constants.SPACE_40,
-                              )
-                            : Image.file(
-                                File(widget.videoModel.authorIcon),
-                                fit: BoxFit.cover,
-                                width: Constants.SPACE_40,
-                                height: Constants.SPACE_40,
-                              ),
-                      )),
-                  Positioned(
-                    bottom: -Constants.SPACE_8,
-                    left: Constants.SPACE_10,
-                    right: Constants.SPACE_10,
-                    height: Constants.SPACE_20,
-                    child: GestureDetector(
-                      behavior: HitTestBehavior.opaque,
-                      onTap: () {
-                        widget.onFollow(!widget.videoModel.isFollow);
-                      },
-                      child: Stack(
-                        children: [
-                          Positioned.fill(
-                            child: Container(
-                              color: Colors.transparent,
+      top: MediaQuery.of(context).size.height / 2 - Constants.SPACE_30,
+      right: Constants.SPACE_20,
+      width: Constants.SPACE_50,
+      child: SizedBox(
+        width: MediaQuery.of(context).size.width,
+        height: MediaQuery.of(context).size.height,
+        child: Column(
+          children: [
+            Stack(
+              clipBehavior: Clip.none,
+              children: [
+                GestureDetector(
+                    onTap: () {
+                      widget.onClick();
+                    },
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(Constants.SPACE_20),
+                      child: widget.videoModel.authorIcon.contains('http')
+                          ? Image.network(
+                              widget.videoModel.authorIcon,
+                              fit: BoxFit.cover,
+                              width: Constants.SPACE_40,
+                              height: Constants.SPACE_40,
+                            )
+                          : Image.file(
+                              File(widget.videoModel.authorIcon),
+                              fit: BoxFit.cover,
+                              width: Constants.SPACE_40,
+                              height: Constants.SPACE_40,
                             ),
+                    )),
+                Positioned(
+                  bottom: -Constants.SPACE_8,
+                  left: Constants.SPACE_10,
+                  right: Constants.SPACE_10,
+                  height: Constants.SPACE_20,
+                  child: GestureDetector(
+                    behavior: HitTestBehavior.opaque,
+                    onTap: () {
+                      widget.onFollow(!widget.videoModel.isFollow);
+                    },
+                    child: Stack(
+                      children: [
+                        Positioned.fill(
+                          child: Container(
+                            color: Colors.transparent,
                           ),
-                          Center(
-                              child: Container(
-                            decoration: BoxDecoration(
-                              borderRadius:
-                                  BorderRadius.circular(Constants.SPACE_7),
-                              color: Colors.white,
-                            ),
-                            child: SvgPicture.asset(
-                              widget.videoModel.isFollow
-                                  ? Constants.icFollowImage
-                                  : Constants.icUnfollowImage,
-                              colorFilter: const ColorFilter.mode(
-                                  Colors.red, BlendMode.srcIn),
-                              fit: BoxFit.none,
-                            ),
-                          )),
-                        ],
-                      ),
+                        ),
+                        Center(
+                            child: Container(
+                          decoration: BoxDecoration(
+                            borderRadius:
+                                BorderRadius.circular(Constants.SPACE_7),
+                            color: Colors.white,
+                          ),
+                          child: SvgPicture.asset(
+                            widget.videoModel.isFollow
+                                ? Constants.icFollowImage
+                                : Constants.icUnfollowImage,
+                            colorFilter: const ColorFilter.mode(
+                                Colors.red, BlendMode.srcIn),
+                            fit: BoxFit.none,
+                          ),
+                        )),
+                      ],
                     ),
                   ),
-                ],
-              ),
-              const SizedBox(
-                height: Constants.SPACE_20,
-              ),
-              GestureDetector(
-                onTap: () => {
-                  widget.onLike(!widget.videoModel.isLike),
-                },
-                child: _buildSideBarItemBuilder(
-                    widget.videoModel.isLike
-                        ? Constants.icLikeImage
-                        : Constants.icUnlikeImage,
-                    widget.videoModel.likeCount == 0
-                        ? '点赞'
-                        : widget.videoModel.likeCount.toString()),
-              ),
-              const SizedBox(
-                height: Constants.SPACE_10,
-              ),
-              GestureDetector(
-                onTap: () => {
-                  widget.onCommond(false),
-                },
-                child: _buildSideBarItemBuilder(
-                  Constants.messageActiveImage,
-                  widget.videoModel.commentCount == 0
-                      ? '评论'
-                      : widget.videoModel.commentCount.toString(),
                 ),
+              ],
+            ),
+            const SizedBox(
+              height: Constants.SPACE_20,
+            ),
+            GestureDetector(
+              onTap: () => {
+                widget.onLike(!widget.videoModel.isLike),
+              },
+              child: _buildSideBarItemBuilder(
+                  widget.videoModel.isLike
+                      ? Constants.icLikeImage
+                      : Constants.icUnlikeImage,
+                  widget.videoModel.likeCount == 0
+                      ? '点赞'
+                      : widget.videoModel.likeCount.toString()),
+            ),
+            const SizedBox(
+              height: Constants.SPACE_10,
+            ),
+            GestureDetector(
+              onTap: () => {
+                widget.onCommond(false),
+              },
+              child: _buildSideBarItemBuilder(
+                Constants.messageActiveImage,
+                widget.videoModel.commentCount == 0
+                    ? '评论'
+                    : widget.videoModel.commentCount.toString(),
               ),
-              const SizedBox(
-                height: Constants.SPACE_10,
-              ),
-              GestureDetector(
-                onTap: () => {
-                  widget.onCollect(!widget.videoModel.isCollect),
-                },
-                child: _buildSideBarItemBuilder(
-                    widget.videoModel.isCollect
-                        ? Constants.icFavoriteImage
-                        : Constants.icUnfavoriteImage,
-                    widget.videoModel.collectCount == 0
-                        ? '收藏'
-                        : widget.videoModel.collectCount.toString()),
-              ),
-              const SizedBox(
-                height: Constants.SPACE_10,
-              ),
-              GestureDetector(
-                onTap: () => {
-                  widget.onShare(),
-                },
-                child: _buildSideBarItemBuilder(Constants.icShareImage, '分享'),
-              ),
-            ],
-          ),
-        ));
+            ),
+            const SizedBox(
+              height: Constants.SPACE_10,
+            ),
+            GestureDetector(
+              onTap: () => {
+                widget.onCollect(!widget.videoModel.isCollect),
+              },
+              child: _buildSideBarItemBuilder(
+                  widget.videoModel.isCollect
+                      ? Constants.icFavoriteImage
+                      : Constants.icUnfavoriteImage,
+                  widget.videoModel.collectCount == 0
+                      ? '收藏'
+                      : widget.videoModel.collectCount.toString()),
+            ),
+            const SizedBox(
+              height: Constants.SPACE_10,
+            ),
+            GestureDetector(
+              onTap: () => {
+                widget.onShare(),
+              },
+              child: _buildSideBarItemBuilder(Constants.icShareImage, '分享'),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   Widget _buildSideBarItemBuilder(String imageUrl, String text) {
@@ -748,21 +890,28 @@ class _VideoPageState extends State<VideoPage> {
                       inactiveColor: Colors.grey,
                       thumbColor: Colors.white,
                       onChanged: (value) {
-                        setState(() {
-                          _isSliderChange = true;
-                          _currentDuration =
-                              Duration(milliseconds: value.toInt());
-                          _stopTimer();
-                        });
+                        setState(
+                          () {
+                            _isSliderChange = true;
+                            _currentDuration =
+                                Duration(milliseconds: value.toInt());
+                            _stopTimer();
+                          },
+                        );
                       },
                       onChangeEnd: (value) {
-                        setState(() {
-                          _controller
-                              .seekTo(Duration(milliseconds: value.toInt()));
-                          _isSliderChange = false;
-                          _startTimer();
-                          widget.onSlider(_currentDuration);
-                        });
+                        setState(
+                          () {
+                            _controller.seekTo(
+                              Duration(
+                                milliseconds: value.toInt(),
+                              ),
+                            );
+                            _isSliderChange = false;
+                            _startTimer();
+                            widget.onSlider(_currentDuration);
+                          },
+                        );
                       },
                       min: 0,
                       max: _totalDuration.inMilliseconds.toDouble(),
@@ -826,6 +975,62 @@ class _VideoPageState extends State<VideoPage> {
     );
   }
 
+  // 亮度调节指示器
+  Widget _buildBrightnessIndicator() {
+    return Positioned(
+      top: MediaQuery.of(context).size.height / 2 - 50,
+      left: 50,
+      child: Column(
+        children: [
+          Icon(
+            _brightness < 0.5 ? Icons.brightness_low : Icons.brightness_high,
+            size: 50,
+            color: Colors.white,
+          ),
+          const SizedBox(height: 10),
+          Text(
+            '${(_brightness * 100).toInt()}%',
+            style: const TextStyle(
+              color: Colors.white,
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // 音量调节指示器
+  Widget _buildVolumeIndicator() {
+    return Positioned(
+      top: MediaQuery.of(context).size.height / 2 - 50,
+      right: 50,
+      child: Column(
+        children: [
+          Icon(
+            _volume == 0
+                ? Icons.volume_off
+                : _volume < 0.5
+                    ? Icons.volume_down
+                    : Icons.volume_up,
+            size: 50,
+            color: Colors.white,
+          ),
+          const SizedBox(height: 10),
+          Text(
+            '${(_volume * 100).toInt()}%',
+            style: const TextStyle(
+              color: Colors.white,
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _buildCommentBuilder() {
     return Positioned(
       bottom: Constants.SPACE_30,
@@ -872,13 +1077,14 @@ class _VideoPageState extends State<VideoPage> {
   }
 
   Widget _buildTopBuilder() {
+    final EdgeInsets safeAreaInsets = MediaQuery.of(context).padding;
     return Positioned(
-      top: Constants.SPACE_0,
-      height: Constants.SPACE_64,
+      top: safeAreaInsets.top,
+      height: Constants.SPACE_20 + safeAreaInsets.top,
       width: MediaQuery.of(context).size.width,
       child: Container(
         width: MediaQuery.of(context).size.width,
-        height: Constants.SPACE_64,
+        height: Constants.SPACE_20 + safeAreaInsets.top,
         decoration: const BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topCenter,
@@ -889,7 +1095,11 @@ class _VideoPageState extends State<VideoPage> {
             ],
           ),
         ),
-        padding: const EdgeInsets.symmetric(horizontal: Constants.SPACE_16),
+        padding: EdgeInsets.only(
+          left: Constants.SPACE_16,
+          right: Constants.SPACE_16,
+          top: safeAreaInsets.top,
+        ),
         child: Row(
           children: [
             SizedBox(
@@ -957,7 +1167,9 @@ class _VideoPageState extends State<VideoPage> {
           width: Constants.SPACE_50,
           height: Constants.SPACE_50,
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(Constants.SPACE_25),
+            borderRadius: BorderRadius.circular(
+              Constants.SPACE_25,
+            ),
             color: Colors.black.withOpacity(0.5),
           ),
           child: SvgPicture.asset(

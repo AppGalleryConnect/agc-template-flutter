@@ -47,7 +47,7 @@ module_flutter_highlight/
 - DevEco Studio版本：DevEco Studio 5.1.0 Release及以上
 - HarmonyOS SDK版本：HarmonyOS SDK 5.1.0 Release SDK及以上
 - 设备类型：华为手机（包括双折叠）
-- 系统版本：HarmonyOS 5.1.0(18)及以上
+- 系统版本：HarmonyOS 5.1.0(18)及以上（模板配置编译版本需要和DevEco Studio侧版本一致）
 - Flutter版本：Flutter 3.22.1-ohos-1.0.4
 - Dart版本：Dart 3.4.0及以上
 

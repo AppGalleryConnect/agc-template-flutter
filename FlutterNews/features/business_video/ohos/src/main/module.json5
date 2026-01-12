@@ -1,0 +1,10 @@
+{
+  "module": {
+    "name": "business_video",
+    "type": "har",
+    "deviceTypes": [
+      "default",
+      "tablet"
+    ]
+  }
+}

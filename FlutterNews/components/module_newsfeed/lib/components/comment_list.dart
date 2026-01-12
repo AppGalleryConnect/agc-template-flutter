@@ -516,31 +516,31 @@ class _CommentListState extends State<CommentList> {
                               children: [
                                 // 二级回复点击（回复二级：targetReply = reply）
                                 Row(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        "${reply.author?.authorNickName ?? "未知作者"}:",
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      "${reply.author?.authorNickName ?? "未知作者"}:",
+                                      style: TextStyle(
+                                        fontSize: Constants.FONT_14 *
+                                            (widget.fontSizeRatio ?? 1.0),
+                                        fontWeight: FontWeight.w600,
+                                        color: Colors.blue,
+                                      ),
+                                    ),
+                                    const SizedBox(width: Constants.SPACE_4),
+                                    Expanded(
+                                      child: Text(
+                                        reply.commentBody ?? '',
                                         style: TextStyle(
                                           fontSize: Constants.FONT_14 *
                                               (widget.fontSizeRatio ?? 1.0),
-                                          fontWeight: FontWeight.w600,
-                                          color: Colors.blue,
+                                          color: Colors.black87,
                                         ),
+                                        softWrap: true,
                                       ),
-                                      const SizedBox(width: Constants.SPACE_4),
-                                      Expanded(
-                                        child: Text(
-                                          reply.commentBody ?? '',
-                                          style: TextStyle(
-                                            fontSize: Constants.FONT_14 * (widget.fontSizeRatio ?? 1.0),
-                                            color: Colors.black87,
-                                          ),
-                                          softWrap: true,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
+                                    ),
+                                  ],
+                                ),
                               ],
                             ),
                           ),

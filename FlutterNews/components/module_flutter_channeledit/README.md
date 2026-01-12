@@ -47,7 +47,7 @@ module_flutter_channeledit/
 └── pubspec.yaml                      // 组件依赖配置
 ```
 
-<img src="assets/channel.png" width="300">
+<img src="screenshots/channel.png" width="300">
 
 ## 约束与限制
 
@@ -56,7 +56,7 @@ module_flutter_channeledit/
 - DevEco Studio版本：DevEco Studio 5.1.0 Release及以上
 - HarmonyOS SDK版本：HarmonyOS 5.1.0 Release SDK及以上
 - 设备类型：华为手机（包括双折叠）
-- 系统版本：HarmonyOS 5.1.0(18)及以上
+- 系统版本：HarmonyOS 5.1.0(18)及以上（模板配置编译版本需要和DevEco Studio侧版本一致）
 - Flutter版本：Flutter 3.22.1-ohos-1.0.4
 - Dart版本：Dart 3.4.0及以上
 
@@ -65,8 +65,9 @@ module_flutter_channeledit/
 ### 配置环境
 
 以下环境变量配置，类似 Unix 系统（Linux、Mac），可参照配置，Windows 下环境变量配置请在"编辑系统环境变量"中设置。
-  
+
   1. 配置 HarmonyOS 环境变量（HarmonyOS SDK、node、ohpm、hvigor）：
+
      ```
      export TOOL_HOME=/Applications/DevEco-Studio.app/Contents # mac环境
      export DEVECO_SDK_HOME=$TOOL_HOME/sdk 
@@ -74,26 +75,20 @@ module_flutter_channeledit/
      export PATH=$TOOL_HOME/tools/hvigor/bin:$PATH 
      export PATH=$TOOL_HOME/tools/node/bin:$PATH
      ```
+
      在 Windows 上还需要配置一个名为 HOS_SDK_HOME 的系统变量，值为 DevEco Studio SDK 的安装路径，示例如下：
-     
+
      ![image1.png](screenshots/image1.png)
 
+     asd
 
   2. 通过代码工具下载 Flutter SDK 仓库代码，tag 为 3.22.1-ohos-1.0.4：
-     ```
-     git clone -b 3.22.1-ohos-1.0.4 https://gitcode.com/openharmony-tpc/flutter_flutter.git
-     ```
 
-     并配置如下环境：
 
-     ```
-     export PUB_CACHE=D:/PUB(自定义路径)
-     export PATH=<flutter_flutter path>/bin:$PATH
-     export FLUTTER_GIT_URL=https://gitcode.com/openharmony-tpc/flutter_flutter.git
-     export PUB_HOSTED_URL=https://pub.flutter-io.cn # 暂用国内的镜像
-     export FLUTTER_STORAGE_BASE_URL=https://storage.flutter-io.cn # 暂用国内的镜像
-     ```
-     Windows 环境变量配置示例如下（请按照实际安装目录配置）：
+```
+git clone -b 3.22.1-ohos-1.0.4 https://gitcode.com/openharmony-tpc/flutter_flutter.git
+```
+
     - 系统变量截图
          ![image2.png](screenshots/image2.png)
     - 环境变量截图
@@ -132,7 +127,7 @@ module_flutter_channeledit/
 ### 安装组件
 
 #### 步骤 1：添加依赖
-   
+
    完成以上步骤后从生态市场下载组件，请参考以下步骤安装组件。
 
    a. 解压下载的组件包，将包中所有文件夹拷贝至您工程根目录的components目录下。
@@ -188,71 +183,91 @@ ChannelEdit(option: [ChannelEditOptions](#ChannelEditOptions对象说明))
 
 **参数：**
 
-| 参数名 | 类型 | 是否必填 | 说明         |
-|:--------|:----------------|:-----|:-----------|
-| options | [ChannelEditOptions](#ChannelEditOptions对象说明) | 否 | 配置频道组件的参数。 |
+| 参数名     | 类型                                       | 是否必填 | 说明         |
+| :------ | :--------------------------------------- | :--- | :--------- |
+| options | [ChannelEditOptions](#ChannelEditOptions对象说明) | 否    | 配置频道组件的参数。 |
 
 ### ChannelEditOptions对象说明
 
-| 参数名 | 类型 | 是否必填 | 说明 |
-|:--------|:----------------|:-----|:-----------|
-| channelsList | List<[TabInfo](#tabinfo类说明)> | 是 | 频道列表数据源 |
-| currentIndex | int | 否 | 当前选中的频道索引，默认为1 |
-| fontSizeRatio | double | 否 | 文字缩放倍率，默认为1.0 |
-| isShowEdit | bool | 否 | 是否显示编辑按钮，默认为true |
-| onSave | Function(List<[TabInfo](#tabinfo类说明)> channelsList) | 是 | 保存频道配置的回调函数 |
-| onChange | Function(int index, [TabInfo](#tabinfo类说明) item) | 是 | 频道切换的回调函数 |
-| index | int | 否 | 前几个为白色 |
-| isDark | bool | 否 | 是否是黑暗模式 |
+| 参数名           | 类型                                       | 是否必填 | 说明               |
+| :------------ | :--------------------------------------- | :--- | :--------------- |
+| channelsList  | List<[TabInfo](#tabinfo类说明)>             | 是    | 频道列表数据源          |
+| currentIndex  | int                                      | 否    | 当前选中的频道索引，默认为1   |
+| fontSizeRatio | double                                   | 否    | 文字缩放倍率，默认为1.0    |
+| isShowEdit    | bool                                     | 否    | 是否显示编辑按钮，默认为true |
+| onSave        | Function(List<[TabInfo](#tabinfo类说明)> channelsList) | 是    | 保存频道配置的回调函数      |
+| onChange      | Function(int index, [TabInfo](#tabinfo类说明) item) | 是    | 频道切换的回调函数        |
+| index         | int                                      | 否    | 前几个为白色           |
+| isDark        | bool                                     | 否    | 是否是黑暗模式          |
 
 ### TabInfo类说明
 
-| 属性名 | 类型 | 是否必填 | 说明 |
-|:--------|:----------------|:-----|:-----------|
-| id | String | 是 | 频道唯一标识 |
-| name | String | 是 | 频道名称 |
-| isFixed | bool | 是 | 是否为固定频道（不可编辑） |
-| sort | int | 是 | 排序值 |
+| 属性名     | 类型     | 是否必填 | 说明            |
+| :------ | :----- | :--- | :------------ |
+| id      | String | 是    | 频道唯一标识        |
+| name    | String | 是    | 频道名称          |
+| isFixed | bool   | 是    | 是否为固定频道（不可编辑） |
+| sort    | int    | 是    | 排序值           |
 
 ## 示例代码
 
-```
+```typescript
 import 'package:flutter/material.dart';
 import 'package:module_flutter_channeledit/module_channeledit.dart';
 
 class ChannelExample extends StatelessWidget {
-  // 模拟频道数据
-  final List<TabInfo> _channels = [
-    TabInfo(id: '1', name: '推荐', isFixed: true, sort: 1),
-    TabInfo(id: '2', name: '关注', isFixed: true, sort: 2),
-    TabInfo(id: '3', name: '热点', isFixed: false, sort: 3),
-    TabInfo(id: '4', name: '科技', isFixed: false, sort: 4),
-    TabInfo(id: '5', name: '娱乐', isFixed: false, sort: 5),
+   // 频道数据
+  List<TabInfo> channelsList = [
+    TabInfo(id: 'follow', text: '关注', selected: true, order: 1, disabled: true),
+    TabInfo(
+        id: 'recommend', text: '推荐', selected: true, order: 2, disabled: true),
+    TabInfo(
+        id: 'hotService', text: '热榜', selected: true, order: 3, disabled: true),
+    TabInfo(
+        id: 'location', text: '南京', selected: true, order: 4, disabled: false),
+    TabInfo(id: 'finance', text: '金融', selected: true, order: 5),
+    TabInfo(id: 'sports', text: '体育', selected: true, order: 6),
+    TabInfo(id: 'people', text: '民生', selected: false, order: 6),
+    TabInfo(id: 'science', text: '科普', selected: false, order: 6),
+    TabInfo(id: 'fun', text: '娱乐', selected: false, order: 6),
   ];
+
+  int currentIndex = 1;
+  double fontSizeRatio = 1.0;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
       appBar: AppBar(
-        title: const Text('频道管理示例'),
-        backgroundColor: Colors.red,
+        title: const Text('频道管理'),
       ),
-      body: ChannelEdit(
-        channelsList: _channels,
-        currentIndex: 1,
-        fontSizeRatio: 1.0,
-        isShowEdit: true,
-        onSave: (channels) {
-          // 保存频道配置
-          print('保存的频道：$channels');
-        },
-        onChange: (index, item) {
-          // 处理频道切换
-          print('切换到频道：${item.name}，索引：$index');
-        },
-        index: 2,
-        isDark: false,
+      body: Column(
+        children: [
+          // 频道编辑组件
+          ChannelEdit(
+            channelsList: channelsList,
+            currentIndex: currentIndex,
+            fontSizeRatio: fontSizeRatio,
+            onSave: (List<TabInfo> list) {
+              setState(() {
+                channelsList = list;
+                print('保存频道配置');
+              });
+            },
+            onChange: (index, item) {
+              setState(() {
+                currentIndex = index;
+                print('切换到频道: ${item.text}, 索引: $index');
+              });
+            },
+          ),
+          // 内容展示区域
+          Expanded(
+            child: Center(
+              child: Text('当前频道: ${channelsList[currentIndex].text}'),
+            ),
+          ),
+        ],
       ),
     );
   }

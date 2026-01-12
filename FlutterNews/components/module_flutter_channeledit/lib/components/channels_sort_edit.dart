@@ -24,58 +24,88 @@ class ChannelsSortEdit extends StatefulWidget {
 
 class _ChannelSortEditState extends State<ChannelsSortEdit> {
   bool _isEdit = false;
+  double _dividerPosition = 0.5;
 
   @override
   Widget build(BuildContext context) {
     return Container(
-        color: Colors.white,
-        child: Column(
-          children: [
-            _titleBuilder('自定义'),
-            _channelBuilder('我的频道', '点击进入频道', true),
-            Expanded(
-              child: _channelItemBuilder(widget.selectChannelList, false),
+      color: Colors.white,
+      child: Column(
+        children: [
+          const SizedBox(height: Constants.SPACE_8),
+          _draggableDividerBuilder(),
+          _titleBuilder('自定义'),
+          _channelBuilder(
+            '我的频道',
+            '点击进入频道',
+            true,
+          ),
+          const SizedBox(height: Constants.SPACE_16),
+          // 动态高度的我的频道列表
+          Flexible(
+            flex: (_dividerPosition * 100).round(),
+            child: _channelItemBuilder(
+              widget.selectChannelList,
+              false,
             ),
-            _channelBuilder('推荐频道', '点击添加', false),
-            Expanded(
-              child: _channelItemBuilder(widget.unselectChannelList, true),
+          ),
+          const SizedBox(height: Constants.SPACE_16),
+          _channelBuilder(
+            '推荐频道',
+            '点击添加',
+            false,
+          ),
+          const SizedBox(height: Constants.SPACE_16),
+          // 动态高度的推荐频道列表
+          Flexible(
+            flex: ((1 - _dividerPosition) * 100).round(),
+            child: _channelItemBuilder(
+              widget.unselectChannelList,
+              true,
             ),
-          ],
-        ));
+          ),
+        ],
+      ),
+    );
   }
 
   Widget _titleBuilder(String title) {
     return Container(
-      height: Constants.SPACE_80,
-      padding: const EdgeInsets.symmetric(horizontal: Constants.SPACE_16),
+      height: Constants.SPACE_65,
+      padding: const EdgeInsets.symmetric(
+        horizontal: Constants.SPACE_16,
+      ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(
             title,
             style: TextStyle(
-              fontSize: Constants.FONT_16 * widget.fontSizeRatio,
-              fontWeight: FontWeight.w500,
-              color: Theme.of(context).colorScheme.onSurface,
-            ),
+                fontSize: Constants.FONT_16 * widget.fontSizeRatio,
+                fontWeight: FontWeight.w500,
+                color: const Color.fromARGB(255, 0, 0, 0)),
           ),
           Container(
             width: Constants.SPACE_40,
             height: Constants.SPACE_40,
             decoration: BoxDecoration(
-              color: Constants.SORT_EDIT_BACKGROUNDCOLOR,
-              borderRadius: BorderRadius.circular(Constants.SPACE_25),
-              border:
-                  Border.all(color: Colors.black12, width: Constants.SPACE_1),
+              color: const Color.fromARGB(255, 228, 230, 231), // 浅灰色背景
+              borderRadius: BorderRadius.circular(
+                Constants.SPACE_25,
+              ),
             ),
             child: IconButton(
-              padding: const EdgeInsets.all(Constants.SPACE_12),
+              padding: const EdgeInsets.all(
+                Constants.SPACE_14,
+              ),
               icon: SvgPicture.asset(
                 Constants.deleteImage,
                 width: Constants.SPACE_15,
                 height: Constants.SPACE_15,
-                colorFilter: ColorFilter.mode(
-                    Theme.of(context).colorScheme.primary, BlendMode.srcIn),
+                colorFilter: const ColorFilter.mode(
+                  Color.fromARGB(255, 0, 0, 0),
+                  BlendMode.srcIn,
+                ),
                 fit: BoxFit.contain,
               ),
               onPressed: () {
@@ -88,12 +118,44 @@ class _ChannelSortEditState extends State<ChannelsSortEdit> {
     );
   }
 
+  Widget _draggableDividerBuilder() {
+    return GestureDetector(
+      onVerticalDragUpdate: (details) {
+        final box = context.findRenderObject() as RenderBox;
+        final height = box.size.height;
+        final newPosition = _dividerPosition + (details.delta.dy / height);
+        setState(() {
+          _dividerPosition = newPosition.clamp(0.1, 0.9);
+        });
+      },
+      child: Container(
+        height: 10,
+        alignment: Alignment.center,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Container(
+              width: 60,
+              height: 4,
+              decoration: BoxDecoration(
+                color: const Color.fromARGB(255, 200, 200, 200),
+                borderRadius: BorderRadius.circular(2),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   Widget _channelBuilder(String title, String subTitle, bool isShowEdit) {
     return Column(
       children: [
         Container(
-          padding: const EdgeInsets.symmetric(horizontal: Constants.SPACE_16),
-          height: Constants.SPACE_40,
+          padding: const EdgeInsets.symmetric(
+            horizontal: Constants.SPACE_16,
+          ),
+          height: Constants.SPACE_25,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -104,15 +166,17 @@ class _ChannelSortEditState extends State<ChannelsSortEdit> {
                     style: TextStyle(
                       fontSize: Constants.FONT_16 * widget.fontSizeRatio,
                       fontWeight: FontWeight.w500,
-                      color: Theme.of(context).colorScheme.onSurface,
+                      color: const Color.fromARGB(255, 0, 0, 0),
                     ),
                   ),
-                  const SizedBox(width: Constants.SPACE_8),
+                  const SizedBox(
+                    width: Constants.SPACE_8,
+                  ),
                   Text(
                     subTitle,
                     style: TextStyle(
                       fontSize: Constants.FONT_12 * widget.fontSizeRatio,
-                      color: Theme.of(context).colorScheme.onSurfaceVariant,
+                      color: const Color.fromARGB(255, 151, 153, 155),
                     ),
                   ),
                 ],
@@ -149,87 +213,87 @@ class _ChannelSortEditState extends State<ChannelsSortEdit> {
           crossAxisCount: 4,
           crossAxisSpacing: Constants.SPACE_16,
           mainAxisSpacing: Constants.SPACE_16,
-          childAspectRatio: Constants.SPACE_2,
+          mainAxisExtent: Constants.SPACE_40,
         ),
         itemCount: list.length,
         physics: const NeverScrollableScrollPhysics(),
         itemBuilder: (_, index) {
           return Container(
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(Constants.SPACE_25),
-              border:
-                  Border.all(color: Colors.black12, width: Constants.SPACE_1),
-              color: Constants.SORT_EDIT_BACKGROUNDCOLOR,
+              borderRadius: BorderRadius.circular(Constants.SPACE_40),
+              border: Border.all(
+                  color: const Color.fromARGB(31, 229, 231, 232),
+                  width: Constants.SPACE_1),
+              color: const Color.fromARGB(255, 229, 231, 232),
             ),
             child: Center(
-                child: GestureDetector(
-              onLongPress: () => {
-                if (!_isEdit && !isAdd)
-                  {
-                    setState(() {
-                      _isEdit = true;
-                    })
-                  }
-              },
-              onTap: () => {
-                if (isAdd)
-                  {
-                    setState(() {
-                      TabInfo info = list[index];
-                      info.selected = true;
-                      widget.onSave(index, info);
-                    })
-                  }
-                else if (!_isEdit)
-                  {
-                    setState(() {
-                      Navigator.pop(context);
-                      widget.onChannelClick(index, list[index]);
-                    })
-                  }
-                else if (!list[index].disabled!)
-                  {
-                    setState(() {
-                      TabInfo info = list[index];
-                      info.selected = false;
-                      widget.onSave(index, list[index]);
-                    })
-                  }
-              },
-              child: Flex(
-                direction: Axis.horizontal,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
+              child: GestureDetector(
+                onLongPress: () => {
+                  if (!_isEdit && !isAdd)
+                    {
+                      setState(() {
+                        _isEdit = true;
+                      })
+                    }
+                },
+                onTap: () => {
                   if (isAdd)
-                    SvgPicture.asset(
-                      Constants.addImage,
-                      width: Constants.SPACE_10,
-                      height: Constants.SPACE_10,
-                      colorFilter: ColorFilter.mode(
-                          Theme.of(context).colorScheme.primary,
-                          BlendMode.srcIn),
-                      fit: BoxFit.contain,
+                    {
+                      setState(() {
+                        TabInfo info = list[index];
+                        info.selected = true;
+                        widget.onSave(index, info);
+                      })
+                    }
+                  else if (!_isEdit)
+                    {
+                      setState(() {
+                        Navigator.pop(context);
+                        widget.onChannelClick(index, list[index]);
+                      })
+                    }
+                  else if (!list[index].disabled!)
+                    {
+                      setState(() {
+                        TabInfo info = list[index];
+                        info.selected = false;
+                        widget.onSave(index, list[index]);
+                      })
+                    }
+                },
+                child: Flex(
+                  direction: Axis.horizontal,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    if (isAdd)
+                      SvgPicture.asset(
+                        Constants.addImage,
+                        width: Constants.SPACE_10,
+                        height: Constants.SPACE_10,
+                        colorFilter: const ColorFilter.mode(
+                            Color.fromARGB(255, 0, 0, 0), BlendMode.srcIn),
+                        fit: BoxFit.contain,
+                      ),
+                    const SizedBox(
+                      width: Constants.SPACE_8,
                     ),
-                  const SizedBox(
-                    width: Constants.SPACE_8,
-                  ),
-                  Text(list[index].text),
-                  const SizedBox(
-                    width: Constants.SPACE_8,
-                  ),
-                  if (_isEdit && !list[index].disabled! && !isAdd)
-                    SvgPicture.asset(
-                      Constants.deleteImage,
-                      width: Constants.SPACE_10,
-                      height: Constants.SPACE_10,
-                      colorFilter: ColorFilter.mode(
-                          Theme.of(context).colorScheme.primary,
-                          BlendMode.srcIn),
-                      fit: BoxFit.contain,
+                    Text(list[index].text),
+                    const SizedBox(
+                      width: Constants.SPACE_8,
                     ),
-                ],
+                    if (_isEdit && !list[index].disabled! && !isAdd)
+                      SvgPicture.asset(
+                        Constants.deleteImage,
+                        width: Constants.SPACE_10,
+                        height: Constants.SPACE_10,
+                        colorFilter: const ColorFilter.mode(
+                            Color.fromARGB(255, 0, 0, 0), BlendMode.srcIn),
+                        fit: BoxFit.contain,
+                      ),
+                  ],
+                ),
               ),
-            )),
+            ),
           );
         },
       ),

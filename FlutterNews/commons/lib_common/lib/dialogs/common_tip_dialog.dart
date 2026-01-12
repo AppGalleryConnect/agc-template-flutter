@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import '../constants/grid_row_col_setting.dart';
 import '../constants/common_constants.dart';
 import '../utils/pop_view_utils.dart';
-import 'common_loading_dialog.dart';
 
 /// 弹窗参数接口
 abstract class ITipDialogParams {
@@ -135,9 +134,9 @@ class CommonTipDialog {
   static void show(ITipDialogParams param) {
     final params = TipDialogParams(param);
     PopViewUtils.showPopView(
-      contentView: const LoadingView(),
-      barrierColor: Colors.transparent,
-      barrierDismissible: false,
+      contentView: CommonTipView(params: params),
+      barrierColor: Colors.black.withOpacity(0.5),
+      barrierDismissible: true,
     );
   }
 }

@@ -91,15 +91,13 @@ class _SettingAboutState extends BaseStatefulWidgetState<SettingAbout> {
           const SizedBox(
             height: Constants.SPACE_8,
           ),
-          Obx(
-            () => Text(
-              controller.appName.value,
-              style: TextStyle(
-                fontSize: Constants.FONT_16 * FontScaleUtils.fontSizeRatio,
-                fontWeight: FontWeight.w500,
-                color: ThemeColors.getFontPrimary(
-                  settingInfo.darkSwitch,
-                ),
+          Text(
+            '新闻flutter模板',
+            style: TextStyle(
+              fontSize: Constants.FONT_16 * FontScaleUtils.fontSizeRatio,
+              fontWeight: FontWeight.w500,
+              color: ThemeColors.getFontPrimary(
+                settingInfo.darkSwitch,
               ),
             ),
           ),

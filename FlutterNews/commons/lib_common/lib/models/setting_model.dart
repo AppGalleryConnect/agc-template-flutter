@@ -9,6 +9,7 @@ class SettingModel with ChangeNotifier {
   static const String _keyDarkSwitch = 'setting_dark_switch';
   static const String _keyFontSizeRatio = 'setting_font_size_ratio';
   static const String _keyPersonalizedPush = 'setting_personalized_push';
+  static const String _keyVolume = 'setting_volume';
   static SettingModel? _instance;
   late final PreferenceUtils _prefs;
   bool _isInitialized = false;
@@ -37,11 +38,13 @@ class SettingModel with ChangeNotifier {
   /// 字体大小比例（对应鸿蒙 fontSizeRatio）
   double _fontSizeRatio = 1.0;
   bool _personalizedPush = true;
+  double _volume = 1.0;
   late final SettingNetworkModel _network;
   bool get pushSwitch => _pushSwitch;
   bool get darkSwitch => _darkSwitch;
   double get fontSizeRatio => _fontSizeRatio;
   bool get personalizedPush => _personalizedPush;
+  double get volume => _volume;
   SettingNetworkModel get network => _network;
   Future<void> _loadSettings() async {
     try {
@@ -50,6 +53,7 @@ class SettingModel with ChangeNotifier {
       _fontSizeRatio = _prefs.get(_keyFontSizeRatio, defaultValue: 1.0) ?? 1.0;
       _personalizedPush =
           _prefs.get(_keyPersonalizedPush, defaultValue: true) ?? true;
+      _volume = _prefs.get(_keyVolume, defaultValue: 1.0) ?? 1.0;
       _network = SettingNetworkModel();
       await _network.initPreferences();
       notifyListeners();
@@ -86,6 +90,14 @@ class SettingModel with ChangeNotifier {
     if (_personalizedPush != value) {
       _personalizedPush = value;
       _prefs.put(_keyPersonalizedPush, value);
+      notifyListeners();
+    }
+  }
+
+  set volume(double value) {
+    if (_volume != value) {
+      _volume = value;
+      _prefs.put(_keyVolume, value);
       notifyListeners();
     }
   }

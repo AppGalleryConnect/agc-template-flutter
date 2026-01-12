@@ -1,0 +1,20 @@
+{
+  "string": [
+    {
+      "name": "app_name",
+      "value": "新闻flutter模版"
+    },
+    {
+      "name": "agcit_huawei_flutter_news_fp",
+      "value": "1.0.1"
+    },
+    {
+      "name": "agcittype_huawei_flutter_news_fp",
+      "value": "industryTemplate"
+    },
+    {
+      "name": "agcitkid_huawei_flutter_news_fp",
+      "value": "agcit_huawei_flutter_module_feedback/1.0.0,agcit_huawei_module_flutter_channeledit/1.0.0,agcit_huawei_module_flutter_feedcomment/1.0.0,agcit_huawei_module_flutter_highlight/1.0.0,agcit_huawei_flutter_module_imagepreview/1.0.0,agcit_huawei_flutter_module_newsfeed/1.0.0,agcit_huawei_flutter_module_post/1.0.0,agcit_huawei_flutter_module_setfontsize/1.0.0,agcit_huawei_flutter_module_share/1.0.0,agcit_huawei_flutter_module_swipeplayer/1.0.0"
+    }
+  ]
+}

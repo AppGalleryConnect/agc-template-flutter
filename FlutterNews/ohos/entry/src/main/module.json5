@@ -1,0 +1,89 @@
+
+{
+  "module": {
+    "name": "entry",
+    "type": "entry",
+    "description": "$string:module_desc",
+    "mainElement": "EntryAbility",
+    "compressNativeLibs": true,
+    "deviceTypes": [
+      "phone"
+    ],
+    "querySchemes": [
+      "weixin", /// 微信的scheme
+      "alipays",/// 支付宝的scheme
+      "sinaweibo" ///新浪微博的scheme
+    ],
+    "deliveryWithInstall": true,
+    "installationFree": false,
+    "pages": "$profile:main_pages",
+    "abilities": [
+      {
+        "name": "EntryAbility",
+        "srcEntry": "./ets/entryability/EntryAbility.ets",
+        "description": "$string:EntryAbility_desc",
+        "icon": "$media:layered_image",
+        "label": "$string:EntryAbility_label",
+        "startWindowIcon": "$media:startIcon",
+        "startWindowBackground": "$color:start_window_background",
+        "exported": true,
+        "skills": [
+          {
+            "entities": [
+              "entity.system.home"
+            ],
+            "actions": [
+              "action.system.home",
+              "wxentity.action.open",
+              "weixin"
+            ]
+          }
+        ],
+        "supportWindowMode": ["fullscreen"]
+      }
+    ],
+    "requestPermissions": [
+      {
+        "name": "ohos.permission.INTERNET"
+      },
+      {
+        "name": "ohos.permission.GET_NETWORK_INFO"
+      },
+      {
+        "name":"ohos.permission.LOCATION",
+        "reason": "$string:location",
+        "usedScene": {when: 'inuse'},
+      },
+      {"name" :  "ohos.permission.KEEP_BACKGROUND_RUNNING"},
+      {
+        "name": "ohos.permission.APPROXIMATELY_LOCATION",
+        "reason": "$string:EntryAbility_label",
+        "usedScene": {
+          "abilities": [
+            "EntryAbility"
+          ],
+          "when": "inuse"
+        }
+      },
+      {
+        "name": "ohos.permission.LOCATION_IN_BACKGROUND",
+        "reason": "$string:EntryAbility_label",
+        "usedScene": {
+          "abilities": [
+            "EntryAbility"
+          ],
+          "when": "inuse"
+        }
+      }
+    ],
+    "metadata": [
+      {
+        /**
+                 * todo: 替换应用的Client ID
+                 */
+        "name": "client_id",
+        "value": "******"
+      }
+    ]
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "string": [
+    {
+      "name": "module_desc",
+      "value": "module description"
+    },
+    {
+      "name": "EntryAbility_desc",
+      "value": "description"
+    },
+    {
+      "name": "EntryAbility_label",
+      "value": "新闻flutter模版"
+    },
+    {
+      "name": "location",
+      "value": "位置"
+    },
+    {
+      "name": "agcit_huawei_flutter_news_fp",
+      "value": "1.0.1"
+    },
+    {
+      "name": "agcittype_huawei_flutter_news_fp",
+      "value": "industryTemplate"
+    }
+  ]
+}

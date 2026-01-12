@@ -28,8 +28,12 @@ import 'package:business_video/pages/video_live_detail_page.dart';
 import 'package:business_profile/pages/person_home_page.dart';
 import 'package:business_profile/pages/watch_page.dart';
 import 'package:business_profile/pages/follower_page.dart';
-import '../pages/splash_page.dart';
+import 'pages/splash_page.dart';
+import 'pages/safe_page.dart';
+import 'pages/privacy_page.dart';
+import 'pages/agree_dialog_page.dart';
 import 'package:business_mine/pages/message_single_comment_list.dart';
+import 'package:business_mine/pages/mine_page.dart';
 import 'package:module_setfontsize/module_setfontsize.dart';
 import 'constants/constants.dart';
 
@@ -106,6 +110,9 @@ class _MyAppState extends State<MyApp> {
             routes: {
               RouterMap.SPLASH_PAGE: (context) => const SplashPage(),
               RouterMap.INDEX_PAGE: (context) => const IndexPage(),
+              RouterMap.SAFE_PAGE: (context) => const SafePage(),
+              RouterMap.PRIVACY_PAGE: (context) => const PrivacyPage(),
+              RouterMap.AGREE_PRIVACY_PAGE: (context) => AgreePrivacyPage(),
               RouterMap.MINE_SCANNER_PAGE: (context) =>
                   const HarmonyQrScanner(),
               RouterMap.NEWS_SEARCH_PAGE: (context) => const NewsSearch(),
@@ -132,6 +139,7 @@ class _MyAppState extends State<MyApp> {
                   const MsgIMChatPage(),
               RouterMap.MINE_MSG_COMMENT_DETAIL: (context) =>
                   const MsgSingleCommentList(),
+              RouterMap.MINE_PAGE: (context) => const MinePage(),
               RouterMap.PUBLISH_POST_PAGE: (context) => const PublishPostPage(),
               RouterMap.SETTING_PAGE: (context) => const SettingPage(),
               RouterMap.SETTING_PERSONAL: (context) => const SettingPersonal(),

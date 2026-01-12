@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 import 'dart:math';
 import 'package:business_video/services/video_services.dart';
 import 'package:business_video/views/video_sheet.dart';
@@ -430,6 +431,17 @@ class _NewsDetailPageState extends State<NewsDetailPage>
     });
   }
 
+  ImageProvider _getImageProvider(String imageUrl) {
+    if (imageUrl.startsWith('http')) {
+      return NetworkImage(imageUrl);
+    } else {
+      // Handle local file paths, removing file:// prefix if present
+      final filePath =
+          imageUrl.startsWith('file://') ? imageUrl.substring(7) : imageUrl;
+      return FileImage(File(filePath));
+    }
+  }
+
   Size _calculateImageSize(String imageUrl) {
     final widthMatch = RegExp(r'w=(\d+)').firstMatch(imageUrl);
     final heightMatch = RegExp(r'h=(\d+)').firstMatch(imageUrl);
@@ -529,8 +541,8 @@ class _NewsDetailPageState extends State<NewsDetailPage>
           },
           child: ClipRRect(
             borderRadius: BorderRadius.circular(10),
-            child: Image.network(
-              imageUrls[0],
+            child: Image(
+              image: _getImageProvider(imageUrls[0]),
               width: imageSize.width,
               height: imageSize.height,
               fit: BoxFit.cover,
@@ -628,8 +640,8 @@ class _NewsDetailPageState extends State<NewsDetailPage>
             },
             child: ClipRRect(
               borderRadius: BorderRadius.circular(Constants.SPACE_10),
-              child: Image.network(
-                imageUrls[index],
+              child: Image(
+                image: _getImageProvider(imageUrls[index]),
                 width: imageSize,
                 height: imageSize,
                 fit: BoxFit.cover,
@@ -828,8 +840,8 @@ class _NewsDetailPageState extends State<NewsDetailPage>
                 borderRadius: BorderRadius.circular(
                   Constants.SPACE_10,
                 ),
-                child: Image.network(
-                  group.picVideoUrl,
+                child: Image(
+                  image: _getImageProvider(group.picVideoUrl),
                   width: double.infinity,
                   // height: Constants.SPACE_220,
                   fit: BoxFit.cover,

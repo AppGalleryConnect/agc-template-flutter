@@ -16,6 +16,7 @@ class CommonConstants {
   static const double PADDING_XS = 4.0;
   static const double PADDING_S = 8.0;
   static const double PADDING_M = 12.0;
+  static const double PADDING_XM = 14.0;
   static const double PADDING_L = 16.0;
   static const double PADDING_XL = 20.0;
   static const double PADDING_XXL = 24.0;

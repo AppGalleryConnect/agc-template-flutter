@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import '../utils/pop_view_utils.dart';
 import '../utils/logger.dart';
 import '../utils/global_context.dart';
 
@@ -58,7 +57,6 @@ class CommonToastView extends StatelessWidget {
 
     const defaultBorderRadius = BorderRadius.all(Radius.circular(20.0));
 
-    // 增强阴影和对比度以提高可见性
     return Container(
       padding: const EdgeInsets.symmetric(
         horizontal: 16,
@@ -87,12 +85,10 @@ class CommonToastView extends StatelessWidget {
   }
 }
 
-/// 轻弹窗工具类
 class CommonToastDialog {
   static Timer? _timer;
   static const String TAG = '[CommonToastDialog]';
-
-  /// 显示轻弹窗
+  static OverlayEntry? _overlayEntry;
   static void show(IToastDialogParams params) {
     Logger.info(TAG, 'Showing toast with message: ${params.message}');
 
@@ -123,12 +119,9 @@ class CommonToastDialog {
           ? params
           : ToastDialogParams(message: params.message);
       _timer?.cancel();
-      showDialog(
-        context: context,
-        barrierDismissible: false,
-        barrierColor: Colors.black.withOpacity(0.1),
-        useRootNavigator: true,
-        builder: (BuildContext dialogContext) {
+      hide();
+      _overlayEntry = OverlayEntry(
+        builder: (BuildContext overlayContext) {
           Widget alignWidget = Align(
             alignment: Alignment.bottomCenter,
             child: CommonToastView(params: toastParams),
@@ -138,6 +131,7 @@ class CommonToastDialog {
           return alignWidget;
         },
       );
+      navigatorState.overlay?.insert(_overlayEntry!);
       _timer = Timer(
         toastParams.duration ?? const Duration(seconds: 1),
         () {
@@ -153,6 +147,7 @@ class CommonToastDialog {
     } catch (e) {
       _timer?.cancel();
       _timer = null;
+      hide();
     }
   }
 
@@ -161,26 +156,21 @@ class CommonToastDialog {
     try {
       _timer?.cancel();
       _timer = null;
-      final navigatorState = GlobalContext.globalKey.currentState;
-      if (navigatorState != null) {
+
+      if (_overlayEntry != null) {
         try {
-          // 安全检查导航栈是否为空
-          if (navigatorState.canPop()) {
-            navigatorState.pop();
-          }
-        } catch (_) {
-          try {
-            PopViewUtils.closePopView();
-          } catch (__) {}
+          _overlayEntry?.remove();
+        } catch (e) {
+          // Logger.error(TAG, 'Error removing overlay: $e');
+        } finally {
+          _overlayEntry = null;
         }
-      } else {
-        try {
-          PopViewUtils.closePopView();
-        } catch (_) {}
       }
     } catch (e) {
+      // Logger.error(TAG, 'Error hiding toast: $e');
       _timer?.cancel();
       _timer = null;
+      _overlayEntry = null;
     }
   }
 }

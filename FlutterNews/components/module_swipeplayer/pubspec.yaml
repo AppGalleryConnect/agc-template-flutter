@@ -23,25 +23,27 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  sensors_plus: ^7.0.0
-  device_info_plus: ^11.2.2
+  sensors_plus: 7.0.0
+  device_info_plus: 11.2.2
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
-  cupertino_icons: ^1.0.6
-  flutter_svg: ^2.0.7
-  intl: ^0.18.1
+  cupertino_icons: 1.0.6
+  flutter_svg: 2.1.0
+  intl: 0.18.1
   
   video_player:
     git:
       url: "https://gitcode.com/openharmony-tpc/flutter_packages.git"
       path: "packages/video_player/video_player"
-  
+  lib_common:
+    path: "../../commons/lib_common"
+
 
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  flutter_lints: ^3.0.0
+  flutter_lints: 3.0.2
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

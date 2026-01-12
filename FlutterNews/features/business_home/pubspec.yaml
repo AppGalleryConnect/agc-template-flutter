@@ -10,11 +10,11 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  flutter_svg: ^2.0.7
-  easy_refresh: ^3.4.0
-  qr_flutter: ^4.0.0
-  camera: ^0.10.0+1
-  qr_code_scanner: ^1.0.0 
+  flutter_svg: 2.1.0
+  easy_refresh: 3.4.0
+  qr_flutter: 4.0.0
+  camera: 0.10.0+1
+  qr_code_scanner: 1.0.0 
   scan:
     git:
       url: "https://gitcode.com/openharmony-sig/fluttertpc_scan.git"
@@ -27,7 +27,7 @@ dependencies:
     git:
       url: "https://gitcode.com/openharmony-tpc/flutter_packages.git"
       path: "packages/image_picker/image_picker"
-  plugin_platform_interface: ^2.0.2
+  plugin_platform_interface: 2.1.8
 
   lib_common:
      path: '../../commons/lib_common'
@@ -68,7 +68,7 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  flutter_lints: ^3.0.0
+  flutter_lints: 3.0.2
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

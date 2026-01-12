@@ -4,6 +4,7 @@ import 'package:module_swipeplayer/model/video_model.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:video_player/video_player.dart';
 import 'package:module_swipeplayer/constants/contants.dart';
+import 'package:lib_common/models/setting_model.dart';
 
 class VideoView extends StatefulWidget {
   final VideoModel videoModel;
@@ -43,12 +44,15 @@ class _VideoViewState extends State<VideoView> {
   Duration _totalDuration = Duration.zero;
 
   String videoUrl = '';
+  SettingModel settingInfo = SettingModel.getInstance();
 
   @override
   void initState() {
     super.initState();
 
     videoUrl = widget.videoModel.videoUrl;
+    settingInfo.initPreferences();
+    settingInfo.addListener(_onSettingChanged);
     _onLoadVideo();
   }
 
@@ -56,7 +60,14 @@ class _VideoViewState extends State<VideoView> {
   void dispose() {
     _controller.removeListener(_onVideoInfo);
     _controller.dispose();
+    settingInfo.removeListener(_onSettingChanged);
     super.dispose();
+  }
+
+  void _onSettingChanged() {
+    setState(() {
+      _controller.setVolume(settingInfo.volume);
+    });
   }
 
   void _onLoadVideo() {
@@ -64,6 +75,7 @@ class _VideoViewState extends State<VideoView> {
         VideoPlayerController.networkUrl(Uri.parse(widget.videoModel.videoUrl))
           ..initialize().then((_) {
             setState(() {
+              _controller.setVolume(settingInfo.volume);
               if (widget.canPlayVideo && widget.autoPlayVideo) _onPlay();
             });
           }).catchError((e) {});
@@ -142,6 +154,7 @@ class _VideoViewState extends State<VideoView> {
         color: Colors.transparent,
         width: MediaQuery.of(context).size.width,
         child: Column(
+          mainAxisSize: MainAxisSize.min,
           children: [
             Stack(children: [
               GestureDetector(
@@ -171,7 +184,6 @@ class _VideoViewState extends State<VideoView> {
                 _buildBufferBuilder(),
               if (_isPlaying) _buildSliderBuilder(),
               if (widget.videoModel.videoType == VideoEnum.Ad) _adBuilder(),
-              if (widget.videoModel.videoType == VideoEnum.Ad) _closeBuilder(),
             ]),
             SizedBox(
               width: MediaQuery.of(context).size.width,
@@ -179,7 +191,7 @@ class _VideoViewState extends State<VideoView> {
                 padding: const EdgeInsets.only(
                     left: Constants.SPACE_16,
                     right: Constants.SPACE_16,
-                    top: Constants.SPACE_10),
+                    top: Constants.SPACE_8),
                 child: Text(
                   widget.videoModel.title,
                   textAlign: TextAlign.left,
@@ -198,7 +210,7 @@ class _VideoViewState extends State<VideoView> {
                 padding: const EdgeInsets.only(
                   left: Constants.SPACE_16,
                   right: Constants.SPACE_16,
-                  bottom: Constants.SPACE_10,
+                  bottom: Constants.SPACE_5,
                 ),
                 child: Row(
                   children: [
@@ -222,57 +234,47 @@ class _VideoViewState extends State<VideoView> {
 
   Widget _adBuilder() {
     return Positioned(
-      top: Constants.SPACE_0,
-      right: Constants.SPACE_0,
-      height: Constants.SPACE_20,
-      width: Constants.SPACE_40,
+      top: Constants.SPACE_2,
+      right: Constants.SPACE_2,
+      width: Constants.SPACE_60,
       child: ClipRRect(
         borderRadius: const BorderRadius.all(
           Radius.circular(Constants.SPACE_5),
         ),
         child: Container(
           color: Colors.grey,
-          child: const Center(
-            child: Text(
-              '广告',
-              style:
-                  TextStyle(color: Colors.white, fontSize: Constants.FONT_12),
-            ),
+          padding: const EdgeInsets.symmetric(
+              horizontal: Constants.SPACE_8, vertical: Constants.SPACE_4),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Text(
+                '广告',
+                style:
+                    TextStyle(color: Colors.white, fontSize: Constants.FONT_12),
+              ),
+              GestureDetector(
+                onTap: () {
+                  widget.onClose();
+                },
+                child: Padding(
+                  padding: const EdgeInsets.only(left: Constants.SPACE_5),
+                  child: SvgPicture.asset(
+                    Constants.deleteImage,
+                    width: Constants.SPACE_10,
+                    height: Constants.SPACE_10,
+                    colorFilter: const ColorFilter.mode(
+                      Colors.white,
+                      BlendMode.srcIn,
+                    ),
+                    fit: BoxFit.contain,
+                  ),
+                ),
+              ),
+            ],
           ),
-        ),
-      ),
-    );
-  }
-
-  Widget _closeBuilder() {
-    return Positioned(
-      bottom: Constants.SPACE_0,
-      right: Constants.SPACE_0,
-      height: Constants.SPACE_40,
-      width: Constants.SPACE_40,
-      child: Container(
-        width: Constants.SPACE_40,
-        height: Constants.SPACE_40,
-        decoration: BoxDecoration(
-          color: Constants.CLOSE_BAAKGROUND_COLOR,
-          borderRadius: BorderRadius.circular(Constants.SPACE_25),
-          border: Border.all(color: Colors.black12, width: 1),
-        ),
-        child: IconButton(
-          padding: const EdgeInsets.all(Constants.SPACE_12),
-          icon: SvgPicture.asset(
-            Constants.deleteImage,
-            width: Constants.SPACE_15,
-            height: Constants.SPACE_15,
-            colorFilter: ColorFilter.mode(
-              Theme.of(context).colorScheme.primary,
-              BlendMode.srcIn,
-            ),
-            fit: BoxFit.contain,
-          ),
-          onPressed: () {
-            widget.onClose();
-          },
         ),
       ),
     );
@@ -282,7 +284,7 @@ class _VideoViewState extends State<VideoView> {
     return Positioned(
       left: Constants.SPACE_0,
       right: Constants.SPACE_0,
-      bottom: Constants.SPACE_0,
+      bottom: Constants.SPACE_1,
       child: SliderTheme(
         data: SliderTheme.of(context).copyWith(
           trackHeight: Constants.SPACE_1,
@@ -334,10 +336,10 @@ class _VideoViewState extends State<VideoView> {
   Widget _buildTimeBuilder() {
     return Positioned(
       right: Constants.SPACE_12,
-      bottom: Constants.SPACE_10,
+      bottom: Constants.SPACE_13,
       child: Container(
         padding: const EdgeInsets.all(
-          Constants.SPACE_5,
+          Constants.SPACE_4,
         ),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(

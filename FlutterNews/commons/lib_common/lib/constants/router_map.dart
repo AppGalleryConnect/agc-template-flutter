@@ -5,6 +5,8 @@ class RouterMap {
   static String SPLASH_PAGE = '/splash';
   // 首页路由
   static String HOME_PAGE = '/home';
+  //我的页面路由
+  static String MINE_PAGE = '/mine';
   // 首页第二个页面路由
   static String HOME_SECOND_PAGE = '/home/second';
   static String MINE_SCANNER_PAGE = '/home/scanner';
@@ -53,22 +55,25 @@ class RouterMap {
   static String MINE_MESSAGE_FOLLOW_PAGE = '/mine/message/follow';
   // 添加私信聊天页面路由
   static String MINE_MSG_IM_CHAT_PAGE = '/mine/msg/im_chat';
-
-  // 设置模块路由 - 完全对齐鸿蒙原生（使用组件名称）
-  static const String SETTING_PAGE = 'SettingPage';
+  // 设置模块路由
+  static const String SETTING_PAGE = '/setting';
   static const String SETTING_PERSONAL = 'SettingPersonal';
   static const String SETTING_PRIVACY = 'SettingPrivacy';
   static const String SETTING_NETWORK = 'SettingNetwork';
   static const String SETTING_FONT = 'SettingFont';
   static const String SETTING_ABOUT = 'SettingAbout';
   static const String SETTING_H5 = 'SettingH5';
-
   // 添加个人关注页面路由
   static String PROFILE_WATCH = '/profile/watch';
   // 添加个人粉丝页面路由
   static String PROFILE_FOLLOWER = '/profile/follower';
-
   // 添加视频播放页面路由
   static String VIDEO_PLAY_PAGE = '/video/play';
   static String VIDEO_Live_PAGE = '/video/live';
+  // 添加隐私政策页面路由
+  static String SAFE_PAGE = '/safe_page';
+  // 添加完整隐私政策页面路由
+  static String PRIVACY_PAGE = '/privacy_page';
+  // 添加同意隐私政策页面路由
+  static String AGREE_PRIVACY_PAGE = '/agree_privacy_page';
 }

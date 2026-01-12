@@ -47,6 +47,10 @@ class _HomePageState extends State<HomePage> {
     TabInfo(id: 'car', text: '汽车', selected: false, order: 6),
     TabInfo(id: 'view', text: 'V观', selected: false, order: 6),
   ];
+
+  List<TabInfo> _filteredChannelsList = [];
+  List<TabInfo> _selectChannelList = [];
+
   int currentIndex = 1;
   int topBack = 0;
   final EasyRefreshController _controller = EasyRefreshController();
@@ -64,12 +68,45 @@ class _HomePageState extends State<HomePage> {
     Logger.info(TAG, '-------RouterUtil route:$newsList');
     _sendPushNotice();
     vm.addListener(_refreshUI);
+
+    _updateFilteredChannels();
+
     _listener = () {
-      setState(() {});
+      setState(() {
+        _updateFilteredChannels();
+        if (_selectChannelList.isNotEmpty) {
+          if (currentIndex >= _selectChannelList.length) {
+            currentIndex = 0;
+            resource = _selectChannelList[0].id;
+          } else {
+            final currentChannel = _selectChannelList[currentIndex];
+            resource = currentChannel.id;
+          }
+
+          _pageController.jumpToPage(currentIndex);
+          getNewsDynamicData(resource);
+        }
+      });
     };
     settingInfo.addListener(_listener);
 
     getLocation();
+  }
+
+  void _updateFilteredChannels() {
+    _filteredChannelsList = [];
+    for (var channel in channelsList) {
+      if (channel.id == 'recommend') {
+        if (settingInfo.personalizedPush) {
+          _filteredChannelsList.add(channel);
+        }
+      } else {
+        _filteredChannelsList.add(channel);
+      }
+    }
+
+    _selectChannelList =
+        _filteredChannelsList.where((element) => element.selected).toList();
   }
 
   getLocation() async {
@@ -165,8 +202,7 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     final Size screenSize = MediaQuery.of(context).size;
     final double statusBarHeight = MediaQuery.of(context).padding.top;
-    List<TabInfo> selectChannelList =
-        channelsList.where((element) => element.selected).toList();
+
     return Container(
       color: ThemeColors.getBackgroundSecondary(settingInfo.darkSwitch),
       width: double.infinity,
@@ -251,7 +287,7 @@ class _HomePageState extends State<HomePage> {
                 padding: EdgeInsets.zero,
                 child: ChannelEdit(
                   currentIndex: currentIndex,
-                  channelsList: channelsList,
+                  channelsList: _filteredChannelsList,
                   fontSizeRatio: settingInfo.fontSizeRatio,
                   onChange: (index, item) => {
                     _pageController.jumpToPage(index),
@@ -259,6 +295,7 @@ class _HomePageState extends State<HomePage> {
                   onSave: (List<TabInfo> list) => {
                     setState(() {
                       channelsList = list;
+                      _updateFilteredChannels();
                     })
                   },
                 ),
@@ -266,19 +303,19 @@ class _HomePageState extends State<HomePage> {
               Expanded(
                 child: PageView.builder(
                   scrollDirection: Axis.horizontal,
-                  itemCount: selectChannelList.length,
+                  itemCount: _selectChannelList.length,
                   physics: const AlwaysScrollableScrollPhysics(),
                   controller: _pageController,
                   onPageChanged: (index) {
                     setState(() {
                       currentIndex = index;
 
-                      resource = selectChannelList[index].id;
+                      resource = _selectChannelList[index].id;
                       getNewsDynamicData(resource);
                     });
                   },
                   itemBuilder: (BuildContext context, int pageIndex) {
-                    final currentChannel = selectChannelList[pageIndex];
+                    final currentChannel = _selectChannelList[pageIndex];
                     return EasyRefresh(
                       controller: EasyRefreshController(),
                       header: const MaterialHeader(),

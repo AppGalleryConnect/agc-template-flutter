@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import '../index_page.dart';
 import '../constants/constants.dart';
+import 'package:lib_common/constants/router_map.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class SplashPage extends StatefulWidget {
   const SplashPage({super.key});
@@ -16,10 +17,18 @@ class _SplashPageState extends State<SplashPage> {
   @override
   void initState() {
     super.initState();
-    Future.delayed(const Duration(seconds: 2), () {
-      Navigator.pushReplacement(
-          context, MaterialPageRoute(builder: (context) => const IndexPage()));
-    });
+    Future.delayed(
+      const Duration(seconds: 2),
+      () async {
+        final prefs = await SharedPreferences.getInstance();
+        final isAgreed = prefs.getBool('isAgreedPrivacyPolicy') ?? false;
+        if (isAgreed) {
+          Navigator.pushReplacementNamed(context, RouterMap.INDEX_PAGE);
+        } else {
+          Navigator.pushReplacementNamed(context, RouterMap.SAFE_PAGE);
+        }
+      },
+    );
   }
 
   @override
@@ -52,9 +61,9 @@ class _SplashPageState extends State<SplashPage> {
                 const Text(
                   '新闻模板',
                   style: TextStyle(
-                    fontSize: AppConstants.FONT_20, 
+                    fontSize: AppConstants.FONT_20,
                     fontWeight: FontWeight.w500,
-                    color: AppConstants.textColor, 
+                    color: AppConstants.textColor,
                     height: AppConstants.SPACE_1_6,
                   ),
                 ),
@@ -63,8 +72,8 @@ class _SplashPageState extends State<SplashPage> {
                   '新闻也是如此精彩',
                   style: TextStyle(
                     fontSize: AppConstants.FONT_16,
-                    fontWeight: FontWeight.normal, 
-                    color: AppConstants.textColor, 
+                    fontWeight: FontWeight.normal,
+                    color: AppConstants.textColor,
                     height: AppConstants.SPACE_1_31,
                   ),
                 ),

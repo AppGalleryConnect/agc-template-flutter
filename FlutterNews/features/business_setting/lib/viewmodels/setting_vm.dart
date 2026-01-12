@@ -186,6 +186,8 @@ class SettingViewModel extends GetxController {
           isUserLoggedIn.value = false;
           isLoggingOut.value = false;
           toast('已退出登录');
+          RouterUtils.of.pushPathByName(RouterMap.MINE_PAGE);
+          RouterUtils.of.clearStack();
         },
       ),
     );
