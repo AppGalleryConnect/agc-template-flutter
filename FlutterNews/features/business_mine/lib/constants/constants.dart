@@ -63,6 +63,7 @@ enum WebIdMap {
 
 class Constants {
   // 尺寸常量
+  static const double SPACE_16 = 16;
   static const int newsImageWidth = 96;
   static const int newsImageHeight = 72;
   static const int normalBtnH = 40;

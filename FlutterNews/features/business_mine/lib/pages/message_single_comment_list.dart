@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:lib_common/constants/common_constants.dart';
+import 'package:lib_common/lib_common.dart';
 import '../constants/constants.dart';
 import '../utils/font_scale_utils.dart';
 import 'package:lib_common/models/window_model.dart';
@@ -135,8 +136,13 @@ class _MsgSingleCommentListState extends State<MsgSingleCommentList> {
     );
   }
 
-  Widget _buildEmptyState() {
-    return Center(
+Widget _buildEmptyState() {
+    final settingInfo = SettingModel.getInstance();
+    return Container(
+      color: ThemeColors.getBackgroundColor(settingInfo.darkSwitch),
+      width: double.infinity,
+      height: double.infinity,
+      child: Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
@@ -154,6 +160,7 @@ class _MsgSingleCommentListState extends State<MsgSingleCommentList> {
             ),
           ),
         ],
+      ),
       ),
     );
   }

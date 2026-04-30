@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:lib_common/lib_common.dart';
 import 'package:provider/provider.dart';
-import 'package:lib_common/utils/router_utils.dart';
 import 'package:lib_widget/components/nav_header_bar.dart';
-import 'package:lib_common/models/window_model.dart';
 import 'package:module_setfontsize/utils/font_scale_utils.dart';
 import '../components/message_item.dart';
 import '../components/set_read_icon.dart';
@@ -22,6 +21,7 @@ class _MessagePageState extends State<MessagePage> {
 
   @override
   Widget build(BuildContext context) {
+    final settingInfo = SettingModel.getInstance();
     return ChangeNotifierProvider(
       create: (context) => MessageViewModel(),
       child: Consumer<MessageViewModel>(
@@ -33,8 +33,16 @@ class _MessagePageState extends State<MessagePage> {
                 NavHeaderBar(
                   title: '消息',
                   windowModel: windowModel,
-                  backButtonBackgroundColor: const Color(0xFFF0F0F0),
-                  backButtonPressedBackgroundColor: const Color(0xFFE0E0E0),
+                  titleColor:
+                      ThemeColors.getFontPrimary(settingInfo.darkSwitch),
+                  bgColor:
+                      ThemeColors.getBackgroundColor(settingInfo.darkSwitch),
+                  backButtonBackgroundColor:
+                      ThemeColors.getCompBackgroundSecondary(
+                          settingInfo.darkSwitch),
+                  backButtonPressedBackgroundColor:
+                      ThemeColors.getCompBackgroundSecondary(
+                          settingInfo.darkSwitch),
                   customTitleSize: 20 * FontScaleUtils.fontSizeRatio,
                   rightPartBuilder: (context) => Container(
                     alignment: Alignment.centerRight,
@@ -46,13 +54,16 @@ class _MessagePageState extends State<MessagePage> {
                   ),
                 ),
                 Expanded(
-                  child: ListView.separated(
+                  child: Container(
+                    color:
+                        ThemeColors.getBackgroundColor(settingInfo.darkSwitch),
+                    child: ListView.separated(
                       padding: const EdgeInsets.symmetric(horizontal: 16),
                       itemCount: viewModel.menuInfoList.length,
                       separatorBuilder: (context, index) => const Divider(
-                            height: 1,
-                            color: Color(0xFFF0F0F0),
-                          ),
+                        height: 1,
+                        color: Color(0xFFF0F0F0),
+                      ),
                       itemBuilder: (context, index) {
                         final menuItem = viewModel.menuInfoList[index];
                         return GestureDetector(
@@ -69,7 +80,9 @@ class _MessagePageState extends State<MessagePage> {
                             fontSizeRatio: FontScaleUtils.fontSizeRatio,
                           ),
                         );
-                      }),
+                      },
+                    ),
+                  ),
                 ),
               ],
             ),

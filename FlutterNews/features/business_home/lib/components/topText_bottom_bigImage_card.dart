@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:lib_common/lib_common.dart';
 import 'package:lib_news_api/params/response/news_response.dart';
 import 'package:module_flutter_highlight/views/high_light.dart';
 import '../commons/constants.dart';
 import '../home_page/widgets/article_source_builder.dart';
 import '../home_page/widgets/author_builder.dart';
+import 'package:get/get.dart';
 
 class TopTextBottomBigImageCard extends StatelessWidget {
   final NewsResponse cardData;
@@ -52,6 +54,7 @@ class _NativeComponentState extends State<NativeComponent> {
   Widget build(BuildContext context) {
     final autoerInfo = widget.cardData.extraInfo?["isNeedAuthor"];
     final isNeedAuthor = autoerInfo != null && autoerInfo == true;
+    final settingInfo = SettingModel.getInstance();
     return SizedBox(
       width: double.infinity,
       child: Column(
@@ -70,7 +73,7 @@ class _NativeComponentState extends State<NativeComponent> {
               keywords: [widget.cardData.extraInfo!["searchKey"].toString()],
               sourceString: widget.cardData.title,
               highLightColor: Constants.highlightColor,
-              textColor: Constants.primaryTextColor,
+              textColor: ThemeColors.getFontPrimary(settingInfo.darkSwitch),
               highLightFontSize: Constants.fontSizeTitle * widget.fontSizeRatio,
               textFontSize: Constants.fontSizeTitle * widget.fontSizeRatio,
               fontSizeRatio: widget.fontSizeRatio,
@@ -80,93 +83,101 @@ class _NativeComponentState extends State<NativeComponent> {
               widget.cardData.title,
               style: TextStyle(
                 fontWeight: FontWeight.w500,
-                color: Constants.primaryTextColor,
+                color: ThemeColors.getFontPrimary(settingInfo.darkSwitch),
                 fontSize: Constants.fontSizeTitle * widget.fontSizeRatio,
               ),
             ),
           const SizedBox(height: 8.0),
           if (widget.cardData.postImgList != null &&
               widget.cardData.postImgList!.isNotEmpty)
-            LayoutBuilder(
-              builder: (context, constraints) {
-                return SizedBox(
-                  width: double.infinity,
-                  height: Constants.topBottomCardImageHeight,
-                  child: ListView.separated(
-                    scrollDirection: Axis.horizontal,
-                    physics: const ClampingScrollPhysics(),
-                    itemCount: widget.cardData.postImgList!.length,
-                    itemBuilder: (context, index) {
-                      final item = widget.cardData.postImgList![index];
-                      return Container(
-                        width: MediaQuery.of(context).size.width -
-                            Constants.topBottomCardContentMargin * 2,
-                        margin: const EdgeInsets.only(
-                          right: Constants.topBottomCardHorizontalSpacing,
-                        ),
-                        child: Column(
-                          children: [
-                            if (item.surfaceUrl != "" &&
-                                item.surfaceUrl.isNotEmpty)
-                              Stack(
-                                children: [
-                                  ClipRRect(
-                                    borderRadius: BorderRadius.circular(
-                                        Constants
-                                            .topBottomCardImageBorderRadius),
-                                    child: _buildNetworkImage(
-                                      url: item.surfaceUrl,
-                                      borderRadius: Constants
-                                          .topBottomCardImageBorderRadius,
+            Obx(() {
+              final breakpointCtrl = Get.find<BreakpointController>();
+              final currentLanes = breakpointCtrl.lanes.value;
+              return LayoutBuilder(
+                builder: (context, constraints) {
+                  return SizedBox(
+                    width: double.infinity,
+                    height: Constants.topBottomCardImageHeight,
+                    child: ListView.separated(
+                      scrollDirection: Axis.horizontal,
+                      physics: const ClampingScrollPhysics(),
+                      itemCount: widget.cardData.postImgList!.length,
+                      itemBuilder: (context, index) {
+                        final item = widget.cardData.postImgList![index];
+
+                        final cardWidth =
+                            MediaQuery.of(context).size.width / currentLanes -
+                                Constants.topBottomCardContentMargin * 2 -
+                                16;
+                        return Container(
+                          width: cardWidth,
+                          margin: const EdgeInsets.only(
+                            right: Constants.topBottomCardHorizontalSpacing,
+                          ),
+                          child: Column(
+                            children: [
+                              if (item.surfaceUrl != "" &&
+                                  item.surfaceUrl.isNotEmpty)
+                                Stack(
+                                  children: [
+                                    ClipRRect(
+                                      borderRadius: BorderRadius.circular(
+                                          Constants
+                                              .topBottomCardImageBorderRadius),
+                                      child: _buildNetworkImage(
+                                        url: item.surfaceUrl,
+                                        borderRadius: Constants
+                                            .topBottomCardImageBorderRadius,
+                                      ),
                                     ),
-                                  ),
-                                  Positioned(
-                                    left: 0,
-                                    right: 0,
-                                    top: 0,
-                                    bottom: 0,
-                                    child: Center(
-                                      child: Container(
-                                        width:
-                                            Constants.leftRightCardPlayIconSize,
-                                        height:
-                                            Constants.leftRightCardPlayIconSize,
-                                        decoration: const BoxDecoration(
-                                          color: Colors.white,
-                                          shape: BoxShape.circle,
-                                        ),
-                                        child: const Icon(
-                                          Icons.play_arrow,
-                                          color: Colors.black,
+                                    Positioned(
+                                      left: 0,
+                                      right: 0,
+                                      top: 0,
+                                      bottom: 0,
+                                      child: Center(
+                                        child: Container(
+                                          width: Constants
+                                              .leftRightCardPlayIconSize,
+                                          height: Constants
+                                              .leftRightCardPlayIconSize,
+                                          decoration: const BoxDecoration(
+                                            color: Colors.white,
+                                            shape: BoxShape.circle,
+                                          ),
+                                          child: const Icon(
+                                            Icons.play_arrow,
+                                            color: Colors.black,
+                                          ),
                                         ),
                                       ),
                                     ),
+                                  ],
+                                )
+                              else if (item.picVideoUrl != "" &&
+                                  item.picVideoUrl.isNotEmpty)
+                                ClipRRect(
+                                  borderRadius: BorderRadius.circular(
+                                    Constants.topBottomCardImageBorderRadius,
                                   ),
-                                ],
-                              )
-                            else if (item.picVideoUrl != "" &&
-                                item.picVideoUrl.isNotEmpty)
-                              ClipRRect(
-                                borderRadius: BorderRadius.circular(
-                                  Constants.topBottomCardImageBorderRadius,
+                                  child: _buildNetworkImage(
+                                    url: item.picVideoUrl,
+                                    borderRadius: Constants
+                                        .topBottomCardImageBorderRadius,
+                                  ),
                                 ),
-                                child: _buildNetworkImage(
-                                  url: item.picVideoUrl,
-                                  borderRadius:
-                                      Constants.topBottomCardImageBorderRadius,
-                                ),
-                              ),
-                          ],
-                        ),
-                      );
-                    },
-                    separatorBuilder: (context, index) => const SizedBox(
-                      width: Constants.topBottomCardHorizontalSpacing,
+                            ],
+                          ),
+                        );
+                      },
+                      separatorBuilder: (context, index) => const SizedBox(
+                        width: Constants.topBottomCardHorizontalSpacing,
+                      ),
                     ),
-                  ),
-                );
-              },
-            ),
+                  );
+                },
+              );
+            }),
           const SizedBox(
             height: Constants.topBottomCardVerticalSpacing,
           ),

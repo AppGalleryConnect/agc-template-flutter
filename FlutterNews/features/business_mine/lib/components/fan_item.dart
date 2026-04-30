@@ -1,8 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:lib_common/constants/common_constants.dart';
-import 'package:lib_common/models/userInfo_model.dart';
-import 'package:lib_common/utils/router_utils.dart';
-import 'package:lib_common/constants/router_map.dart';
+import 'package:lib_common/lib_common.dart';
 import 'package:lib_news_api/observedmodels/author_model.dart';
 import 'package:lib_news_api/services/mine_service.dart';
 import 'package:lib_news_api/services/author_service.dart';
@@ -24,7 +21,7 @@ class FanItem extends StatefulWidget {
 
 class _FanItemState extends State<FanItem> {
   late UserInfoModel _userInfoModel;
-
+  final settingInfo = SettingModel.getInstance();
   @override
   void initState() {
     super.initState();
@@ -99,18 +96,21 @@ class _FanItemState extends State<FanItem> {
               borderRadius: BorderRadius.circular(Constants.dialogBorderRadius),
             ),
             elevation: 0,
-            backgroundColor: Constants.secondaryButtonColor,
+            backgroundColor:
+                ThemeColors.getBackgroundSecondary(settingInfo.darkSwitch),
             child: Container(
               padding: const EdgeInsets.all(Constants.dialogPadding),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  const Center(
+                  Center(
                     child: Text(
                       '确定不再关注TA？',
                       style: TextStyle(
                         fontSize: Constants.dialogTextSize,
                         fontWeight: Constants.dialogTitleFontWeight,
+                        color:
+                            ThemeColors.getFontPrimary(settingInfo.darkSwitch),
                       ),
                     ),
                   ),
@@ -236,7 +236,9 @@ class _FanItemState extends State<FanItem> {
                           : '用户',
                       style: TextStyle(
                           fontSize: Constants.avatarTextSize *
-                              FontScaleUtils.fontSizeRatio),
+                              FontScaleUtils.fontSizeRatio,
+                          color: ThemeColors.getFontPrimary(
+                              settingInfo.darkSwitch)),
                     )
                   : null,
             ),

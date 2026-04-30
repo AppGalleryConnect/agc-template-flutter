@@ -4,11 +4,13 @@ import { componentSnapshot } from '@kit.ArkUI'
 import { image } from '@kit.ImageKit'
 import { PosterShare } from '../utils/SystemShare'
 import { WxShareViewModel } from '../viewModel/WxShareViewModel'
-// import { QqShareViewModel } from '../viewModel/QqShareViewModel'
 import { PopViewUtils } from '../utils/PopViewUtils'
+import { UtilLog } from '@hw-agconnect/util-log'
+
+const TAG = '[FirstPosterShare]'
 
 @Builder
-export function FirstPosterShareBuilder(params:ShareSheetParams) {
+export function FirstPosterShareBuilder(params: ShareSheetParams) {
   FirstPosterShare({
     params: params,
   })
@@ -18,9 +20,8 @@ export function FirstPosterShareBuilder(params:ShareSheetParams) {
 export struct FirstPosterShare {
   @Local shareList: ShareKinds[][] = firstShareList
   @Param posterShare: PosterShare = new PosterShare()
-  @Require @Param params:ShareSheetParams
+  @Require @Param params: ShareSheetParams
   @Local wxShareViewModel: WxShareViewModel = WxShareViewModel.instance
-  // @Local qqShareViewModel: QqShareViewModel = QqShareViewModel.instance
 
   build() {
     List() {
@@ -37,12 +38,14 @@ export struct FirstPosterShare {
               .onClick(() => {
                 switch (value.id) {
                   case 'create_poster':
-                    componentSnapshot.get(this.params.qrCodeInfo.id, ((err: Error, pixmap: image.PixelMap) => {
-                      if (err) {
-                        return
-                      }
-                      this.params.onPost(true,pixmap)
-                    }))
+                    try {
+                      let pixelMap = componentSnapshot.getSync(this.params.qrCodeInfo.id)
+                      UtilLog.info(TAG, `get ${this.params.qrCodeInfo.id} snapshot sync success!`);
+                      this.params.onPost(true, pixelMap)
+                    } catch (error) {
+                      UtilLog.error(`getSync ${this.params.qrCodeInfo.id} errorCode: ` + error.code + ' message: ' +
+                      error.message);
+                    }
                     break
                   case 'wechat':
                     this.wxShareViewModel.newsWebShare(this.params.qrCodeInfo)

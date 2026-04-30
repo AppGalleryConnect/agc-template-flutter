@@ -1,11 +1,8 @@
 import 'package:flutter/material.dart';
 import 'dart:io';
-import 'package:lib_common/constants/common_constants.dart';
+import 'package:lib_common/lib_common.dart';
 import 'package:lib_common/utils/pop_view_utils.dart';
-import 'package:lib_common/utils/router_utils.dart';
-import 'package:lib_common/models/userInfo_model.dart';
 import 'package:lib_news_api/observedmodels/author_model.dart';
-import 'package:lib_common/constants/router_map.dart';
 import '../common/constants.dart';
 import 'dialog_like_num.dart';
 import 'watch_button.dart';
@@ -67,7 +64,10 @@ class UserIntro extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
+    final settingInfo = SettingModel.getInstance();
+    return Container(
+      color: ThemeColors.getBackgroundColor(settingInfo.darkSwitch),
+      child: Padding(
       padding: const EdgeInsets.symmetric(
         horizontal: CommonConstants.PADDING_PAGE,
       ),
@@ -216,6 +216,7 @@ class UserIntro extends StatelessWidget {
             ],
           ),
         ],
+      ),
       ),
     );
   }

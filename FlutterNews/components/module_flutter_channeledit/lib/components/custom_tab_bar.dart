@@ -9,6 +9,7 @@ class CustomTabBar extends StatefulWidget {
   final double fontSizeRatio;
   final ScrollController listScroller;
   final bool isShowEdit;
+  final Color fontColor;
   final bool isDark;
   final int index;
   const CustomTabBar({
@@ -16,6 +17,7 @@ class CustomTabBar extends StatefulWidget {
     this.currentIndex = 1,
     this.myChannels = const [],
     this.fontSizeRatio = 1.0,
+    this.fontColor = Colors.white,
     required this.listScroller,
     required this.onIndexChange,
     required this.isShowEdit,
@@ -65,11 +67,11 @@ class _CustomTabBarState extends State<CustomTabBar> {
               style: TextStyle(
                 color: isSelected
                     ? (widget.currentIndex < widget.index
-                        ? Colors.white
+                        ? widget.fontColor
                         : Constants.TAB_BAR_TEXT_COLOR)
                     : (widget.currentIndex < widget.index
                         ? Colors.grey
-                        : (widget.isDark ? Colors.white : Colors.black)),
+                        : widget.fontColor),
                 fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
                 fontSize: Constants.FONT_16 * widget.fontSizeRatio,
               ),

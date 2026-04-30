@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lib_common/lib_common.dart';
 import 'package:lib_news_api/services/message_service.dart';
 import '../common/observed_model.dart';
 import 'dart:developer' as developer;
@@ -23,7 +24,7 @@ class MsgSystemViewModel extends ChangeNotifier {
       notifyListeners();
     } catch (e) {
       // 错误处理
-      print('Failed to initialize system messages: \$e');
+      Logger.error('Failed to initialize system messages: \$e');
     }
   }
 

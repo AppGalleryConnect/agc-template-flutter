@@ -1,6 +1,8 @@
+import 'dart:ffi';
 import 'package:business_video/views/video_sheet.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:lib_common/lib_common.dart';
 import 'package:lib_news_api/database/comment_type.dart';
 import 'package:lib_news_api/lib_news_api.dart';
 import 'package:lib_account/viewmodels/login_vm.dart' as login_vm;
@@ -30,6 +32,7 @@ class CommentActionButtons extends StatefulWidget {
 class _CommentActionButtonsState extends State<CommentActionButtons> {
   bool _isMark = false;
   late List<BaseComment> comments = [];
+  final settingInfo = SettingModel.getInstance();
 
   @override
   void initState() {
@@ -81,9 +84,12 @@ class _CommentActionButtonsState extends State<CommentActionButtons> {
         ],
         if (widget.showBottomButton) ...[
           _buildMarkActionItem(
-            icon: widget.newsResponse!.isMarked == true
-                ? Constants.starFillImage
+            icon: widget.newsResponse!.isMarked
+                ? Constants.starImageActive
+                : settingInfo.darkSwitch
+                    ? Constants.starImageDark
                 : Constants.starImage,
+            isMarked: widget.newsResponse!.isMarked,
             count: widget.newsResponse?.markCount ?? 0,
             onTap: () {
               final loginVM = login_vm.LoginVM.getInstance();
@@ -138,8 +144,8 @@ class _CommentActionButtonsState extends State<CommentActionButtons> {
                     'packages/module_newsfeed/assets/$icon',
                     width: Constants.SPACE_18,
                     height: Constants.SPACE_18,
-                    colorFilter: const ColorFilter.mode(
-                      Colors.black,
+                    colorFilter: ColorFilter.mode(
+                      ThemeColors.getFontPrimary(settingInfo.darkSwitch),
                       BlendMode.srcIn,
                     ),
                     fit: BoxFit.contain,
@@ -155,6 +161,7 @@ class _CommentActionButtonsState extends State<CommentActionButtons> {
   Widget _buildMarkActionItem({
     required String icon,
     required int count,
+    required bool isMarked,
     required VoidCallback onTap,
   }) {
     return IconButton(
@@ -173,8 +180,10 @@ class _CommentActionButtonsState extends State<CommentActionButtons> {
                     'packages/module_newsfeed/assets/$icon',
                     width: Constants.SPACE_18,
                     height: Constants.SPACE_18,
-                    colorFilter: const ColorFilter.mode(
-                      Colors.black,
+                    colorFilter: isMarked
+                        ? null
+                        : ColorFilter.mode(
+                            ThemeColors.getFontPrimary(settingInfo.darkSwitch),
                       BlendMode.srcIn,
                     ),
                     fit: BoxFit.contain,
@@ -201,8 +210,8 @@ class _CommentActionButtonsState extends State<CommentActionButtons> {
               Constants.opForwardImage,
               width: Constants.SPACE_18,
               height: Constants.SPACE_18,
-              colorFilter: const ColorFilter.mode(
-                Colors.black,
+              colorFilter: ColorFilter.mode(
+                ThemeColors.getFontPrimary(settingInfo.darkSwitch),
                 BlendMode.srcIn,
               ),
               fit: BoxFit.contain,

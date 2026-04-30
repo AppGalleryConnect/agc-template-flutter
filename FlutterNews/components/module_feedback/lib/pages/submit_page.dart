@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lib_common/lib_common.dart';
 import 'package:provider/provider.dart';
 import '../common/constants.dart';
 import 'package:module_setfontsize/utils/font_scale_utils.dart';
@@ -17,7 +18,7 @@ class SubmitPageState extends State<SubmitPage> {
   late SubmitVM viewModel;
   late TextEditingController _problemController;
   late TextEditingController _contactController;
-
+  final settingInfo = SettingModel.getInstance();
   @override
   void initState() {
     super.initState();
@@ -36,7 +37,8 @@ class SubmitPageState extends State<SubmitPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor:
+          ThemeColors.getBackgroundSecondary(settingInfo.darkSwitch),
       body: ChangeNotifierProvider.value(
         value: viewModel,
         child: Consumer<SubmitVM>(
@@ -48,7 +50,7 @@ class SubmitPageState extends State<SubmitPage> {
                 ),
                 Container(
                   height: Constants.SPACE_8,
-                  color: Colors.grey.shade100,
+                  color: ThemeColors.getBackgroundColor(settingInfo.darkSwitch),
                 ),
                 Expanded(
                   child: SingleChildScrollView(
@@ -62,7 +64,8 @@ class SubmitPageState extends State<SubmitPage> {
                         // 分割线
                         Container(
                           height: Constants.SPACE_8,
-                          color: Colors.grey.shade100,
+                          color: ThemeColors.getBackgroundColor(
+                              settingInfo.darkSwitch),
                         ),
                         // 联系方式区域
                         _contactInfo(vm),
@@ -88,12 +91,20 @@ class SubmitPageState extends State<SubmitPage> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          TextField(
+          Container(
+            decoration: BoxDecoration(
+              color: ThemeColors.getBackgroundColor(settingInfo.darkSwitch),
+              borderRadius: BorderRadius.circular(8.0),
+            ),
+            padding:
+                const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+            child: TextField(
               controller: _problemController,
               onChanged: vm.updateBody,
               maxLines: 5,
               decoration: InputDecoration(
                 hintText: '请详细描述您的问题（必填）',
+                filled: false,
                 hintStyle: TextStyle(
                   color: Colors.grey.shade400,
                   fontSize: Constants.FONT_16 * FontScaleUtils.fontSizeRatio,
@@ -103,7 +114,10 @@ class SubmitPageState extends State<SubmitPage> {
               ),
               style: TextStyle(
                 fontSize: Constants.FONT_16 * FontScaleUtils.fontSizeRatio,
-              )),
+                color: ThemeColors.getFontPrimary(settingInfo.darkSwitch),
+              ),
+            ),
+          ),
           // 字数统计，右对齐
           Align(
             alignment: Alignment.centerRight,
@@ -178,18 +192,27 @@ class SubmitPageState extends State<SubmitPage> {
               color: Colors.black,
             ),
           ),
-          TextField(
+        Container(
+          decoration: BoxDecoration(
+            color: ThemeColors.getBackgroundColor(settingInfo.darkSwitch),
+            borderRadius: BorderRadius.circular(8.0),
+          ),
+          child: TextField(
             controller: _contactController,
             onChanged: vm.updateContactPhone,
             keyboardType: TextInputType.phone,
             decoration: InputDecoration(
               hintText: '请填写联系手机',
+              filled: false,
               hintStyle: TextStyle(
                 color: Colors.grey.shade400,
                 fontSize: Constants.FONT_13 * FontScaleUtils.fontSizeRatio,
               ),
               border: InputBorder.none,
-              contentPadding: const EdgeInsets.only(top: Constants.SPACE_8),
+              contentPadding: const EdgeInsets.symmetric(
+                horizontal: Constants.SPACE_8,
+                vertical: Constants.SPACE_8,
+              ),
               suffixIcon: vm.contactPhone.isNotEmpty
                   ? IconButton(
                       icon: const Icon(Icons.close),
@@ -197,15 +220,18 @@ class SubmitPageState extends State<SubmitPage> {
                         _contactController.clear();
                         vm.updateContactPhone('');
                       },
-                      iconSize: Constants.FONT_16 * FontScaleUtils.fontSizeRatio,
+                      iconSize:
+                          Constants.FONT_16 * FontScaleUtils.fontSizeRatio,
                     )
                   : null,
             ),
             style: TextStyle(
               fontSize: Constants.FONT_16 * FontScaleUtils.fontSizeRatio,
+              color: ThemeColors.getFontPrimary(settingInfo.darkSwitch),
             ),
           ),
-        ],
+        ),
+      ]
       ),
     );
   }
@@ -264,12 +290,12 @@ class SubmitPageState extends State<SubmitPage> {
             3,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(Constants.SPACE_12),
-          color: Constants.UPLOAD_COLOR,
+          color: ThemeColors.getBackgroundTertiary(settingInfo.darkSwitch),
         ),
         child: Center(
           child: Icon(
             Icons.add,
-            color: Colors.grey,
+            color: ThemeColors.getFontSecondary(settingInfo.darkSwitch),
             size: Constants.FONT_24 * FontScaleUtils.fontSizeRatio,
           ),
         ),
@@ -280,7 +306,7 @@ class SubmitPageState extends State<SubmitPage> {
   Widget _imageBox(String path, int index, SubmitVM vm) {
     return GestureDetector(
       onTap: () {
-        
+
       },
       child: AspectRatio(
         aspectRatio: 1,

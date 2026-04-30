@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:lib_common/lib_common.dart';
 import 'package:lib_widget/components/nav_header_bar.dart';
+import 'package:module_setfontsize/utils/font_scale_utils.dart';
 import '../components/base_follow_watch_page.dart';
 import '../viewmodels/follower_page_vm.dart';
 import 'dart:async';
-import 'package:module_setfontsize/utils/font_scale_utils.dart';
 
 class FollowerPage extends StatefulWidget {
   const FollowerPage({super.key});
@@ -83,6 +84,7 @@ class _FollowerPageState extends State<FollowerPage> {
 
   @override
   Widget build(BuildContext context) {
+    final settingInfo = SettingModel.getInstance();
     return Scaffold(
       backgroundColor: const Color(0xFFF5F5F5),
       body: Column(
@@ -96,8 +98,10 @@ class _FollowerPageState extends State<FollowerPage> {
             showBackBtn: true,
             onBack: vm.customBack,
             windowModel: vm.windowModel,
-            backButtonBackgroundColor: const Color(0xFFF0F0F0),
-            backButtonPressedBackgroundColor: const Color(0xFFE0E0E0),
+            bgColor: ThemeColors.getBackgroundSecondary(settingInfo.darkSwitch),
+            titleColor: ThemeColors.getFontPrimary(settingInfo.darkSwitch),
+            backButtonBackgroundColor:
+                ThemeColors.getBackgroundTertiary(settingInfo.darkSwitch),
             customTitleSize: 20 * FontScaleUtils.fontSizeRatio,
           ),
           Expanded(

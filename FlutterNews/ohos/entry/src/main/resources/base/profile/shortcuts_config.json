@@ -1,0 +1,34 @@
+{
+  "shortcuts": [
+    {
+      "shortcutId": "id_follow",
+      "label": "$string:go_to_follow",
+      "icon": "$media:shortcut_follow",
+      "wants": [
+        {
+          "bundleName": "flutternews.1.1",
+          "moduleName": "entry",
+          "abilityName": "EntryAbility",
+          "parameters": {
+            "shortCutKey": "FollowPage"
+          }
+        }
+      ]
+    },
+    {
+      "shortcutId": "id_action",
+      "label": "$string:go_to_action",
+      "icon": "$media:shortcut_action",
+      "wants": [
+        {
+          "bundleName": "flutternews.1.1",
+          "moduleName": "entry",
+          "abilityName": "EntryAbility",
+          "parameters": {
+            "shortCutKey": "ActionPage"
+          }
+        }
+      ]
+    }
+  ]
+}

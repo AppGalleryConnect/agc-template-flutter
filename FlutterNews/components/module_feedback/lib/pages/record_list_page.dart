@@ -1,3 +1,5 @@
+import 'package:lib_common/lib_common.dart';
+
 import '../common/constants.dart';
 import '../viewmodels/record_list_VM.dart';
 import '../components/record_card.dart';
@@ -22,10 +24,12 @@ class RecordListPage extends StatefulWidget {
 }
 
 class _RecordListPageState extends State<RecordListPage> {
+  final settingInfo = SettingModel.getInstance();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey.shade100,
+      backgroundColor:
+          ThemeColors.getBackgroundSecondary(settingInfo.darkSwitch),
       body: Consumer<RecordListVM>(
         builder: (context, viewModel, child) {
           return SizedBox(
@@ -50,6 +54,8 @@ class _RecordListPageState extends State<RecordListPage> {
                         ? Container(
                             height: MediaQuery.of(context).size.height * 0.8,
                             alignment: Alignment.center,
+                            color: ThemeColors.getBackgroundColor(
+                                settingInfo.darkSwitch),
                             child: const CircularProgressIndicator(),
                           )
                         : viewModel.list.isNotEmpty
@@ -62,7 +68,7 @@ class _RecordListPageState extends State<RecordListPage> {
                                       children: [
                                         if (index > 0)
                                           const SizedBox(
-                                              height: Constants.SPACE_12), 
+                                              height: Constants.SPACE_12),
                                         RecordCard(
                                           record: viewModel.list[index],
                                           fontSizeRatio:

@@ -1,20 +1,25 @@
 import 'dart:async';
+import 'dart:ffi';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:lib_common/utils/orientation_utils.dart';
 import 'package:video_player/video_player.dart';
 import 'package:module_swipeplayer/model/video_model.dart';
 import 'package:flutter/services.dart';
+import 'package:newsflutterstemplate/notifier/fullScreenProvider.dart';
 import 'package:module_swipeplayer/constants/contants.dart';
 
 class LiveView extends StatefulWidget {
   final VideoModel videoModel;
   final bool isFullScreen;
+  final bool isLive;
   final Function(bool isFullScreen) onFullScreen;
 
   const LiveView({
     super.key,
     required this.videoModel,
     this.isFullScreen = false,
+    this.isLive = false,
     required this.onFullScreen,
   });
 
@@ -61,7 +66,7 @@ class _LiveViewState extends State<LiveView> {
     _controller =
         VideoPlayerController.networkUrl(Uri.parse(widget.videoModel.videoUrl))
           ..initialize().then((_) {}).catchError((e) {
-            
+
           });
     _controller.addListener(_onVideoInfo);
   }
@@ -125,7 +130,8 @@ class _LiveViewState extends State<LiveView> {
               _isFullScreen = false;
               _stopTimer();
               widget.onFullScreen(_isFullScreen);
-              SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+                OrientationUtils.quitFullScreen();
+                FullScreenProvider().setFullScreen(false);
             });
           }else {
             Navigator.of(context).pop();
@@ -189,7 +195,7 @@ class _LiveViewState extends State<LiveView> {
               if (_isShowUI && _isFullScreen)  _buildLockBuilder(),
               if (_isShowUI && !_isLock && _isFullScreen) _buildTopBuilder(),
             ],
-            
+
           ),
         )
       )
@@ -240,7 +246,7 @@ class _LiveViewState extends State<LiveView> {
               width: Constants.SPACE_100,
               height: Constants.SPACE_40,
               decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(Constants.SPACE_25), 
+                borderRadius: BorderRadius.circular(Constants.SPACE_25),
                 color: Colors.black.withOpacity(0.5),
               ),
               child: Row(
@@ -280,7 +286,7 @@ class _LiveViewState extends State<LiveView> {
               Constants.icRateImage,
               width: Constants.SPACE_7,
               height: Constants.SPACE_8,
-              fit: BoxFit.contain, 
+              fit: BoxFit.contain,
             ),
             const SizedBox(
               width: Constants.SPACE_5,
@@ -318,9 +324,9 @@ class _LiveViewState extends State<LiveView> {
                   : (_isFullScreen
                       ? Constants.icPlayImage
                       : Constants.icPausedImage),
-              width: Constants.SPACE_50, 
+              width: Constants.SPACE_50,
               height: Constants.SPACE_50,
-              fit: BoxFit.contain, 
+              fit: BoxFit.contain,
             ),
           ),
         ));
@@ -338,77 +344,72 @@ class _LiveViewState extends State<LiveView> {
           children: [
             if (_isSliderChange && _isFullScreen)
               Center(
-                  child: Text(
+                child: Text(
                 '${_formatDuration(_currentDuration)}  /  ${_formatDuration(_totalDuration)}',
                 style: const TextStyle(
                   fontSize: Constants.FONT_20,
                   fontWeight: FontWeight.w500,
                   color: Colors.white,
                 ),
-              )),
+                ),
+              ),
             SizedBox(
               height: _isFullScreen ? Constants.SPACE_30 : Constants.SPACE_80,
             ),
-            Row(
-              children: [
-                const SizedBox(
-                  width: Constants.SPACE_30,
-                ),
+            Padding(
+              padding: const EdgeInsets.only(bottom: Constants.SPACE_10),
+              child: Row(
+                children: [
                 GestureDetector(
-                  onTap: () => {
+                  onTap: () {
                     setState(() {
                       _isPlaying ? _onPause() : _onPlay();
-                    })
+                    });
                   },
                   child: SvgPicture.asset(
-                    _isPlaying
-                        ? Constants.icPauseImage
-                        : Constants.icPlayImage,
-                    fit: BoxFit.none,
+                    _isPlaying ? Constants.icPauseImage : Constants.icPlayImage,
                     width: Constants.SPACE_24,
                     height: Constants.SPACE_24,
                   ),
                 ),
-                const SizedBox(
-                  width: Constants.SPACE_10,
-                ),
+
+
+                if (!widget.isLive) ...[
+                  const SizedBox(width: Constants.SPACE_10),
                 Text(
                   _formatDuration(_currentDuration),
-                  style: const TextStyle(
-                    fontSize: Constants.FONT_10,
-                    color: Colors.white,
+                    style: const TextStyle(
+                        fontSize: Constants.FONT_10, color: Colors.white),
                   ),
-                ),
-                const SizedBox(
-                  width: Constants.SPACE_10,
-                ),
+                  const SizedBox(width: Constants.SPACE_10),
                 Expanded(
                   child: SliderTheme(
                     data: SliderTheme.of(context).copyWith(
-                      trackHeight: Constants.SPACE_1, 
-                      thumbShape:
-                          const RoundSliderThumbShape(enabledThumbRadius: Constants.SPACE_3),
-                      overlayShape: const RoundSliderOverlayShape(overlayRadius: Constants.SPACE_3), 
+                        trackHeight: Constants.SPACE_1,
+                        thumbShape: const RoundSliderThumbShape(
+                            enabledThumbRadius: Constants.SPACE_3),
+                        overlayShape: const RoundSliderOverlayShape(
+                            overlayRadius: Constants.SPACE_3),
                     ),
                     child: Slider(
-                      value: _currentDuration.inMilliseconds.toDouble() >= 0
-                          ? _currentDuration.inMilliseconds.toDouble()
-                          : 0,
-                      activeColor: Colors.white, 
-                      inactiveColor: Colors.grey, 
-                      thumbColor: Colors.white, 
+                        value: _currentDuration.inMilliseconds
+                            .toDouble()
+                            .clamp(0, double.infinity),
+                        activeColor: Colors.white,
+                        inactiveColor: Colors.grey,
+                        thumbColor: Colors.white,
                       onChanged: (value) {
                         setState(() {
                           _isSliderChange = true;
-                          _currentDuration =
-                              Duration(milliseconds: value.toInt());
+                            _currentDuration =
+                                Duration(milliseconds: value.toInt());
                           _stopTimer();
                         });
                       },
                       onChangeEnd: (value) {
                         setState(() {
-                          _controller
-                              .seekTo(Duration(milliseconds: value.toInt()));
+                            _controller
+                                .seekTo(Duration(milliseconds: value.toInt()));
                           _isSliderChange = false;
                           _startTimer();
                         });
@@ -418,45 +419,45 @@ class _LiveViewState extends State<LiveView> {
                     ),
                   ),
                 ),
-                const SizedBox(
-                  width: Constants.SPACE_10,
-                ),
+                  const SizedBox(width: Constants.SPACE_10),
                 Text(
                   _formatDuration(_totalDuration),
-                  style: const TextStyle(
-                    fontSize: Constants.FONT_10,
-                    color: Colors.white,
+                    style: const TextStyle(
+                        fontSize: Constants.FONT_10, color: Colors.white),
                   ),
-                ),
-                const SizedBox(
-                  width: Constants.SPACE_10,
-                ),
+                ],
+
+                if (widget.isLive) const Spacer(),
+
+                const SizedBox(width: Constants.SPACE_10),
+                // 右侧全屏按钮
                 GestureDetector(
-                  onTap: () => {
-                      setState(() {
-                        _isFullScreen = !_isFullScreen;
-                        widget.onFullScreen(_isFullScreen);         
-                        if (_isFullScreen) {
-                          _startTimer();
-                          SystemChrome.setPreferredOrientations([DeviceOrientation.landscapeLeft]);
-                        }else {
-                          _stopTimer();
-                          SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
-                        }     
-                      })
+                  onTap: () {
+                    setState(() {
+                      _isFullScreen = !_isFullScreen;
+                      widget.onFullScreen(_isFullScreen);
+                      if (_isFullScreen) {
+                        _startTimer();
+                        OrientationUtils.handleOrientation();
+                        FullScreenProvider().setFullScreen(true);
+                      } else {
+                        _stopTimer();
+                        OrientationUtils.quitFullScreen();
+                        FullScreenProvider().setFullScreen(false);
+                      }
+                    });
                   },
                   child: SvgPicture.asset(
-                    _isFullScreen ? Constants.icExitFullScreenImage : Constants.icExpandFullScreenImage,
-                    fit: BoxFit.none,
+                    _isFullScreen
+                        ? Constants.icExitFullScreenImage
+                        : Constants.icExpandFullScreenImage,
                     width: Constants.SPACE_18,
                     height: Constants.SPACE_18,
                   ),
-                ),
-                const SizedBox(
-                  width: Constants.SPACE_30,
-                ),
+                  ),
               ],
             ),
+            )
           ],
         ),
       ),
@@ -465,7 +466,7 @@ class _LiveViewState extends State<LiveView> {
 
   Widget _buildTopBuilder() {
     return Positioned(
-      top: Constants.SPACE_0,
+      top: Constants.SPACE_16,
       height: Constants.SPACE_64,
       width: MediaQuery.of(context).size.width,
       child: Container(
@@ -481,7 +482,7 @@ class _LiveViewState extends State<LiveView> {
             ],
           ),
         ),
-        padding: const EdgeInsets.symmetric(horizontal: Constants.SPACE_16), 
+        padding: const EdgeInsets.symmetric(horizontal: Constants.SPACE_16),
         child: Row(
           children: [
             SizedBox(
@@ -492,8 +493,9 @@ class _LiveViewState extends State<LiveView> {
                       setState(() {
                         _isFullScreen = false;
                         _stopTimer();
-                        widget.onFullScreen(_isFullScreen);    
-                        SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+                        widget.onFullScreen(_isFullScreen);
+                        FullScreenProvider().setFullScreen(false);
+                        OrientationUtils.quitFullScreen();
                       })
                     },
                     child: Container(
@@ -523,7 +525,7 @@ class _LiveViewState extends State<LiveView> {
                 ],
               ),
             ),
-            const Spacer(), 
+            const Spacer(),
             const Icon(Icons.battery_full, color: Colors.white),
           ],
         ),
@@ -547,7 +549,7 @@ class _LiveViewState extends State<LiveView> {
           width: Constants.SPACE_50,
           height: Constants.SPACE_50,
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(Constants.SPACE_25), 
+            borderRadius: BorderRadius.circular(Constants.SPACE_25),
             color: Colors.black.withOpacity(0.5),
           ),
           child: SvgPicture.asset(

@@ -28,11 +28,12 @@ class SearchButton extends StatelessWidget {
         RouterMap.NEWS_SEARCH_PAGE,
       );
     }
-
+    final settingInfo = SettingModel.getInstance();
     return IconButton(
       style: ButtonStyle(
         backgroundColor: WidgetStateProperty.all(
-          backgroundColor ?? Constants.searchButtonBackgroundColor,
+          backgroundColor ??
+              ThemeColors.getBackgroundColor(settingInfo.darkSwitch),
         ),
         shape: WidgetStateProperty.all(
           RoundedRectangleBorder(
@@ -48,7 +49,7 @@ class SearchButton extends StatelessWidget {
         width: Constants.searchButtonIconWidth,
         height: Constants.searchButtonIconHeight,
         colorFilter: ColorFilter.mode(
-          Theme.of(context).colorScheme.primary,
+          ThemeColors.getFontPrimary(settingInfo.darkSwitch),
           BlendMode.srcIn,
         ),
         fit: BoxFit.contain,

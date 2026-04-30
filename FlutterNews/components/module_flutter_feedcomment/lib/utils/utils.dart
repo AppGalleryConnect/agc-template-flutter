@@ -5,14 +5,25 @@ import '../components/publish_comment.dart';
 class CommentParams {
   String reNickName;
   Function(String) callback;
-  String? articleAuthorId; 
+  String? articleAuthorId;
+  Color? fontColor;
+  Color? backgroundColor;
+  Color? inputColor;
 
-  CommentParams(String? replyAuthor, this.callback, {this.articleAuthorId})
+  CommentParams(String? replyAuthor, this.callback,
+      {this.articleAuthorId,
+      this.fontColor,
+      this.backgroundColor,
+      this.inputColor})
       : reNickName = replyAuthor ?? '';
 }
 
 void openPublishComment(
-    BuildContext context, String? replyAuthor, Function(String) callback, {String? articleAuthorId}) {
+    BuildContext context, String? replyAuthor, Function(String) callback,
+    {String? articleAuthorId,
+    Color? fontColor,
+    Color? backgroundColor,
+    Color? inputColor}) {
   showModalBottomSheet(
     context: context,
     builder: (BuildContext context) {
@@ -21,7 +32,12 @@ void openPublishComment(
           bottom: MediaQuery.of(context).viewInsets.bottom,
         ),
         child: publishCommentBuilder(
-            context, CommentParams(replyAuthor, callback, articleAuthorId: articleAuthorId)),
+            context,
+            CommentParams(replyAuthor, callback,
+                articleAuthorId: articleAuthorId,
+                fontColor: fontColor,
+                backgroundColor: backgroundColor,
+                inputColor: inputColor)),
       );
     },
     isScrollControlled: true,
@@ -36,20 +52,36 @@ void openPublishComment(
 /// @param articleAuthorId 文章作者ID
 void commentSheetOpen(
     BuildContext context, String? replyAuthor, Function(String) callback,
-    [bool? isVerifyLogin, String? articleAuthorId]) {
+    [bool? isVerifyLogin,
+    String? articleAuthorId,
+    Color? fontColor,
+    Color? backgroundColor,
+    Color? inputColor]) {
   if (isVerifyLogin != null && !isVerifyLogin) {
-    openPublishComment(context, replyAuthor, callback, articleAuthorId: articleAuthorId);
+    openPublishComment(context, replyAuthor, callback,
+        articleAuthorId: articleAuthorId,
+        fontColor: fontColor,
+        backgroundColor: backgroundColor,
+        inputColor: inputColor);
     return;
   }
 
   if (CommentEventDispatcher.interceptLogin == null) {
-    openPublishComment(context, replyAuthor, callback, articleAuthorId: articleAuthorId);
+    openPublishComment(context, replyAuthor, callback,
+        articleAuthorId: articleAuthorId,
+        fontColor: fontColor,
+        backgroundColor: backgroundColor,
+        inputColor: inputColor);
     return;
   }
 
   CommentEventDispatcher.dispatchToInterceptLogin((bool? isLogin) {
     if (isLogin == true || isLogin == null) {
-      openPublishComment(context, replyAuthor, callback, articleAuthorId: articleAuthorId);
+      openPublishComment(context, replyAuthor, callback,
+          articleAuthorId: articleAuthorId,
+          fontColor: fontColor,
+          backgroundColor: backgroundColor,
+          inputColor: inputColor);
     }
   });
 }

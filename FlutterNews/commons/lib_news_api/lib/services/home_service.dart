@@ -147,15 +147,7 @@ class HomeService {
         .map((v) => BaseNewsServiceApi.handleRawNews(v))
         .map((v) => BaseNewsServiceApi.layoutTrans(v))
         .toList();
-    final posts = MockPost.list
-        .where((v) =>
-            (myUserInfo?.watchers.contains(v.authorId) == true &&
-                newsType.contains(v.type)) ||
-            v.authorId == myUserInfo?.authorId)
-        .map((v) => BaseNewsServiceApi.handleRawNews(v))
-        .map((v) => BaseNewsServiceApi.layoutTrans(v))
-        .toList();
-    final result = Utils.shuffleArray([...videos, ...posts, ...articles]);
+    final result = Utils.shuffleArray([...videos, ...articles]);
     int end = min(currentPage + currentIndex, result.length);
     int start = min(currentPage, end);
     return result.sublist(start, end);

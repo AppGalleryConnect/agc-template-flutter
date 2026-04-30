@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import '../utils/preference_utils.dart';
 import '../utils/logger.dart';
 
@@ -10,8 +11,10 @@ class SettingModel with ChangeNotifier {
   static const String _keyFontSizeRatio = 'setting_font_size_ratio';
   static const String _keyPersonalizedPush = 'setting_personalized_push';
   static const String _keyVolume = 'setting_volume';
+  static const String _keyCurrentThemeMode = 'current_theme_mode';
   static SettingModel? _instance;
   late final PreferenceUtils _prefs;
+
   bool _isInitialized = false;
   static SettingModel getInstance() {
     _instance ??= SettingModel._internal();
@@ -20,6 +23,7 @@ class SettingModel with ChangeNotifier {
 
   SettingModel._internal();
   factory SettingModel() => getInstance();
+
   Future<void> initPreferences() async {
     if (_isInitialized) return;
     try {
@@ -31,9 +35,9 @@ class SettingModel with ChangeNotifier {
       // 初始化失败
     }
   }
-
   bool _pushSwitch = false;
-  bool _darkSwitch = false;
+  bool _darkSwitch = true;
+  int _currentThemeMode = 0;
 
   /// 字体大小比例（对应鸿蒙 fontSizeRatio）
   double _fontSizeRatio = 1.0;
@@ -42,6 +46,7 @@ class SettingModel with ChangeNotifier {
   late final SettingNetworkModel _network;
   bool get pushSwitch => _pushSwitch;
   bool get darkSwitch => _darkSwitch;
+  int get currentThemeMode => _currentThemeMode;
   double get fontSizeRatio => _fontSizeRatio;
   bool get personalizedPush => _personalizedPush;
   double get volume => _volume;
@@ -49,13 +54,17 @@ class SettingModel with ChangeNotifier {
   Future<void> _loadSettings() async {
     try {
       _pushSwitch = _prefs.get(_keyPushSwitch, defaultValue: false) ?? false;
-      _darkSwitch = _prefs.get(_keyDarkSwitch, defaultValue: false) ?? false;
+      _darkSwitch = _prefs.get(_keyDarkSwitch, defaultValue: true) ?? true;
+      _currentThemeMode =
+          _prefs.get(_keyCurrentThemeMode, defaultValue: 0) ?? 0;
       _fontSizeRatio = _prefs.get(_keyFontSizeRatio, defaultValue: 1.0) ?? 1.0;
       _personalizedPush =
           _prefs.get(_keyPersonalizedPush, defaultValue: true) ?? true;
       _volume = _prefs.get(_keyVolume, defaultValue: 1.0) ?? 1.0;
       _network = SettingNetworkModel();
       await _network.initPreferences();
+      _network.addListener(() => notifyListeners());
+
       notifyListeners();
     } catch (e) {
       // 加载设置失败
@@ -74,6 +83,14 @@ class SettingModel with ChangeNotifier {
     if (_darkSwitch != value) {
       _darkSwitch = value;
       _prefs.put(_keyDarkSwitch, value);
+      notifyListeners();
+    }
+  }
+
+  set currentThemeMode(int value) {
+    if (_currentThemeMode != value) {
+      _currentThemeMode = value;
+      _prefs.put(_keyCurrentThemeMode, value);
       notifyListeners();
     }
   }

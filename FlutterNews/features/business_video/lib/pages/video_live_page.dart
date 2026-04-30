@@ -107,14 +107,15 @@ class _VideoLivePageState extends State<VideoLivePage> {
 
   Widget _buildLiveWidget() {
     return ListView(
-      padding: EdgeInsets.zero, 
+      padding: EdgeInsets.zero,
       controller: _scrollController,
       children: [
         Container(
           height: Constants.SPACE_50,
           decoration: BoxDecoration(
-            color: widget.settingInfo.darkSwitch ? Colors.grey[850] : Colors.white, 
-            borderRadius: BorderRadius.circular(Constants.SPACE_20), 
+            color:
+                widget.settingInfo.darkSwitch ? Colors.grey[850] : Colors.white,
+            borderRadius: BorderRadius.circular(Constants.SPACE_20),
           ),
           margin: const EdgeInsets.symmetric(horizontal: Constants.SPACE_16),
           width: MediaQuery.of(context).size.width,
@@ -129,7 +130,7 @@ class _VideoLivePageState extends State<VideoLivePage> {
           child: _buildLiveListWidget(),
         ),
         Container(
-          margin: const EdgeInsets.symmetric(horizontal: Constants.SPACE_16), 
+          margin: const EdgeInsets.symmetric(horizontal: Constants.SPACE_16),
           width: MediaQuery.of(context).size.width,
           child: Column(
             children: [
@@ -156,8 +157,8 @@ class _VideoLivePageState extends State<VideoLivePage> {
           ),
         ),
         Container(
-          height: MediaQuery.of(context).size.width > Constants.SPACE_400 ? Constants.SPACE_335 : Constants.SPACE_670,
-          margin: const EdgeInsets.symmetric(horizontal: Constants.SPACE_16), 
+          height: MediaQuery.of(context).size.width > Constants.SPACE_400 ? Constants.SPACE_400 : Constants.SPACE_670,
+          margin: const EdgeInsets.symmetric(horizontal: Constants.SPACE_16),
           width: MediaQuery.of(context).size.width,
           child: _buildLiveHighlightsWidget(),
         ),
@@ -175,7 +176,9 @@ class _VideoLivePageState extends State<VideoLivePage> {
           Constants.icNoticeImage,
           width: Constants.SPACE_20,
           height: Constants.SPACE_15,
-          colorFilter: ColorFilter.mode(widget.settingInfo.darkSwitch ? Colors.white : Colors.black, BlendMode.srcIn), 
+          colorFilter: ColorFilter.mode(
+              widget.settingInfo.darkSwitch ? Colors.white : Colors.black,
+              BlendMode.srcIn),
         ),
         const SizedBox(
           width: Constants.SPACE_10,
@@ -209,13 +212,17 @@ class _VideoLivePageState extends State<VideoLivePage> {
       itemCount: _liveList.length,
       scrollDirection: Axis.horizontal,
       itemBuilder: (BuildContext context, int index) {
+        final double viewportWidth = MediaQuery.of(context).size.width;
+        final double itemWidth = viewportWidth * 0.5;
+
         return Container(
-          margin: const EdgeInsets.symmetric(horizontal: Constants.SPACE_16), 
-          width: MediaQuery.of(context).size.width > Constants.SPACE_400 ? (MediaQuery.of(context).size.width * 0.5 - Constants.SPACE_32) : (MediaQuery.of(context).size.width - Constants.SPACE_32),
+          margin: const EdgeInsets.symmetric(horizontal: Constants.SPACE_16),
+          width: itemWidth - Constants.SPACE_32,
           child: GestureDetector(
             onTap: () => RouterUtils.of.pushPathByName(
-                RouterMap.VIDEO_Live_PAGE,
-                param: [_liveList[index], true, widget.settingInfo],),
+              RouterMap.VIDEO_Live_PAGE,
+              param: [_liveList[index], true, widget.settingInfo],
+            ),
             child: Column(
               children: [
                 Stack(
@@ -223,6 +230,7 @@ class _VideoLivePageState extends State<VideoLivePage> {
                     ClipRRect(
                       borderRadius: BorderRadius.circular(Constants.SPACE_20),
                       child: SizedBox(
+                        width: itemWidth - Constants.SPACE_32,
                         height: Constants.SPACE_200,
                         child: Image.network(
                           _liveList[index].coverUrl,
@@ -237,7 +245,7 @@ class _VideoLivePageState extends State<VideoLivePage> {
                       height: Constants.SPACE_20,
                       child: Container(
                         decoration: const BoxDecoration(
-                          color: Colors.red, 
+                          color: Colors.red,
                           borderRadius: BorderRadius.only(
                             topRight: Radius.circular(Constants.SPACE_20),
                             bottomLeft: Radius.circular(Constants.SPACE_20),
@@ -245,9 +253,7 @@ class _VideoLivePageState extends State<VideoLivePage> {
                         ),
                         child: Row(
                           children: [
-                            const SizedBox(
-                              width: Constants.SPACE_15,
-                            ),
+                            const SizedBox(width: Constants.SPACE_15),
                             SvgPicture.asset(
                               Constants.icLiveImage,
                               width: Constants.SPACE_12,
@@ -255,8 +261,10 @@ class _VideoLivePageState extends State<VideoLivePage> {
                             ),
                             const Text(
                               '直播中',
-                              style:
-                                  TextStyle(color: Colors.white, fontSize: Constants.FONT_10),
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: Constants.FONT_10,
+                              ),
                             )
                           ],
                         ),
@@ -264,17 +272,20 @@ class _VideoLivePageState extends State<VideoLivePage> {
                     )
                   ],
                 ),
-                const SizedBox(
-                  height: Constants.SPACE_10,
-                ),
+                const SizedBox(height: Constants.SPACE_10),
                 SizedBox(
-                  width: MediaQuery.of(context).size.width, 
+                  width: double.infinity,
                   child: Text(
                     '【正在直播】${_liveList[index].title}',
                     textAlign: TextAlign.left,
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
-                    style: TextStyle(fontWeight: FontWeight.w500, color: widget.settingInfo.darkSwitch ? Colors.white : Colors.black),
+                    style: TextStyle(
+                      fontWeight: FontWeight.w500,
+                      color: widget.settingInfo.darkSwitch
+                          ? Colors.white
+                          : Colors.black,
+                    ),
                   ),
                 ),
               ],
@@ -286,48 +297,61 @@ class _VideoLivePageState extends State<VideoLivePage> {
   }
 
   Widget _buildLiveHighlightsWidget() {
-    return GridView.count(
-      padding: EdgeInsets.zero, 
-      crossAxisCount: MediaQuery.of(context).size.width > Constants.SPACE_400 ? 4 : 2, 
-      crossAxisSpacing: Constants.SPACE_10, 
-      physics: const NeverScrollableScrollPhysics(),
-      children: List.generate(
-          _liveHighlightsList.length, 
-          (index) => GestureDetector(
-                onTap: () => RouterUtils.of.pushPathByName(
-                    RouterMap.VIDEO_Live_PAGE,
-                    param: [_liveHighlightsList[index], false, widget.settingInfo]),
-                child: Container(
-                  child: Column(
-                    children: [
-                      ClipRRect(
-                        borderRadius: BorderRadius.circular(Constants.SPACE_20), 
-                        child: SizedBox(
-                          height: Constants.SPACE_100,
-                          child: Image.network(
-                            _liveHighlightsList[index].coverUrl,
-                            fit: BoxFit.cover,
-                          ),
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final crossCount = constraints.maxWidth > 500 ? 4 : 2;
+        const double columnSpacing = 10;
+
+        final itemWidth =
+            (constraints.maxWidth - (crossCount - 1) * columnSpacing) /
+                crossCount;
+
+        return Wrap(
+          spacing: columnSpacing,
+          runSpacing: 12,
+          children: List.generate(_liveHighlightsList.length, (index) {
+            return SizedBox(
+              width: itemWidth,
+              child: GestureDetector(
+                onTap: () => RouterUtils.of
+                    .pushPathByName(RouterMap.VIDEO_Live_PAGE, param: [
+                  _liveHighlightsList[index],
+                  false,
+                  widget.settingInfo
+                ]),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(Constants.SPACE_20),
+                      child: SizedBox(
+                        height: Constants.SPACE_100,
+                        width: double.infinity,
+                        child: Image.network(
+                          _liveHighlightsList[index].coverUrl,
+                          fit: BoxFit.cover,
                         ),
                       ),
-                      const SizedBox(
-                        height: Constants.SPACE_10,
+                    ),
+                    const SizedBox(height: Constants.SPACE_10),
+                    Text(
+                      _liveHighlightsList[index].title,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        color: widget.settingInfo.darkSwitch
+                            ? Colors.white
+                            : Colors.black,
+                        fontSize: Constants.FONT_14,
                       ),
-                      SizedBox(
-                        width: MediaQuery.of(context).size.width,
-                        height: Constants.SPACE_41,
-                        child: Text(
-                          _liveHighlightsList[index].title,
-                          textAlign: TextAlign.left,
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                          style: TextStyle(color: widget.settingInfo.darkSwitch ? Colors.white : Colors.black, fontSize: Constants.FONT_14),
-                        ),
-                      ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
-              )),
+              ),
+            );
+          }),
+        );
+      },
     );
   }
 }

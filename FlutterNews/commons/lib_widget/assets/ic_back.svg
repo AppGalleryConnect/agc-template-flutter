@@ -1,1 +1,18 @@
-<?xml version="1.0" standalone="no"?><!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd"><svg t="1758783591269" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="4697" xmlns:xlink="http://www.w3.org/1999/xlink" width="200" height="200"><path d="M209.459634 511.851755a103.934252 103.934252 0 0 1 33.744887-76.170355L693.291496 18.082605a70.166093 70.166093 0 0 1 94.020237 0 58.623014 58.623014 0 0 1 0 87.27126L349.186738 511.991389l438.101723 406.660797a58.623014 58.623014 0 0 1 0 87.27126 70.166093 70.166093 0 0 1-94.020237 0L243.344155 588.278106A104.329882 104.329882 0 0 1 209.459634 511.851755z" fill="#1B1B1B" p-id="4698"></path></svg>
+<svg viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="40.000000" height="40.000000" fill="none" customFrame="url(#clipPath_6)">
+	<defs>
+		<clipPath id="clipPath_6">
+			<rect width="40.000000" height="40.000000" x="0.000000" y="0.000000" rx="20.000000" fill="rgb(255,255,255)" />
+		</clipPath>
+		<clipPath id="clipPath_7">
+			<rect width="24.000000" height="24.000000" x="8.000000" y="8.000000" fill="rgb(255,255,255)" />
+		</clipPath>
+	</defs>
+	<rect id="3.Icon Button" width="40.000000" height="40.000000" x="0.000000" y="0.000000" rx="20.000000" fill="rgb(0,0,0)" fill-opacity="0.0470588244" />
+	<g id="chevron_backward" clip-path="url(#clipPath_7)" customFrame="url(#clipPath_7)">
+		<rect id="chevron_backward" width="24.000000" height="24.000000" x="8.000000" y="8.000000" />
+		<rect id="rect" width="24.000000" height="24.000000" x="8.000000" y="8.000000" opacity="0" />
+		<g id="g">
+			<path id="path" d="M16.09 20L23.05 13.04C23.19 12.88 23.26 12.7 23.26 12.5C23.26 12.3 23.19 12.12 23.05 11.96C22.9033 11.8133 22.7266 11.74 22.52 11.74C22.3133 11.74 22.1366 11.8133 21.99 11.96L15.01 18.94C14.7233 19.2333 14.58 19.5867 14.58 20C14.58 20.4133 14.7233 20.7667 15.01 21.06L21.97 27.99C22.0966 28.1367 22.2666 28.21 22.48 28.21C22.7 28.21 22.88 28.1367 23.02 27.99C23.1666 27.85 23.24 27.6733 23.24 27.46C23.24 27.2533 23.1666 27.08 23.02 26.94L16.09 20Z" fill="rgb(0,0,0)" fill-opacity="0.898039222" fill-rule="nonzero" />
+		</g>
+	</g>
+</svg>

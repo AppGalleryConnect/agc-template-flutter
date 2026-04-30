@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lib_common/lib_common.dart';
 import 'package:lib_common/utils/time_utils.dart';
 import 'package:lib_news_api/params/response/news_response.dart';
 import '../../commons/constants.dart';
@@ -20,6 +21,8 @@ class _ArticleSourceBuilderState extends State<ArticleSourceBuilder> {
     final nativeCardData = widget.cardData;
     final autoerInfo = widget.cardData.extraInfo?["isNeedAuthor"];
     final isNeedAuthor = autoerInfo != null && autoerInfo == true;
+    final settingInfo = SettingModel.getInstance();
+
     if (isNeedAuthor) {
       return const SizedBox.shrink();
     }
@@ -32,7 +35,7 @@ class _ArticleSourceBuilderState extends State<ArticleSourceBuilder> {
             style: TextStyle(
               fontSize:
                   Constants.articleSourceBuilderFontSize * widget.fontSizeRatio,
-              color: Constants.secondaryTextColor,
+              color: ThemeColors.getFontSecondary(settingInfo.darkSwitch),
             ),
             textAlign: TextAlign.start,
           ),
@@ -47,7 +50,7 @@ class _ArticleSourceBuilderState extends State<ArticleSourceBuilder> {
             style: TextStyle(
               fontSize:
                   Constants.articleSourceBuilderFontSize * widget.fontSizeRatio,
-              color: Constants.secondaryTextColor,
+              color: ThemeColors.getFontSecondary(settingInfo.darkSwitch),
             ),
             textAlign: TextAlign.start,
           ),

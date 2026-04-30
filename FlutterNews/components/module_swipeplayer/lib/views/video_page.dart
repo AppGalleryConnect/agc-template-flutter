@@ -3,6 +3,8 @@ import 'dart:io';
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:newsflutterstemplate/notifier/fullScreenProvider.dart';
+import 'package:lib_common/lib_common.dart';
 import 'package:video_player/video_player.dart';
 import 'package:module_swipeplayer/model/video_model.dart';
 import 'package:flutter/services.dart';
@@ -12,7 +14,7 @@ import 'package:lib_common/models/setting_model.dart';
 class VideoPage extends StatefulWidget {
   final VideoModel videoModel;
   final bool canPlayVideo;
-
+  final Function(VideoModel videoModel)? onPlay;
   final Function(bool isPlaying) onTap;
   final Function() onClick;
   final Function(bool isFollow) onFollow;
@@ -21,8 +23,8 @@ class VideoPage extends StatefulWidget {
   final Function(bool isCollect) onCollect;
   final Function() onShare;
   final Function() onFinish;
-  final Function(Duration duration) onSlider;
 
+  final Function(Duration duration) onSlider;
   final bool isCommend;
   final Function() onCommendChange;
 
@@ -32,6 +34,7 @@ class VideoPage extends StatefulWidget {
     required this.canPlayVideo,
     required this.onTap,
     required this.onClick,
+    this.onPlay,
     required this.onFollow,
     required this.onLike,
     required this.onCommond,
@@ -47,7 +50,7 @@ class VideoPage extends StatefulWidget {
   State<VideoPage> createState() => _VideoPageState();
 }
 
-class _VideoPageState extends State<VideoPage> {
+class _VideoPageState extends State<VideoPage> with WidgetsBindingObserver {
   late VideoPlayerController _controller;
 
   bool _isPlaying = false;
@@ -66,7 +69,7 @@ class _VideoPageState extends State<VideoPage> {
   Duration _totalDuration = Duration.zero;
 
   bool _isBrightnessChange = false;
-  double _brightness = 0.5;
+  double _brightness = 1.0;
   bool _isVolumeChange = false;
   double _volume = 1.0;
 
@@ -78,7 +81,9 @@ class _VideoPageState extends State<VideoPage> {
   @override
   void initState() {
     super.initState();
-
+    WidgetsBinding.instance.addObserver(this);
+    _isFullScreen = FullScreenProvider().isFullScreen;
+    FullScreenProvider().addListener(_onFullScreenChanged);
     videoUrl = widget.videoModel.videoUrl;
     settingInfo.initPreferences().then((_) {
       setState(() {
@@ -88,14 +93,33 @@ class _VideoPageState extends State<VideoPage> {
     settingInfo.addListener(_onSettingChanged);
     _onLoadVideo();
   }
-
+  void _onFullScreenChanged() {
+    if (mounted && _isFullScreen != FullScreenProvider().isFullScreen) {
+      setState(() {
+        _isFullScreen = FullScreenProvider().isFullScreen;
+      });
+    }
+  }
   @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    FullScreenProvider().removeListener(_onFullScreenChanged);
     _controller.removeListener(_onVideoInfo);
     _controller.dispose();
     _stopTimer();
     settingInfo.removeListener(_onSettingChanged);
     super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    super.didChangeAppLifecycleState(state);
+
+    if (state == AppLifecycleState.paused) {
+      if (_isPlaying) {
+        _onPause();
+      }
+    }
   }
 
   void _onSettingChanged() {
@@ -189,6 +213,7 @@ class _VideoPageState extends State<VideoPage> {
     _startTimer();
     if (!_controller.value.isInitialized || _controller.value.isPlaying) return;
     await _controller.play();
+    widget.onPlay?.call(widget.videoModel);
     _lastVideoIsPalying = true;
   }
 
@@ -233,13 +258,13 @@ class _VideoPageState extends State<VideoPage> {
     }
     return PopScope(
       canPop: false,
-      onPopInvoked: (bool didPop) {
+      onPopInvoked: (bool didPop) async {
         if (!didPop) {
           if (_isFullScreen) {
-            SystemChrome.setPreferredOrientations(
-                [DeviceOrientation.portraitUp]);
+            OrientationUtils.quitFullScreen();
             setState(() {
               _isFullScreen = false;
+              FullScreenProvider().setFullScreen(false);
               _stopTimer();
             });
           }
@@ -599,14 +624,16 @@ class _VideoPageState extends State<VideoPage> {
       bottom: MediaQuery.of(context).size.height / 2 - Constants.SPACE_110,
       height: Constants.SPACE_40,
       child: GestureDetector(
-        onTap: () => {
-          SystemChrome.setPreferredOrientations(
-              [DeviceOrientation.landscapeLeft]),
+        onTap: () async {
           setState(() {
             _isShowUI = true;
             _isFullScreen = true;
-            _onPlay();
-          }),
+            FullScreenProvider().setFullScreen(true);
+
+
+          });
+          OrientationUtils.handleOrientation();
+          _onPlay();
         },
         child: Container(
           decoration: BoxDecoration(
@@ -952,11 +979,11 @@ class _VideoPageState extends State<VideoPage> {
                     ),
                   ),
                   GestureDetector(
-                    onTap: () => {
-                      SystemChrome.setPreferredOrientations(
-                          [DeviceOrientation.portraitUp]),
+                    onTap: () async => {
+                      OrientationUtils.quitFullScreen(),
                       setState(() {
                         _isFullScreen = false;
+                        FullScreenProvider().setFullScreen(false);
                         _stopTimer();
                       })
                     },
@@ -1107,10 +1134,10 @@ class _VideoPageState extends State<VideoPage> {
                 children: [
                   GestureDetector(
                     onTap: () => {
-                      SystemChrome.setPreferredOrientations(
-                          [DeviceOrientation.portraitUp]),
+                      OrientationUtils.quitFullScreen(),
                       setState(() {
                         _isFullScreen = false;
+                        FullScreenProvider().setFullScreen(false);
                         _stopTimer();
                       })
                     },
@@ -1183,9 +1210,15 @@ class _VideoPageState extends State<VideoPage> {
     );
   }
 
-  String _formatDuration(Duration duration) {
-    final minutes = duration.inMinutes.remainder(60).toString().padLeft(2, '0');
-    final seconds = duration.inSeconds.remainder(60).toString().padLeft(2, '0');
-    return '$minutes:$seconds';
+String _formatDuration(Duration duration) {
+    int hours = duration.inHours;
+    int minutes = duration.inMinutes.remainder(60);
+    int seconds = duration.inSeconds.remainder(60);
+
+    if (hours == 0) {
+      return '${minutes.toString().padLeft(2, '0')}:${seconds.toString().padLeft(2, '0')}';
+    } else {
+      return '${hours.toString().padLeft(2, '0')}:${minutes.toString().padLeft(2, '0')}:${seconds.toString().padLeft(2, '0')}';
+    }
   }
 }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:lib_common/constants/router_map.dart';
+import 'package:lib_common/lib_common.dart';
 import 'package:lib_common/models/userInfo_model.dart';
 import 'package:lib_common/utils/time_utils.dart';
 import 'package:lib_common/utils/router_utils.dart';
@@ -94,36 +95,42 @@ class _AuthorCardState extends State<AuthorCard> {
                 ],
               ),
               const SizedBox(width: Constants.SPACE_8),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Padding(
-                    padding: widget.isShowBigImage == true
-                        ? const EdgeInsets.only(top: Constants.SPACE_13)
-                        : EdgeInsets.zero,
-                    child: Text(
-                      widget.cardData.author?.authorNickName ?? "未知作者",
-                      style: TextStyle(
-                        fontSize: Constants.FONT_15 * fontSizeRatio,
-                        color: widget.isShowBigImage == true
-                            ? Colors.white
-                            : Theme.of(context).textTheme.bodyMedium?.color,
-                        fontWeight: FontWeight.w500,
+              SizedBox(
+                width: 120,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Padding(
+                      padding: widget.isShowBigImage == true
+                          ? const EdgeInsets.only(top: Constants.SPACE_13)
+                          : EdgeInsets.zero,
+                      child: Text(
+                        widget.cardData.author?.authorNickName ?? "未知作者",
+                        style: TextStyle(
+                          fontSize: Constants.FONT_15 * fontSizeRatio,
+                          color: widget.isShowBigImage == true
+                              ? Colors.white
+                              : Theme.of(context).textTheme.bodyMedium?.color,
+                          fontWeight: FontWeight.w500,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        softWrap: false,
                       ),
                     ),
-                  ),
-                  const SizedBox(height: Constants.SPACE_5),
-                  if (widget.isShowBigImage == false)
-                    Text(
-                      TimeUtils.formatDate(widget.cardData.createTime),
-                      style: TextStyle(
-                        fontSize: Constants.SPACE_12 * fontSizeRatio,
-                        color: widget.isShowBigImage == true
-                            ? Colors.white
-                            : Colors.black54,
+                    const SizedBox(height: Constants.SPACE_5),
+                    if (widget.isShowBigImage == false)
+                      Text(
+                        TimeUtils.formatDate(widget.cardData.createTime),
+                        style: TextStyle(
+                          fontSize: Constants.SPACE_12 * fontSizeRatio,
+                          color: widget.isShowBigImage == true
+                              ? Colors.white
+                              : Colors.black54,
+                        ),
                       ),
-                    ),
-                ],
+                  ],
+                ),
               ),
             ],
           ),
@@ -185,9 +192,9 @@ class _AuthorCardState extends State<AuthorCard> {
     final isLogin = userInfoModel.isLogin;
     final watchers = userInfoModel.watchers;
     final getWatch = isLogin && watchers.contains(authorId);
-
+    final curSettingInfo = SettingModel.getInstance();
     final backgroundColor = getWatch
-        ? ThemeColors.getBackgroundTertiary(false)
+        ? ThemeColors.getBackgroundTertiary(curSettingInfo.darkSwitch)
         : ThemeColors.appTheme;
     final textColor = getWatch ? ThemeColors.appTheme : Colors.white;
 

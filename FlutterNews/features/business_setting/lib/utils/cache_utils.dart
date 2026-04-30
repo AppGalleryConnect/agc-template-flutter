@@ -1,34 +1,24 @@
 import 'dart:io';
 import 'dart:math';
-import 'package:path_provider/path_provider.dart';
+import 'package:lib_common/lib_common.dart';
+
 
 const String TAG = '[CacheUtils]';
 
 /// 缓存管理工具类
 class CacheUtils {
-  static Future<int> getCache() async {
+  static Future<String> getCache() async {
     try {
-      final tempDir = await getTemporaryDirectory();
-      final cacheDir = await getApplicationCacheDirectory();
-      int tempSize = await _getDirectorySize(tempDir);
-      int cacheSize = await _getDirectorySize(cacheDir);
-      int totalSize = tempSize + cacheSize;
+      String totalSize = await NativeCacheUtils.getNativeCache();
       return totalSize;
     } catch (e) {
-      return 0;
+      return '0.0M';
     }
   }
 
   static Future<void> clearCache() async {
     try {
-      final tempDir = await getTemporaryDirectory();
-      final cacheDir = await getApplicationCacheDirectory();
-      if (await tempDir.exists()) {
-        await _clearDirectory(tempDir);
-      }
-      if (await cacheDir.exists()) {
-        await _clearDirectory(cacheDir);
-      }
+      await NativeCacheUtils.clearNativeCache();
     } catch (e) {
       rethrow;
     }

@@ -3,6 +3,7 @@ import 'package:business_video/views/video_sheet.dart';
 import 'package:lib_account/viewmodels/login_vm.dart' as login_vm;
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:lib_common/lib_common.dart';
 import 'package:lib_news_api/lib_news_api.dart';
 import 'package:module_share/utils/event_dispatcher.dart';
 import 'comment_detail_list.dart';
@@ -49,6 +50,7 @@ class CommentList extends StatefulWidget {
 }
 
 class _CommentListState extends State<CommentList> {
+  final settingInfo = SettingModel.getInstance();
   List<CommentResponse> get _mainComments {
     final allMainComments = widget.commentResponse
         .where((comment) =>
@@ -97,7 +99,7 @@ class _CommentListState extends State<CommentList> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: Colors.white,
+      color: ThemeColors.getBackgroundColor(settingInfo.darkSwitch),
       padding: const EdgeInsets.symmetric(
           horizontal: Constants.SPACE_16, vertical: Constants.SPACE_12),
       child: Column(
@@ -161,7 +163,8 @@ class _CommentListState extends State<CommentList> {
                         style: TextStyle(
                           fontSize:
                               Constants.FONT_14 * (widget.fontSizeRatio ?? 1.0),
-                          color: Colors.black,
+                          color: ThemeColors.getFontPrimary(
+                              settingInfo.darkSwitch),
                         ),
                       ),
                       ElevatedButton(
@@ -223,13 +226,20 @@ class _CommentListState extends State<CommentList> {
                     ),
                   ),
                   const SizedBox(width: Constants.SPACE_8),
-                  Text(
-                    authorName,
-                    style: TextStyle(
-                      fontSize:
-                          Constants.FONT_14 * (widget.fontSizeRatio ?? 1.0),
-                      color: Theme.of(context).textTheme.bodyMedium?.color,
-                      fontWeight: FontWeight.w500,
+                  SizedBox(
+                    width: 160,
+                    child: Text(
+                      authorName,
+                      style: TextStyle(
+                        fontSize:
+                            Constants.FONT_14 * (widget.fontSizeRatio ?? 1.0),
+                        color:
+                            ThemeColors.getFontPrimary(settingInfo.darkSwitch),
+                        fontWeight: FontWeight.w500,
+                      ),
+                      softWrap: false,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                     ),
                   ),
                 ],
@@ -288,6 +298,13 @@ class _CommentListState extends State<CommentList> {
                                 : Constants.giveLikeImage,
                             width: Constants.SPACE_16,
                             height: Constants.SPACE_16,
+                            colorFilter: comment.isLiked
+                                ? null
+                                : ColorFilter.mode(
+                              ThemeColors.getFontPrimary(
+                                  settingInfo.darkSwitch),
+                              BlendMode.srcIn,
+                            ),
                             fit: BoxFit.contain,
                           ),
                         ),
@@ -357,7 +374,7 @@ class _CommentListState extends State<CommentList> {
       shape: const RoundedRectangleBorder(
           borderRadius:
               BorderRadius.vertical(top: Radius.circular(Constants.SPACE_16))),
-      backgroundColor: Colors.white,
+      backgroundColor: ThemeColors.getBackgroundColor(settingInfo.darkSwitch),
       isDismissible: false,
       builder: (context) {
         return Container(
@@ -454,7 +471,7 @@ class _CommentListState extends State<CommentList> {
               title,
               style: TextStyle(
                 fontSize: Constants.FONT_16 * (widget.fontSizeRatio ?? 1.0),
-                color: textColor,
+                color: ThemeColors.getFontPrimary(settingInfo.darkSwitch),
                 fontWeight: FontWeight.w500,
               ),
             ),
@@ -491,12 +508,8 @@ class _CommentListState extends State<CommentList> {
           padding: const EdgeInsets.all(Constants.SPACE_12),
           margin: const EdgeInsets.symmetric(vertical: Constants.SPACE_6),
           decoration: BoxDecoration(
-            color: Colors.grey[100],
+            color: ThemeColors.getBackgroundSecondary(settingInfo.darkSwitch),
             borderRadius: BorderRadius.circular(Constants.SPACE_8),
-            boxShadow: const [
-              BoxShadow(
-                  color: Colors.black12, blurRadius: 2, offset: Offset(0, 1))
-            ],
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -518,13 +531,19 @@ class _CommentListState extends State<CommentList> {
                                 Row(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Text(
-                                      "${reply.author?.authorNickName ?? "未知作者"}:",
-                                      style: TextStyle(
-                                        fontSize: Constants.FONT_14 *
-                                            (widget.fontSizeRatio ?? 1.0),
-                                        fontWeight: FontWeight.w600,
-                                        color: Colors.blue,
+                                    SizedBox(
+                                      width: 160,
+                                      child: Text(
+                                        "${reply.author?.authorNickName ?? "未知作者"}:",
+                                        style: TextStyle(
+                                          fontSize: Constants.FONT_14 *
+                                              (widget.fontSizeRatio ?? 1.0),
+                                          fontWeight: FontWeight.w600,
+                                          color: Colors.blue,
+                                        ),
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                        softWrap: false,
                                       ),
                                     ),
                                     const SizedBox(width: Constants.SPACE_4),
@@ -534,7 +553,8 @@ class _CommentListState extends State<CommentList> {
                                         style: TextStyle(
                                           fontSize: Constants.FONT_14 *
                                               (widget.fontSizeRatio ?? 1.0),
-                                          color: Colors.black87,
+                                          color: ThemeColors.getFontPrimary(
+                                              settingInfo.darkSwitch),
                                         ),
                                         softWrap: true,
                                       ),

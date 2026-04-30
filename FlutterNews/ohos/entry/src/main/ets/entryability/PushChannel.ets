@@ -58,7 +58,7 @@ interface PushMessageParams {
 }
 
 export class PushChannel implements FlutterPlugin {
-  private channel?: MethodChannel;
+  private pushChannel?: MethodChannel;
   private context: common.UIAbilityContext;
 
   constructor(context: common.UIAbilityContext) {
@@ -70,26 +70,24 @@ export class PushChannel implements FlutterPlugin {
   }
 
   onAttachedToEngine(binding: FlutterPluginBinding): void {
-    this.channel = new MethodChannel(binding.getBinaryMessenger(), 'com.news.flutter/push');
-    this.channel.setMethodCallHandler({
+    this.pushChannel = new MethodChannel(binding.getBinaryMessenger(), 'com.news.flutter/push');
+    this.pushChannel.setMethodCallHandler({
       onMethodCall: (call: MethodCall, result: MethodResult): void => {
-        this.handleMethodCall(call, result);
+        this.handlePushMethodCall(call, result);
       }
     });
   }
 
   onDetachedFromEngine(binding: FlutterPluginBinding): void {
-    if (this.channel) {
-      this.channel.setMethodCallHandler(null);
+    if (this.pushChannel) {
+      this.pushChannel.setMethodCallHandler(null);
     }
   }
 
   /**
    * 处理Flutter调用
    */
-  private handleMethodCall(call: MethodCall, result: MethodResult): void {
-    console.info(TAG, `收到Flutter调用: ${call.method}`);
-
+  private handlePushMethodCall(call: MethodCall, result: MethodResult): void {
     switch (call.method) {
       case 'getToken':
         this.getToken(result);

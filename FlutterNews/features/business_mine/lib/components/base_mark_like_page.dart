@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:lib_common/constants/common_constants.dart';
+import 'package:lib_common/lib_common.dart';
 import 'package:lib_news_api/observedmodels/news_model.dart';
 import 'package:lib_widget/components/empty_builder.dart';
 import 'package:module_setfontsize/utils/font_scale_utils.dart';
+import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
+import 'package:get/get.dart';
 import '../viewmodels/like_vm.dart';
 import '../viewmodels/mark_vm.dart';
 import 'uniform_news_card.dart';
@@ -10,6 +12,7 @@ import 'package:provider/provider.dart';
 import 'package:lib_common/utils/pop_view_utils.dart';
 import '../utils/content_navigation_utils.dart';
 import '../constants/constants.dart';
+
 
 class BaseMarkLikePage extends StatefulWidget {
   final ChangeNotifier vm;
@@ -51,30 +54,44 @@ class _BaseMarkLikePageState extends State<BaseMarkLikePage> {
 
   @override
   Widget build(BuildContext context) {
+    final settingInfo = SettingModel.getInstance();
+
     return ChangeNotifierProvider.value(
       value: widget.vm,
       child: Consumer<ChangeNotifier>(
         builder: (context, vm, child) {
           final list = _getList();
 
-          return list.isNotEmpty
-              ? ListView.builder(
-                  itemCount: list.length,
-                  itemBuilder: (context, index) {
-                    final item = list[index];
-                    return contentItemBuilder(item);
-                  },
-                  padding: const EdgeInsets.only(
-                    left: CommonConstants.PADDING_PAGE,
-                    right: CommonConstants.PADDING_PAGE,
-                    top: CommonConstants.SPACE_M,
+          return Obx(() {
+            final breakpointCtrl = Get.find<BreakpointController>();
+            final currentLanes = breakpointCtrl.lanes.value;
+
+          return Container(
+            color: ThemeColors.getBackgroundColor(settingInfo.darkSwitch),
+            child: list.isNotEmpty
+                  ? MasonryGridView.count(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      crossAxisCount: currentLanes,
+                      crossAxisSpacing: 8.0,
+                      mainAxisSpacing: 8.0,
+                      itemCount: list.length,
+                      padding: const EdgeInsets.only(
+                        left: CommonConstants.PADDING_PAGE,
+                        right: CommonConstants.PADDING_PAGE,
+                        top: CommonConstants.SPACE_M,
+                      ),
+                      itemBuilder: (context, index) {
+                        final item = list[index];
+                        return contentItemBuilder(item);
+                      },
+                    )
+                  : Container(
+                      padding: const EdgeInsets.only(bottom: 100),
+                      child: widget.emptyStateBuilder(context),
                   ),
-                  physics: const BouncingScrollPhysics(),
-                )
-              : Container(
-                  padding: const EdgeInsets.only(bottom: 100),
-                  child: widget.emptyStateBuilder(context),
-                );
+          );
+          });
         },
       ),
     );

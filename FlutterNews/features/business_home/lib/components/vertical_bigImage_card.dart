@@ -1,7 +1,6 @@
 import 'package:business_video/models/video_model.dart';
 import 'package:flutter/material.dart';
-import 'package:lib_common/constants/router_map.dart';
-import 'package:lib_common/utils/router_utils.dart';
+import 'package:lib_common/lib_common.dart';
 import 'package:lib_news_api/params/response/news_response.dart';
 import 'package:lib_news_api/utils/format_count.dart';
 import 'package:lib_news_api/constants/constants.dart';
@@ -19,6 +18,7 @@ class VerticalBigImageCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final surfaceUrl = _getSurface(cardData);
+    final settingInfo = SettingModel.getInstance();
     return GestureDetector(
       onTap: () {
         VideoNewsData videoData = VideoNewsData.fromCommentResponse(cardData);
@@ -67,7 +67,8 @@ class VerticalBigImageCard extends StatelessWidget {
                             fontSize:
                                 Constants.verticalBigImageCardSubtitleFontSize *
                                     fontSizeRatio,
-                            color: Constants.whiteColor,
+                            color: ThemeColors.getFontPrimary(
+                                settingInfo.darkSwitch),
                           ),
                         ),
                       ],
@@ -80,7 +81,8 @@ class VerticalBigImageCard extends StatelessWidget {
                       style: TextStyle(
                         fontSize: Constants.verticalBigImageCardTitleFontSize *
                             fontSizeRatio,
-                        color: Constants.whiteColor,
+                        color: ThemeColors.getFontPrimary(
+                                settingInfo.darkSwitch),
                       ),
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,

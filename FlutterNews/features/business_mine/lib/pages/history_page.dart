@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:lib_common/constants/common_constants.dart';
+import 'package:lib_common/lib_common.dart';
 import 'package:lib_news_api/observedmodels/news_model.dart';
 import 'package:lib_widget/components/nav_header_bar.dart';
+import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
+import 'package:get/get.dart';
 import '../components/uniform_news_card.dart';
 import '../viewmodels/history_vm.dart';
 import 'package:lib_common/models/window_model.dart' as common;
@@ -9,6 +11,7 @@ import 'package:provider/provider.dart';
 import '../utils/content_navigation_utils.dart';
 import 'package:module_setfontsize/utils/font_scale_utils.dart';
 import '../constants/constants.dart' as MineConstants;
+
 
 class HistoryPage extends StatefulWidget {
   const HistoryPage({super.key});
@@ -20,6 +23,7 @@ class HistoryPage extends StatefulWidget {
 class _HistoryPageState extends State<HistoryPage> {
   late HistoryViewModel _vm;
   late common.WindowModel _windowModel;
+  final settingInfo = SettingModel.getInstance();
 
   @override
   void initState() {
@@ -38,7 +42,7 @@ class _HistoryPageState extends State<HistoryPage> {
     return ChangeNotifierProvider.value(
       value: _vm,
       child: Scaffold(
-        backgroundColor: Colors.white,
+        backgroundColor: ThemeColors.getBackgroundColor(settingInfo.darkSwitch),
         body: Column(
           children: [
             NavHeaderBar(
@@ -46,13 +50,15 @@ class _HistoryPageState extends State<HistoryPage> {
               showBackBtn: true,
               rightPartBuilder: (BuildContext context) => _rightPartBuilder(),
               windowModel: _windowModel,
+              titleColor: ThemeColors.getFontPrimary(settingInfo.darkSwitch),
               onBack: () {
                 Navigator.pop(context);
               },
-              backButtonBackgroundColor:
-                  MineConstants.Constants.messageItemIconBgColor,
+              backButtonBackgroundColor: ThemeColors.getCompBackgroundSecondary(
+                  settingInfo.darkSwitch),
               backButtonPressedBackgroundColor:
-                  MineConstants.Constants.dividerColor,
+                  ThemeColors.getCompBackgroundSecondary(
+                      settingInfo.darkSwitch),
               customTitleSize: MineConstants.Constants.textHeaderSize *
                   FontScaleUtils.fontSizeRatio,
             ),
@@ -69,25 +75,34 @@ class _HistoryPageState extends State<HistoryPage> {
   Widget _buildHistoryList() {
     return Consumer<HistoryViewModel>(
       builder: (context, vm, child) {
+        return Obx(() {
+          final breakpointCtrl = Get.find<BreakpointController>();
+          final currentLanes = breakpointCtrl.lanes.value;
+
         return Column(
           children: [
             Expanded(
-              child: ListView.builder(
+                child: MasonryGridView.count(
+                  shrinkWrap: true,
+                  physics: const BouncingScrollPhysics(),
+                  crossAxisCount: currentLanes,
+                  crossAxisSpacing: 8.0,
+                  mainAxisSpacing: 8.0,
+                  itemCount: vm.list.length,
                 padding: const EdgeInsets.symmetric(
                   horizontal: CommonConstants.PADDING_PAGE,
                   vertical: CommonConstants.SPACE_M,
-                ),
-                itemCount: vm.list.length,
+                  ),
                 itemBuilder: (context, index) {
                   final item = vm.list[index];
                   return _contentItemBuilder(item);
-                },
-                physics: const BouncingScrollPhysics(),
+                  },
               ),
             ),
             if (vm.isEditMode) _toolBarBuilder(),
           ],
         );
+        });
       },
     );
   }
@@ -103,11 +118,11 @@ class _HistoryPageState extends State<HistoryPage> {
             height: MineConstants.Constants.commentEmptyIconSize,
           ),
           const SizedBox(height: 16),
-          const Text(
+          Text(
             '暂无历史记录',
             style: TextStyle(
               fontSize: MineConstants.Constants.textSecondarySize,
-              color: MineConstants.Constants.textMediumGrayColor,
+              color: ThemeColors.getFontPrimary(settingInfo.darkSwitch),
             ),
           ),
         ],
@@ -220,14 +235,16 @@ class _HistoryPageState extends State<HistoryPage> {
                         MineConstants.Constants.icPublicEraser,
                         width: MineConstants.Constants.commentToolIconSize,
                         height: MineConstants.Constants.commentToolIconSize,
-                        color: Theme.of(context).textTheme.bodyLarge?.color,
+                        color:
+                            ThemeColors.getFontPrimary(settingInfo.darkSwitch),
                       ),
                       Text(
                         '一键清空',
                         style: TextStyle(
                           fontSize: MineConstants.Constants.textMinSize *
                               FontScaleUtils.fontSizeRatio,
-                          color: Theme.of(context).textTheme.bodyLarge?.color,
+                          color: ThemeColors.getFontPrimary(
+                              settingInfo.darkSwitch),
                         ),
                       ),
                     ],
@@ -246,8 +263,9 @@ class _HistoryPageState extends State<HistoryPage> {
                         width: MineConstants.Constants.commentToolIconSize,
                         height: MineConstants.Constants.commentToolIconSize,
                         color: vm.allowDelete
-                            ? Theme.of(context).textTheme.bodyLarge?.color
-                            : Theme.of(context).textTheme.bodySmall?.color,
+                            ? ThemeColors.getFontPrimary(settingInfo.darkSwitch)
+                            : ThemeColors.getFontSecondary(
+                                settingInfo.darkSwitch),
                       ),
                       Text(
                         '删除',
@@ -255,8 +273,10 @@ class _HistoryPageState extends State<HistoryPage> {
                           fontSize: MineConstants.Constants.textMinSize *
                               FontScaleUtils.fontSizeRatio,
                           color: vm.allowDelete
-                              ? Theme.of(context).textTheme.bodyLarge?.color
-                              : Theme.of(context).textTheme.bodySmall?.color,
+                              ? ThemeColors.getFontPrimary(
+                                  settingInfo.darkSwitch)
+                              : ThemeColors.getFontSecondary(
+                                  settingInfo.darkSwitch),
                         ),
                       ),
                     ],

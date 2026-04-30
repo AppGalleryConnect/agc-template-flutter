@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:lib_common/lib_common.dart';
 import 'package:module_newsfeed/constants/constants.dart';
 
 class DeleteCommentDialog extends StatelessWidget {
-  final VoidCallback onDelete; 
-  final VoidCallback onCancel; 
-  final String? title; 
+  final VoidCallback onDelete;
+  final VoidCallback onCancel;
+  final String? title;
 
   const DeleteCommentDialog({
     super.key,
@@ -15,8 +16,9 @@ class DeleteCommentDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final settingInfo = SettingModel.getInstance();
     return AlertDialog(
-      backgroundColor: Colors.white, 
+      backgroundColor: ThemeColors.getBackgroundColor(settingInfo.darkSwitch),
 
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(Constants.SPACE_20),
@@ -24,9 +26,10 @@ class DeleteCommentDialog extends StatelessWidget {
       content: Text(
         title ?? "确定要删除此评论？",
         textAlign: TextAlign.center,
-        style: const TextStyle(
+        style: TextStyle(
           fontSize: Constants.FONT_18,
           fontWeight: FontWeight.normal,
+          color: ThemeColors.getFontPrimary(settingInfo.darkSwitch),
         ),
       ),
       actions: [
@@ -36,19 +39,19 @@ class DeleteCommentDialog extends StatelessWidget {
             children: [
               TextButton(
                 onPressed: (){
-                  onCancel(); 
+                  onCancel();
                 },
-                child: const Text(
+                child: Text(
                   '取消',
                   style: TextStyle(
-                    color: Colors.black87,
+                    color: ThemeColors.getFontPrimary(settingInfo.darkSwitch),
                     fontSize: Constants.FONT_16,
                   ),
                 ),
               ),
               TextButton(
                 onPressed: () {
-                  onDelete(); 
+                  onDelete();
                 },
                 child: const Text(
                   '确定',

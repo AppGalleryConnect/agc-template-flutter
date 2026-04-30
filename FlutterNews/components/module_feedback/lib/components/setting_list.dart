@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:lib_common/models/setting_model.dart';
+import 'package:lib_common/utils/theme_colors.dart';
 import '../common/constants.dart';
 import 'package:module_setfontsize/utils/font_scale_utils.dart';
 
@@ -14,6 +16,7 @@ class SettingList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final settingInfo = SettingModel.getInstance();
     return Padding(
       padding: const EdgeInsets.symmetric(
         horizontal: Constants.SPACE_10,
@@ -34,7 +37,7 @@ class SettingList extends StatelessWidget {
             child: Container(
               padding: const EdgeInsets.all(Constants.SPACE_4),
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: ThemeColors.getBackgroundColor(settingInfo.darkSwitch),
                 borderRadius: BorderRadius.circular(Constants.SPACE_16),
               ),
               child: Row(
@@ -48,7 +51,8 @@ class SettingList extends StatelessWidget {
                         item.label,
                         style: TextStyle(
                           fontSize: Constants.FONT_16 * FontScaleUtils.fontSizeRatio,
-                          color: Colors.black,
+                          color: ThemeColors.getFontPrimary(
+                              settingInfo.darkSwitch),
                           fontWeight: FontWeight.w500,
                         ),
                       ),

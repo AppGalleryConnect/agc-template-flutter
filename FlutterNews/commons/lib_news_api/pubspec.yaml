@@ -30,6 +30,9 @@ dependencies:
   get:
     git:
       url: "https://gitcode.com/openharmony-sig/fluttertpc_get.git"
+  flutter_staggered_grid_view:
+    git:
+      url: https://github.com/letsar/flutter_staggered_grid_view.git
   lib_account:
     path: '../lib_account'
   shared_preferences:

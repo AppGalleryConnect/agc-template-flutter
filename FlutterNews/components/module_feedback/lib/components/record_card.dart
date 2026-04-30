@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lib_common/lib_common.dart';
 import '../common/common_utils.dart';
 import '../common/constants.dart';
 import '../services/response_model.dart';
@@ -12,10 +13,11 @@ class RecordCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final settingInfo = SettingModel.getInstance();
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: ThemeColors.getBackgroundColor(settingInfo.darkSwitch),
         borderRadius: BorderRadius.circular(Constants.SPACE_16),
       ),
       padding: const EdgeInsets.all(Constants.SPACE_16),
@@ -26,7 +28,7 @@ class RecordCard extends StatelessWidget {
             CommonUtils.handleDateTime(record.createTime),
             style: TextStyle(
               fontSize: Constants.FONT_12 * fontSizeRatio,
-              color: Colors.black,
+              color: ThemeColors.getFontPrimary(settingInfo.darkSwitch),
               fontWeight: FontWeight.w500,
             ),
           ),
@@ -35,7 +37,7 @@ class RecordCard extends StatelessWidget {
             '问题描述',
             style: TextStyle(
               fontSize: Constants.FONT_16 * fontSizeRatio,
-              color: Colors.black,
+              color: ThemeColors.getFontPrimary(settingInfo.darkSwitch),
               fontWeight: FontWeight.w500,
             ),
           ),
@@ -48,20 +50,21 @@ class RecordCard extends StatelessWidget {
             ),
           ),
           const SizedBox(height: Constants.SPACE_12),
+          if (record.screenShots.isNotEmpty)
           Text(
             '问题截图',
             style: TextStyle(
               fontSize: Constants.FONT_16 * fontSizeRatio,
-              color: Colors.black,
+              color: ThemeColors.getFontPrimary(settingInfo.darkSwitch),
               fontWeight: FontWeight.w500,
-              height: Constants.SPACE_1, 
+              height: Constants.SPACE_1,
             ),
           ),
           const SizedBox(height: Constants.SPACE_8),
           if (record.screenShots.isNotEmpty)
             Wrap(
-              spacing: Constants.SPACE_8, 
-              runSpacing: Constants.SPACE_8, 
+              spacing: Constants.SPACE_8,
+              runSpacing: Constants.SPACE_8,
               children: record.screenShots.map((imagePath) {
                 final screenWidth =
                     MediaQuery.of(context).size.width - Constants.SPACE_16 * 4;
@@ -87,7 +90,7 @@ class RecordCard extends StatelessWidget {
                               (context, animation, secondaryAnimation, child) {
                             return child;
                           },
-                          opaque: false, 
+                          opaque: false,
                         ),
                       );
                     },
@@ -105,21 +108,6 @@ class RecordCard extends StatelessWidget {
                 );
               }).toList(),
             )
-          else
-            Container(
-              height: Constants.SPACE_100,
-              decoration: BoxDecoration(
-                color: Colors.grey.shade100,
-                borderRadius: BorderRadius.circular(Constants.SPACE_8),
-              ),
-              child: Center(
-                child: Icon(
-                  Icons.add_photo_alternate_outlined,
-                  size: Constants.SPACE_24 * fontSizeRatio,
-                  color: Colors.grey.shade400,
-                ),
-              ),
-            ),
         ],
       ),
     );
@@ -170,8 +158,9 @@ class _ImagePreviewScreenState extends State<_ImagePreviewScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final settingInfo = SettingModel.getInstance();
     return Scaffold(
-      backgroundColor: Colors.transparent, 
+      backgroundColor: Colors.transparent,
       body: GestureDetector(
         onTap: () {
           Navigator.pop(context);
@@ -179,8 +168,7 @@ class _ImagePreviewScreenState extends State<_ImagePreviewScreen> {
         child: Stack(
           children: [
             Container(
-              color: Colors.black,
-            ),
+                color: ThemeColors.getBackgroundColor(settingInfo.darkSwitch)),
             // 图片查看区域
             PageView.builder(
               controller: _pageController,

@@ -68,6 +68,12 @@ class EmptyState extends StatelessWidget {
       fontSizeRatio: fontSizeRatio,
       space: space,
     );
-    return EmptyBuilder(params: params);
+    final settingInfo = SettingModel.getInstance();
+    return Container(
+      color: ThemeColors.getBackgroundColor(settingInfo.darkSwitch),
+      width: double.infinity,
+      height: double.infinity,
+      child: EmptyBuilder(params: params),
+    );
   }
 }

@@ -3,8 +3,12 @@ import 'package:easy_refresh/easy_refresh.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:lib_account/services/account_api.dart';
+import 'package:get/get.dart';
+import 'package:lib_news_api/services/comment_service.dart';
 import 'package:lib_news_api/services/base_news_service.dart';
 import 'package:lib_news_api/services/mine_service.dart';
+import 'package:newsflutterstemplate/notifier/fullScreenProvider.dart';
+import 'package:module_newsfeed/components/native_navigation_utils.dart';
 import 'package:module_swipeplayer/module_swipeplayer.dart';
 import 'package:business_video/services/video_services.dart';
 import 'package:business_video/models/video_model.dart';
@@ -45,7 +49,7 @@ class _VideoSliderPageState extends State<VideoSliderPage>
     implements MarkLikeObserver {
   final PageController _pageController = PageController();
   final EasyRefreshController _controller = EasyRefreshController();
-
+  final settingInfo = SettingModel.getInstance();
   int _currentPageIndex = 0;
   List<VideoNewsData> _videoList = [];
   bool _canPlayVideo = true;
@@ -77,11 +81,26 @@ class _VideoSliderPageState extends State<VideoSliderPage>
     }
   }
 
+  void enableGestureShare(VideoModel videoModel) {
+    final Map<String, dynamic> params = {
+      "title": videoModel.title,
+      "author": videoModel.author,
+      "time": videoModel.createTime,
+      "newsId": videoModel.id,
+      "newsType": 1,
+      "newsImageUri":
+          videoModel.coverUrl.isNotEmpty == true ? videoModel.coverUrl : '',
+    };
+    // 开启隔空抓取监听
+    NativeNavigationUtils.listenToGestureShare(params: params);
+  }
+
   @override
   void dispose() {
     super.dispose();
     userInfoModel.removeListener(_listener);
     MineServiceApi.removeObserver(this);
+    NativeNavigationUtils.listenToOffGestureShare();
     _controller.dispose();
     _pageController.dispose();
   }
@@ -95,10 +114,10 @@ class _VideoSliderPageState extends State<VideoSliderPage>
         for (int i = 0; i < _videoList.length; i++) {
           final news = BaseNewsServiceApi.queryRawNews(_videoList[i].id);
           if (news != null) {
-            _videoList[i].isLiked = news.isLiked ?? false;
-            _videoList[i].likeCount = news.likeCount ?? 0;
-            _videoList[i].isMarked = news.isMarked ?? false;
-            _videoList[i].markCount = news.markCount ?? 0;
+            _videoList[i].isLiked = news.isLiked;
+            _videoList[i].likeCount = news.likeCount;
+            _videoList[i].isMarked = news.isMarked;
+            _videoList[i].markCount = news.markCount;
           }
         }
       });
@@ -119,33 +138,61 @@ class _VideoSliderPageState extends State<VideoSliderPage>
 
   @override
   Widget build(BuildContext context) {
+    final breakpointCtrl = Get.find<BreakpointController>();
+    final isBigScreen = [
+      BreakpointName.md,
+      BreakpointName.lg,
+      BreakpointName.xl
+    ].contains(breakpointCtrl.currentBreakpoint.value);
+
     return Scaffold(
-      body: SingleChildScrollView(
-        physics: const NeverScrollableScrollPhysics(),
-        child: Container(
-          color: Colors.black,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Container(
-                height: widget.isCommend
-                    ? MediaQuery.of(context).size.height * 0.3
-                    : MediaQuery.of(context).size.height,
-                color: Colors.black,
-                child: widget.type == PageType.RECOMMEND &&
-                        widget.videoInfo != null
-                    ? _buildvideoListWidget()
-                    : _buildReloadWidget(),
-              ),
-              if (widget.isCommend)
-                const SizedBox(
-                  height: Constants.SPACE_30,
+      body: isBigScreen
+          ? Row(
+              children: [
+                Expanded(
+                  flex: 1,
+                  child: Container(
+                    color: Colors.black,
+                    height: double.infinity,
+                    child: widget.type == PageType.RECOMMEND &&
+                            widget.videoInfo != null
+                        ? _buildvideoListWidget()
+                        : _buildReloadWidget(),
+                  ),
                 ),
-              if (widget.isCommend) _showCommondSheet(),
-            ],
-          ),
-        ),
-      ),
+                if (widget.isCommend)
+                  Expanded(
+                    flex: 1,
+                    child: _showCommondSheet(),
+                  ),
+              ],
+            )
+          : SingleChildScrollView(
+              physics: const NeverScrollableScrollPhysics(),
+              child: Container(
+                color: Colors.black,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Container(
+                      height: widget.isCommend
+                          ? MediaQuery.of(context).size.height * 0.3
+                          : MediaQuery.of(context).size.height,
+                      color: Colors.black,
+                      child: widget.type == PageType.RECOMMEND &&
+                              widget.videoInfo != null
+                          ? _buildvideoListWidget()
+                          : _buildReloadWidget(),
+                    ),
+                    if (widget.isCommend)
+                      const SizedBox(
+                        height: Constants.SPACE_30,
+                      ),
+                    if (widget.isCommend) _showCommondSheet(),
+                  ],
+                ),
+              ),
+            ),
     );
   }
 
@@ -177,13 +224,12 @@ class _VideoSliderPageState extends State<VideoSliderPage>
   }
 
   Widget _buildvideoListWidget() {
-    Orientation orientation = MediaQuery.of(context).orientation;
-    bool isLandscape = orientation == Orientation.portrait;
+    final fullScreen = FullScreenProvider();
     return PageView.builder(
         scrollDirection: Axis.vertical,
         itemCount: _videoList.length,
         allowImplicitScrolling: true,
-        physics: isLandscape && !widget.isCommend
+        physics: !fullScreen.isFullScreen && !widget.isCommend
             ? const ScrollPhysics()
             : const NeverScrollableScrollPhysics(),
         controller: _pageController,
@@ -191,6 +237,8 @@ class _VideoSliderPageState extends State<VideoSliderPage>
         itemBuilder: (context, index) => VideoPage(
               isCommend: widget.isCommend,
               videoModel: _getVideoModel(index),
+              onPlay: (VideoModel videoModel) =>
+                  {enableGestureShare(videoModel)},
               canPlayVideo: index == _currentPageIndex &&
                   widget.isVideo &&
                   ModalRoute.of(context)!.isCurrent &&
@@ -365,114 +413,132 @@ class _VideoSliderPageState extends State<VideoSliderPage>
   }
 
   Widget _showCommondSheet() {
+    final breakpointCtrl = Get.find<BreakpointController>();
+    final isBigScreen = [
+      BreakpointName.md,
+      BreakpointName.lg,
+      BreakpointName.xl
+    ].contains(breakpointCtrl.currentBreakpoint.value);
+
+    if (isBigScreen) {
+      return Container(
+        width: double.infinity,
+        height: double.infinity,
+        color: ThemeColors.getBackgroundColor(settingInfo.darkSwitch),
+        child: _buildCommentContent(isBigScreen),
+      );
+    }
+
     return ClipRRect(
       borderRadius: const BorderRadius.vertical(
         top: Radius.circular(Constants.SPACE_20),
       ),
       child: Container(
         height: MediaQuery.of(context).size.height * 0.7 - Constants.SPACE_30,
-        color: widget.settingInfo.darkSwitch ? Colors.black : Colors.white,
-        child: Column(
-          children: [
-            Container(
-              height: Constants.SPACE_50,
-              padding: const EdgeInsets.only(
-                  left: Constants.SPACE_10,
-                  right: Constants.SPACE_10,
-                  top: Constants.SPACE_10),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    '${_videoList[_currentPageIndex].commentCount}条评论',
-                    style: TextStyle(
-                        fontSize: Constants.FONT_20,
-                        fontWeight: FontWeight.bold,
-                        color: widget.settingInfo.darkSwitch
-                            ? Colors.white
-                            : Colors.black),
-                  ),
-                  _backButton(context)
-                ],
-              ),
-            ),
-            Expanded(
-              child: SingleChildScrollView(
-                child: CommentList(
-                  commentResponse: _videoList[_currentPageIndex].comments,
-                  onPullUpKeyboard: () =>
-                      {showCommond(_currentPageIndex, '', '')},
-                  showInteractiveButtons: true,
-                  onReplyToComment: (
-                      {required CommentResponse targetComment,
-                      CommentResponse? targetReply}) {
-                    showCommond(
-                        _currentPageIndex,
-                        targetReply!.author!.authorNickName,
-                        targetComment.commentId);
-                  },
-                ),
-              ),
-            ),
-            GestureDetector(
-              onTap: () => {showCommond(_currentPageIndex, '', '')},
-              child: Container(
-                height: Constants.SPACE_40,
-                width: MediaQuery.of(context).size.width - Constants.SPACE_40,
-                padding: const EdgeInsets.all(Constants.SPACE_10),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(Constants.SPACE_24),
-                  border: Border.all(
-                      color: Colors.black12, width: Constants.SPACE_1),
-                  color: widget.settingInfo.darkSwitch
-                      ? Colors.grey[800]
-                      : Colors.grey[200],
-                ),
-                child: Text(
-                  '发表评论',
-                  style: TextStyle(
-                      color: widget.settingInfo.darkSwitch
-                          ? Colors.white
-                          : Colors.black,
-                      fontSize: Constants.FONT_16),
-                ),
-              ),
-            ),
-            SizedBox(
-              height: MediaQuery.of(context).padding.bottom,
-            ),
-          ],
-        ),
+        color: ThemeColors.getBackgroundColor(settingInfo.darkSwitch),
+        child: _buildCommentContent(isBigScreen),
       ),
     );
   }
 
-  void showCommond(int index, String title, String commendId) {
-    commentSheetOpen(
-      context,
-      title,
-      (content) {
-        PublishCommentRequest params = PublishCommentRequest(
-            newsId: _videoList[index].id,
-            content: content,
-            parentCommentId: commendId);
-        MineServiceApi.publishComment(params).then((value) {
-          setState(() {
-            if (title.isEmpty) {
-              _videoList[index].commentCount++;
-              _videoList[index].comments.add(value);
-            } else {
-              for (int i = 0; i < _videoList[index].comments.length; i++) {
-                if (_videoList[index].comments[i].commentId == commendId) {
-                  _videoList[index].comments[i].replyComments.add(value);
+  Widget _buildCommentContent(bool isBigScreen) {
+    return Column(
+      children: [
+        Container(
+          height: Constants.SPACE_50,
+          margin: EdgeInsets.only(top: isBigScreen ? Constants.SPACE_24 : 0),
+          padding: const EdgeInsets.only(
+              left: Constants.SPACE_10,
+              right: Constants.SPACE_10,
+              top: Constants.SPACE_10),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                '${_videoList[_currentPageIndex].commentCount}条评论',
+                style: TextStyle(
+                    fontSize: Constants.FONT_20,
+                    fontWeight: FontWeight.bold,
+                    color: ThemeColors.getFontPrimary(settingInfo.darkSwitch)),
+              ),
+              _backButton(context)
+            ],
+          ),
+        ),
+        Expanded(
+          child: SingleChildScrollView(
+            child: CommentList(
+              commentResponse: _videoList[_currentPageIndex].comments,
+              onCommentLike: (String commentId, bool isLiked) {
+                if (isLiked) {
+                  CommentServiceApi.addCommentLike(commentId);
+                } else {
+                  CommentServiceApi.cancelCommentLike(commentId);
                 }
+              },
+              onPullUpKeyboard: () => {showCommond(_currentPageIndex, '', '')},
+              showInteractiveButtons: true,
+              onReplyToComment: (
+                  {required CommentResponse targetComment,
+                  CommentResponse? targetReply}) {
+                showCommond(
+                    _currentPageIndex,
+                    targetReply!.author!.authorNickName,
+                    targetComment.commentId);
+              },
+            ),
+          ),
+        ),
+        GestureDetector(
+          onTap: () => {showCommond(_currentPageIndex, '', '')},
+          child: Container(
+            height: Constants.SPACE_40,
+            width: MediaQuery.of(context).size.width - Constants.SPACE_40,
+            padding: const EdgeInsets.all(Constants.SPACE_10),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(Constants.SPACE_24),
+              border: Border.all(
+                  color: ThemeColors.getBackgroundColor(settingInfo.darkSwitch),
+                  width: Constants.SPACE_1),
+              color: ThemeColors.getBackgroundSecondary(settingInfo.darkSwitch),
+            ),
+            child: Text(
+              '发表评论',
+              style: TextStyle(
+                  color: ThemeColors.getFontPrimary(settingInfo.darkSwitch),
+                  fontSize: Constants.FONT_16),
+            ),
+          ),
+        ),
+        SizedBox(
+          height: MediaQuery.of(context).padding.bottom,
+        ),
+      ],
+    );
+  }
+
+  void showCommond(int index, String title, String commendId) {
+    commentSheetOpen(context, title, (content) {
+      PublishCommentRequest params = PublishCommentRequest(
+          newsId: _videoList[index].id,
+          content: content,
+          parentCommentId: commendId);
+      MineServiceApi.publishComment(params).then((value) {
+        setState(() {
+          if (title.isEmpty) {
+            _videoList[index].commentCount++;
+            _videoList[index].comments.add(value);
+          } else {
+            for (int i = 0; i < _videoList[index].comments.length; i++) {
+              if (_videoList[index].comments[i].commentId == commendId) {
+                _videoList[index].comments[i].replyComments.add(value);
               }
             }
-          });
+          }
         });
-      },
-      false,
-    );
+      });
+    }, false, null, ThemeColors.getFontPrimary(settingInfo.darkSwitch),
+        ThemeColors.getBackgroundColor(settingInfo.darkSwitch));
   }
 
   Widget _backButton(BuildContext context) {
@@ -484,7 +550,9 @@ class _VideoSliderPageState extends State<VideoSliderPage>
             ? Colors.grey[800]
             : Constants.backButtonColor,
         borderRadius: BorderRadius.circular(Constants.SPACE_25),
-        border: Border.all(color: Colors.black12, width: 1),
+        border: Border.all(
+            color: ThemeColors.getFontPrimary(settingInfo.darkSwitch),
+            width: 1),
       ),
       child: IconButton(
         padding: const EdgeInsets.all(Constants.SPACE_9),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lib_common/lib_common.dart';
 import 'package:lib_news_api/lib_news_api.dart';
 import 'comment_action_buttons.dart';
 import 'package:module_newsfeed/constants/constants.dart';
@@ -26,12 +27,13 @@ class CommentInputBar extends StatefulWidget {
 }
 
 class _CommentInputBarState extends State<CommentInputBar> {
+  final settingInfo = SettingModel.getInstance();
   @override
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
-      decoration: const BoxDecoration(
-        color: Colors.white,
+      decoration: BoxDecoration(
+        color: ThemeColors.getBackgroundColor(settingInfo.darkSwitch),
       ),
       padding: const EdgeInsets.symmetric(
         vertical: Constants.SPACE_8,
@@ -54,12 +56,14 @@ class _CommentInputBarState extends State<CommentInputBar> {
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(Constants.SPACE_24),
                     border: Border.all(
-                        color: Colors.black12, width: Constants.SPACE_1),
-                    color: Colors.grey[200],
+                        color: ThemeColors.getFontSecondary(settingInfo.darkSwitch), width: Constants.SPACE_1),
+                    color: ThemeColors.getBackgroundSecondary(settingInfo.darkSwitch),
                   ),
-                  child: const Text(
+                  child: Text(
                     '发表评论',
-                    style: TextStyle(color: Colors.black),
+                    style: TextStyle(
+                        color:
+                            ThemeColors.getFontPrimary(settingInfo.darkSwitch)),
                   ),
                 ),
               ),

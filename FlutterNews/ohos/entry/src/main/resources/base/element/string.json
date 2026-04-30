@@ -17,12 +17,40 @@
       "value": "位置"
     },
     {
+      "name": "go_to_follow",
+      "value": "关注"
+    },
+    {
+      "name": "go_to_live",
+      "value": "直播"
+    },
+    {
+      "name": "go_to_action",
+      "value": "互动"
+    },
+    {
       "name": "agcit_huawei_flutter_news_fp",
       "value": "1.0.1"
     },
     {
       "name": "agcittype_huawei_flutter_news_fp",
       "value": "industryTemplate"
+    },
+    {
+      "name": "EntryFormAbility_desc",
+      "value": "form_description"
+    },
+    {
+      "name": "EntryFormAbility_label",
+      "value": "form_label"
+    },
+    {
+      "name": "widget_desc",
+      "value": "This is a service widget."
+    },
+    {
+      "name": "widget_display_name",
+      "value": "widget"
     }
   ]
 }

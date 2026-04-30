@@ -1,6 +1,6 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
-import 'package:lib_common/constants/common_constants.dart';
+import 'package:lib_common/lib_common.dart';
 import 'package:module_imagepreview/advanced_customImage_viewer.dart';
 import '../common/constants.dart';
 import '../viewmodels/personal_home_vm.dart';
@@ -13,9 +13,6 @@ import 'package:lib_news_api/params/base/base_model.dart'; // 导入 PostImgList
 import 'package:lib_widget/components/custom_image.dart';
 import 'package:lib_common/utils/pop_view_utils.dart';
 import 'package:lib_widget/components/nav_header_bar.dart';
-import 'package:lib_common/models/window_model.dart';
-import 'package:lib_common/utils/router_utils.dart';
-import 'package:lib_common/constants/router_map.dart';
 import 'package:lib_common/utils/time_utils.dart';
 import 'package:lib_account/lib_account.dart';
 import 'package:lib_account/viewmodels/login_vm.dart' as login_vm;
@@ -26,6 +23,8 @@ import 'package:lib_news_api/services/mine_service.dart';
 import 'package:business_video/models/video_model.dart';
 import 'package:module_newsfeed/components/news_detail_page.dart';
 import 'package:module_setfontsize/utils/font_scale_utils.dart';
+import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
+import 'package:get/get.dart';
 
 class PersonalHomePage extends StatefulWidget {
   final String userId;
@@ -44,7 +43,7 @@ class _PersonalHomePageState extends State<PersonalHomePage> {
   bool _isPopViewInitialized = false;
   final Map<String, bool> _expandedStates = {};
   final List<TabItem> _tabList = tabList;
-
+  final settingInfo = SettingModel.getInstance();
   @override
   void initState() {
     super.initState();
@@ -115,8 +114,9 @@ class _PersonalHomePageState extends State<PersonalHomePage> {
   @override
   Widget build(BuildContext context) {
     final windowModel = WindowModel();
+
     return Scaffold(
-      backgroundColor: Constants.PAGE_BACKGROUND_COLOR,
+      backgroundColor: ThemeColors.getBackgroundSecondary(settingInfo.darkSwitch),
       body: Column(
         children: [
           NavHeaderBar(
@@ -126,9 +126,12 @@ class _PersonalHomePageState extends State<PersonalHomePage> {
             showBackBtn: true,
             windowModel: windowModel,
             onBack: () => Navigator.pop(context),
-            backButtonBackgroundColor: Constants.BACK_BUTTON_BACKGROUND_COLOR,
+            titleColor: ThemeColors.getFontPrimary(settingInfo.darkSwitch),
+            bgColor: ThemeColors.getBackgroundColor(settingInfo.darkSwitch),
+            backButtonBackgroundColor:
+                ThemeColors.getCompBackgroundSecondary(settingInfo.darkSwitch),
             backButtonPressedBackgroundColor:
-                Constants.BACK_BUTTON_PRESSED_COLOR,
+                ThemeColors.getCompBackgroundSecondary(settingInfo.darkSwitch),
             leftPadding: Constants.LEFT_PADDING,
             // 私信
             rightPartBuilder: (context) {
@@ -138,15 +141,17 @@ class _PersonalHomePageState extends State<PersonalHomePage> {
                       child: Container(
                         width: Constants.MESSAGE_BUTTON_SIZE,
                         height: Constants.MESSAGE_BUTTON_SIZE,
-                        decoration: const BoxDecoration(
+                        decoration:  BoxDecoration(
                           shape: BoxShape.circle,
-                          color: Constants.BACK_BUTTON_BACKGROUND_COLOR,
+                          color: ThemeColors.getBackgroundTertiary(
+                              settingInfo.darkSwitch),
                         ),
                         alignment: Alignment.center,
                         child: Icon(
                           Icons.mail_outline,
                           size: Constants.MESSAGE_ICON_SIZE,
-                          color: Theme.of(context).textTheme.bodyLarge?.color,
+                          color: ThemeColors.getFontPrimary(
+                              settingInfo.darkSwitch),
                         ),
                       ),
                     )
@@ -180,13 +185,14 @@ class _PersonalHomePageState extends State<PersonalHomePage> {
                       const SizedBox(height: CommonConstants.SPACE_XXL),
                       // 下方：文章/视频/动态区域
                       Container(
-                        decoration: const BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.vertical(
+                        decoration: BoxDecoration(
+                          color: ThemeColors.getBackgroundColor(
+                              settingInfo.darkSwitch),
+                          borderRadius: const BorderRadius.vertical(
                             top: Radius.circular(
                                 Constants.CONTENT_BORDER_RADIUS),
                           ),
-                          boxShadow: [
+                          boxShadow: const [
                             BoxShadow(
                               color: Colors.black12,
                               blurRadius: Constants.CONTENT_SHADOW_BLUR_RADIUS,
@@ -225,13 +231,15 @@ class _PersonalHomePageState extends State<PersonalHomePage> {
                     child: Container(
                       width: double.infinity,
                       height: Constants.TAB_BAR_HEIGHT,
-                      decoration: const BoxDecoration(
-                        color: Colors.white,
+                      decoration: BoxDecoration(
+                        color: ThemeColors.getBackgroundColor(
+                            settingInfo.darkSwitch),
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.black12,
+                            color: ThemeColors.getBackgroundColor(
+                                settingInfo.darkSwitch),
                             blurRadius: Constants.TAB_BAR_SHADOW_BLUR_RADIUS,
-                            offset: Offset(0, 2),
+                            offset: const Offset(0, 2),
                           ),
                         ],
                       ),
@@ -302,7 +310,7 @@ class _PersonalHomePageState extends State<PersonalHomePage> {
                         : Constants.UNSELECTED_FONT_SIZE,
                     fontWeight:
                         isSelected ? FontWeight.bold : FontWeight.normal,
-                    color: Colors.black,
+                    color: ThemeColors.getFontPrimary(settingInfo.darkSwitch),
                   ),
                 ),
                 if (isSelected)
@@ -311,9 +319,9 @@ class _PersonalHomePageState extends State<PersonalHomePage> {
                         top: Constants.TAB_INDICATOR_MARGIN_TOP),
                     width: Constants.TAB_INDICATOR_WIDTH,
                     height: Constants.TAB_INDICATOR_HEIGHT,
-                    decoration: const BoxDecoration(
-                      color: Colors.black,
-                      borderRadius: BorderRadius.all(Radius.circular(
+                    decoration: BoxDecoration(
+                      color: ThemeColors.getFontPrimary(settingInfo.darkSwitch),
+                      borderRadius: const BorderRadius.all(Radius.circular(
                           Constants.TAB_INDICATOR_BORDER_RADIUS)),
                     ),
                   ),
@@ -326,120 +334,179 @@ class _PersonalHomePageState extends State<PersonalHomePage> {
   }
 
   Widget buildArticleContent() {
-    final currentDataSource =
-        vm.dataSource[vm.curIndex] as LayoutNewsDataSource;
-    if (currentDataSource.originDataArray.isEmpty) {
-      return Container(
-        padding: const EdgeInsets.symmetric(
-            vertical: Constants.EMPTY_CONTENT_PADDING),
-        alignment: Alignment.center,
-        child: const Text('暂无内容'),
-      );
-    }
+    return Obx(() {
+      final breakpointCtrl = Get.find<BreakpointController>();
+      final currentLanes = breakpointCtrl.lanes.value;
 
-    List<NewsResponse> allNews = [];
-    for (var requestListData in currentDataSource.originDataArray) {
-      allNews.addAll(requestListData.articles);
-    }
-    return Column(
-      children: allNews
-          .map((news) => Padding(
-                padding: const EdgeInsets.only(bottom: CommonConstants.SPACE_M),
-                child: UniformNews(
-                  newsInfo: news,
-                  fontSizeRatio: vm.settingInfo.fontSizeRatio,
-                ),
-              ))
-          .toList(),
-    );
+      final currentDataSource =
+          vm.dataSource[vm.curIndex] as LayoutNewsDataSource;
+      List<NewsResponse> allNews = [];
+      for (var requestListData in currentDataSource.originDataArray) {
+        allNews.addAll(requestListData.articles);
+      }
+
+      if (allNews.isEmpty) {
+        return Container(
+          padding: const EdgeInsets.symmetric(
+              vertical: Constants.EMPTY_CONTENT_PADDING),
+          alignment: Alignment.center,
+          child: const Text('暂无内容'),
+        );
+      }
+
+
+      return MasonryGridView.count(
+        shrinkWrap: true,
+        physics: const NeverScrollableScrollPhysics(),
+        crossAxisCount: currentLanes,
+        crossAxisSpacing: 8.0,
+        mainAxisSpacing: 8.0,
+        itemCount: allNews.length,
+        padding: const EdgeInsets.only(top: 0),
+        itemBuilder: (context, index) {
+          final news = allNews[index];
+          return Container(
+            margin: const EdgeInsets.only(bottom: Constants.SPACE_12),
+            padding: const EdgeInsets.all(Constants.SPACE_12),
+            decoration: BoxDecoration(
+              color: ThemeColors.getCardBackground(settingInfo.darkSwitch),
+              borderRadius: BorderRadius.circular(Constants.SPACE_16),
+            ),
+            child: UniformNews(
+              newsInfo: news,
+              fontSizeRatio: vm.settingInfo.fontSizeRatio,
+            ),
+          );
+        },
+      );
+    });
   }
 
   Widget buildVideoContent() {
-    final currentDataSource = vm.dataSource[1] as LayoutNewsDataSource;
-    if (currentDataSource.originDataArray.isEmpty) {
-      return Container(
-        padding: const EdgeInsets.symmetric(
-            vertical: Constants.EMPTY_CONTENT_PADDING),
-        alignment: Alignment.center,
-        child: const Text('暂无视频'),
-      );
-    }
+    return Obx(() {
+      final breakpointCtrl = Get.find<BreakpointController>();
+      final currentLanes = breakpointCtrl.lanes.value;
 
+      final currentDataSource = vm.dataSource[1] as LayoutNewsDataSource;
     List<NewsResponse> allVideos = [];
     for (var requestListData in currentDataSource.originDataArray) {
       allVideos.addAll(requestListData.articles);
     }
-    return Column(
-      children: allVideos
-          .map((video) => Padding(
-                padding: const EdgeInsets.only(bottom: CommonConstants.SPACE_M),
-                child: UniformNews(
-                  newsInfo: video,
-                  fontSizeRatio: vm.settingInfo.fontSizeRatio,
-                ),
-              ))
-          .toList(),
-    );
+
+      if (allVideos.isEmpty) {
+        return const SingleChildScrollView(
+          physics: AlwaysScrollableScrollPhysics(),
+          child: SizedBox(
+            height: Constants.SPACE_500,
+            child: Text('暂无视频'),
+          ),
+        );
+      }
+
+      return MasonryGridView.count(
+        shrinkWrap: true,
+        physics: const NeverScrollableScrollPhysics(),
+        crossAxisCount: currentLanes,
+        crossAxisSpacing: 8.0,
+        mainAxisSpacing: 8.0,
+        itemCount: allVideos.length,
+        padding: const EdgeInsets.only(top: 0),
+        itemBuilder: (context, index) {
+          final video = allVideos[index];
+          return Container(
+            margin: const EdgeInsets.only(bottom: Constants.SPACE_12),
+            padding: const EdgeInsets.all(Constants.SPACE_12),
+            decoration: BoxDecoration(
+              color: ThemeColors.getCardBackground(settingInfo.darkSwitch),
+              borderRadius: BorderRadius.circular(Constants.SPACE_16),
+            ),
+            child: UniformNews(
+              newsInfo: video,
+              fontSizeRatio: vm.settingInfo.fontSizeRatio,
+            ),
+          );
+        },
+      );
+    });
   }
 
   Widget buildPostContent() {
-    final currentDataSource = vm.dataSource[2] as LayoutNewsDataSource;
-    if (currentDataSource.originDataArray.isEmpty) {
-      return Container(
-        padding: const EdgeInsets.symmetric(
-            vertical: Constants.EMPTY_CONTENT_PADDING),
-        alignment: Alignment.center,
-        child: const Text('暂无动态'),
-      );
-    }
+    return Obx(() {
+      final breakpointCtrl = Get.find<BreakpointController>();
+      final currentLanes = breakpointCtrl.lanes.value;
 
+      final currentDataSource = vm.dataSource[2] as LayoutNewsDataSource;
     List<NewsResponse> allPosts = [];
     for (var requestListData in currentDataSource.originDataArray) {
       allPosts.addAll(requestListData.articles);
     }
 
-    return Column(
-      children: allPosts
-          .map((post) => GestureDetector(
-                onTap: () {
-                  final NewsModel newsModel = NewsModel.fromNewsResponse(post);
-                  ContentNavigationUtils.navigateToDetailFromAnySource(
-                      newsModel,
-                      source: 'profile');
-                },
-                child: Padding(
-                  padding:
-                      const EdgeInsets.only(bottom: CommonConstants.SPACE_XXL),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      buildExpandableContent(context, post.title, post.id,
-                          vm.settingInfo.fontSizeRatio),
-                      const SizedBox(height: CommonConstants.SPACE_S),
-                      if (post.postImgList != null &&
-                          post.postImgList!.isNotEmpty)
-                        buildImageGrid(context, post.postImgList!, post),
-                      Container(
-                        margin: const EdgeInsets.only(
-                            bottom: CommonConstants.SPACE_S),
-                      ),
-                      const SizedBox(height: CommonConstants.SPACE_S),
-                      Text(
-                        TimeUtils.getDateDiff(post.createTime),
-                        style: TextStyle(
-                          fontSize:
-                              Theme.of(context).textTheme.bodySmall?.fontSize ??
-                                  12.0,
-                          color: Theme.of(context).textTheme.bodySmall?.color ??
-                              const Color(0xFF999999),
-                        ),
-                      ),
-                    ],
+      if (allPosts.isEmpty) {
+        return const SingleChildScrollView(
+          physics: AlwaysScrollableScrollPhysics(),
+          child: SizedBox(
+            height: Constants.SPACE_500,
+            child: Text('暂无动态'),
+          ),
+        );
+      }
+
+
+      return MasonryGridView.count(
+        shrinkWrap: true,
+        physics: const NeverScrollableScrollPhysics(),
+        crossAxisCount: currentLanes,
+        crossAxisSpacing: 8.0,
+        mainAxisSpacing: 8.0,
+        itemCount: allPosts.length,
+        padding: const EdgeInsets.only(top: 0),
+        itemBuilder: (context, index) {
+          final post = allPosts[index];
+          return Container(
+            margin: const EdgeInsets.only(bottom: Constants.SPACE_12),
+            padding: const EdgeInsets.all(Constants.SPACE_12),
+            decoration: BoxDecoration(
+              color: ThemeColors.getCardBackground(settingInfo.darkSwitch),
+              borderRadius: BorderRadius.circular(Constants.SPACE_16),
+            ),
+            child: GestureDetector(
+              onTap: () {
+                final NewsModel newsModel = NewsModel.fromNewsResponse(post);
+                ContentNavigationUtils.navigateToDetailFromAnySource(
+                  newsModel,
+                  source: 'profile',
+                );
+              },
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  buildExpandableContent(
+                    context,
+                    post.title,
+                    post.id,
+                    vm.settingInfo.fontSizeRatio,
                   ),
-                ),
-              ))
-          .toList(),
-    );
+                  const SizedBox(height: CommonConstants.SPACE_S),
+                  if (post.postImgList != null && post.postImgList!.isNotEmpty)
+                    buildImageGrid(context, post.postImgList!, post),
+                  const SizedBox(height: CommonConstants.SPACE_S),
+                  Text(
+                    TimeUtils.getDateDiff(post.createTime),
+                    style: TextStyle(
+                      fontSize:
+                          Theme.of(context).textTheme.bodySmall?.fontSize ??
+                              12.0,
+                      color: Theme.of(context).textTheme.bodySmall?.color ??
+                          const Color(0xFF999999),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          );
+        },
+      );
+    });
   }
 
   Size _calculateImageSize(String imageUrl) {
@@ -568,9 +635,10 @@ class _PersonalHomePageState extends State<PersonalHomePage> {
                     color: Constants.VIDEO_PLAY_BUTTON_BACKGROUND_COLOR,
                     shape: BoxShape.circle,
                   ),
-                  child: const Icon(
+                  child: Icon(
                     Icons.play_arrow,
-                    color: Colors.white,
+                    color:
+                        ThemeColors.getBackgroundColor(settingInfo.darkSwitch),
                     size: Constants.VIDEO_PLAY_ICON_SIZE_LARGE,
                   ),
                 ),
@@ -634,9 +702,10 @@ class _PersonalHomePageState extends State<PersonalHomePage> {
                       color: Constants.VIDEO_PLAY_BUTTON_BACKGROUND_COLOR,
                       shape: BoxShape.circle,
                     ),
-                    child: const Icon(
+                    child: Icon(
                       Icons.play_arrow,
-                      color: Colors.white,
+                      color: ThemeColors.getBackgroundColor(
+                          settingInfo.darkSwitch),
                       size: Constants.VIDEO_PLAY_ICON_SIZE_SMALL,
                     ),
                   ),

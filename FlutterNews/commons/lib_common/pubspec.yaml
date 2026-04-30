@@ -45,6 +45,9 @@ dependencies:
   get:
     git:
       url: "https://gitcode.com/openharmony-sig/fluttertpc_get.git"
+  flutter_staggered_grid_view:
+    git:
+      url: https://github.com/letsar/flutter_staggered_grid_view.git
   shared_preferences:
     git:
       url: "https://gitcode.com/openharmony-tpc/flutter_packages.git"
@@ -54,11 +57,11 @@ dependencies:
     git:
       url:  "https://gitcode.com/openharmony-sig/flutter_fluttertoast.git"
 
-  
+
   # 添加对lib_news_api的依赖，用于访问新闻相关模型
   lib_news_api:
     path: ../lib_news_api
-  
+
   lib_account:
     path: ../lib_account
 dev_dependencies:

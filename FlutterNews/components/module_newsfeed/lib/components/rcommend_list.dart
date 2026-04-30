@@ -1,8 +1,7 @@
 import 'package:business_home/items_card/custom_item_card.dart';
 import 'package:business_video/models/video_model.dart';
 import 'package:flutter/material.dart';
-import 'package:lib_common/constants/router_map.dart';
-import 'package:lib_common/utils/router_utils.dart';
+import 'package:lib_common/lib_common.dart';
 import 'package:lib_news_api/constants/constants.dart';
 import 'package:lib_news_api/params/response/layout_response.dart';
 import 'package:lib_news_api/params/response/news_response.dart';
@@ -25,13 +24,15 @@ class RecommendList extends StatelessWidget {
     this.subtitleStyle,
     this.imageWidth = 100,
     this.imageHeight = 60,
-    this.padding = const EdgeInsets.symmetric(horizontal: Constants.SPACE_16, vertical: Constants.SPACE_8),
+    this.padding = const EdgeInsets.symmetric(
+        horizontal: Constants.SPACE_16, vertical: Constants.SPACE_8),
     this.fontSizeRatio = 1.0,
   });
 
   @override
   Widget build(BuildContext context) {
     final List<RequestListData> allRequestData = [];
+    final settingInfo = SettingModel.getInstance();
     for (final data in requestListDataList) {
       if (data.navInfo.parsedSetting!.showType! ==
           NewsCardType.leftTextRightImageCard) {
@@ -43,22 +44,23 @@ class RecommendList extends StatelessWidget {
 
     return Container(
       padding: padding,
-      color: Colors.white,
+      color: ThemeColors.getBackgroundColor(settingInfo.darkSwitch),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             '相关推荐',
             style: TextStyle(
-                fontSize: Constants.FONT_16 * fontSizeRatio,
-                fontWeight: FontWeight.bold),
+              fontSize: Constants.FONT_16 * fontSizeRatio,
+              fontWeight: FontWeight.bold,
+              color: ThemeColors.getFontPrimary(settingInfo.darkSwitch),
+            ),
           ),
-
           if (allRequestData.isEmpty)
             _buildEmptyState()
           else
             SizedBox(
-              height: allRequestData.length * (imageHeight), 
+              height: allRequestData.length * (imageHeight),
               child: ListView.builder(
                 physics: const NeverScrollableScrollPhysics(),
                 itemCount: allRequestData.length,
@@ -99,13 +101,16 @@ class RecommendList extends StatelessWidget {
   }
 
   Widget _buildEmptyState() {
+    final settingInfo = SettingModel.getInstance();
     return Container(
       padding: const EdgeInsets.symmetric(vertical: Constants.SPACE_20),
       alignment: Alignment.center,
       child: Text(
         '暂无相关推荐',
         style: TextStyle(
-            fontSize: Constants.FONT_14 * fontSizeRatio, color: Colors.grey),
+          fontSize: Constants.FONT_14 * fontSizeRatio,
+          color: ThemeColors.getFontSecondary(settingInfo.darkSwitch),
+        ),
       ),
     );
   }

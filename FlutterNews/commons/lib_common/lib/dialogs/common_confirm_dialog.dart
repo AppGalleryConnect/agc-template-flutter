@@ -40,7 +40,8 @@ class CommonConfirmDialog {
       barrierDismissible: false,
       builder: (BuildContext context) {
         return Dialog(
-          backgroundColor: ThemeColors.getBackgroundColor(isDark),
+          backgroundColor:
+              ThemeColors.getCompBackgroundSecondary(settingModel.darkSwitch),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(36.0),
           ),
@@ -55,7 +56,8 @@ class CommonConfirmDialog {
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 20,
-                      color: ThemeColors.getFontPrimary(isDark),
+                      color:
+                          ThemeColors.getFontPrimary(settingModel.darkSwitch),
                     ),
                   ),
                   const SizedBox(height: 8),

@@ -138,13 +138,20 @@ class _FeedCommentState extends State<FeedComment> {
           const SizedBox(height: Constants.SPACE_16),
           ElevatedButton(
             onPressed: () {
-              commentSheetOpen(
-                context,
-                null,
-                (commentContent) {
-                  widget.onFirstComment(commentContent);
-                },
-              );
+              commentSheetOpen(context, null, (commentContent) {
+                widget.onFirstComment(commentContent);
+              },
+                  null,
+                  null,
+                  widget.isDark
+                      ? const Color(0xFFFFFFFF)
+                      : const Color(0xFF000000),
+                  widget.isDark
+                      ? const Color(0xFF1F1F1F)
+                      : const Color(0xFFFFFFFF),
+                  widget.isDark
+                      ? const Color(0x99FFFFFF)
+                      : const Color(0x99000000));
             },
             style: ElevatedButton.styleFrom(
               padding: const EdgeInsets.symmetric(
@@ -233,12 +240,18 @@ class _FeedCommentState extends State<FeedComment> {
                               CommentEventDispatcher.dispatchToUserHome(
                                   item.author.authorId);
                             },
-                            child: Text(
-                              '${item.author.authorNickName}:',
-                              style: TextStyle(
-                                fontSize: Constants.FONT_12 *
-                                    feedCommentVM.fontSizeRatio,
-                                color: Colors.blue,
+                            child: SizedBox(
+                              width: 120,
+                              child: Text(
+                                '${item.author.authorNickName}:',
+                                style: TextStyle(
+                                  fontSize: Constants.FONT_12 *
+                                      feedCommentVM.fontSizeRatio,
+                                  color: Colors.blue,
+                                ),
+                                softWrap: false,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
                               ),
                             ),
                           ),

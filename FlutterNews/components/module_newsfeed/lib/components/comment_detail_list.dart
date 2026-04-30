@@ -3,6 +3,7 @@ import 'package:lib_account/viewmodels/login_vm.dart' as login_vm;
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:lib_account/services/account_api.dart';
+import 'package:lib_common/lib_common.dart';
 import 'package:lib_news_api/params/request/common_request.dart';
 import 'package:lib_news_api/params/response/comment_response.dart';
 import 'package:lib_news_api/services/comment_service.dart';
@@ -24,7 +25,7 @@ class CommentDetailList extends StatefulWidget {
 class _CommentDetailListState extends State<CommentDetailList> {
   late List<CommentResponse> _localComments;
   final userInfoModel = AccountApi.getInstance().userInfoModel;
-
+  final settingInfo = SettingModel.getInstance();
   @override
   void initState() {
     super.initState();
@@ -38,12 +39,15 @@ class _CommentDetailListState extends State<CommentDetailList> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: ThemeColors.getBackgroundColor(settingInfo.darkSwitch),
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: ThemeColors.getBackgroundColor(settingInfo.darkSwitch),
         elevation: 1,
-        title: const Text('评论详情', style: TextStyle(color: Colors.black87)),
-        iconTheme: const IconThemeData(color: Colors.black87),
+        title: Text('评论详情',
+            style: TextStyle(
+                color: ThemeColors.getFontPrimary(settingInfo.darkSwitch))),
+        iconTheme: IconThemeData(
+            color: ThemeColors.getFontPrimary(settingInfo.darkSwitch)),
       ),
       body: LayoutBuilder(
         builder: (context, constraints) {
@@ -71,12 +75,13 @@ class _CommentDetailListState extends State<CommentDetailList> {
                         _buildParentCommentHeader(widget.parentComment!),
                       if (widget.parentComment != null)
                         const SizedBox(height: Constants.SPACE_16),
-                      const Text(
+                      Text(
                         '全部评论',
                         style: TextStyle(
                           fontSize: Constants.FONT_16,
                           fontWeight: FontWeight.bold,
-                          color: Colors.black87,
+                          color: ThemeColors.getFontPrimary(
+                              settingInfo.darkSwitch),
                         ),
                       ),
                       const SizedBox(height: Constants.SPACE_12),
@@ -114,12 +119,17 @@ class _CommentDetailListState extends State<CommentDetailList> {
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(Constants.SPACE_24),
                       border: Border.all(
-                          color: Colors.black12, width: Constants.SPACE_1),
-                      color: Colors.grey[200],
+                          color: ThemeColors.getFontPrimary(
+                              settingInfo.darkSwitch),
+                          width: Constants.SPACE_1),
+                      color: ThemeColors.getBackgroundSecondary(
+                          settingInfo.darkSwitch),
                     ),
-                    child: const Text(
+                    child: Text(
                       '回复',
-                      style: TextStyle(color: Colors.black),
+                      style: TextStyle(
+                          color: ThemeColors.getFontPrimary(
+                              settingInfo.darkSwitch)),
                     ),
                   ),
                 ),
@@ -137,27 +147,27 @@ class _CommentDetailListState extends State<CommentDetailList> {
       VideoSheet.showLoginSheet(context);
       return;
     }
-    commentSheetOpen(
-      context,
-      title,
-      (content) {
-        PublishCommentRequest params = PublishCommentRequest(
-            newsId: widget.parentComment!.newsId,
-            content: content,
-            parentCommentId: commendId);
-        MineServiceApi.publishComment(params).then((value) {
-          setState(() {
-            _localComments.insert(0, value);
-          });
-
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-                content: Text("评论发送成功！"), duration: Duration(seconds: 1)),
-          );
+    commentSheetOpen(context, title, (content) {
+      PublishCommentRequest params = PublishCommentRequest(
+          newsId: widget.parentComment!.newsId,
+          content: content,
+          parentCommentId: commendId);
+      MineServiceApi.publishComment(params).then((value) {
+        setState(() {
+          _localComments.insert(0, value);
         });
-      },
-      false,
-    );
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+              content: Text("评论发送成功！"), duration: Duration(seconds: 1)),
+        );
+      });
+    },
+        false,
+        null,
+        ThemeColors.getFontPrimary(settingInfo.darkSwitch),
+        ThemeColors.getBackgroundColor(settingInfo.darkSwitch),
+        ThemeColors.getBackgroundSecondary(settingInfo.darkSwitch));
   }
 
   void _showLongPressBottomSheet(
@@ -168,7 +178,7 @@ class _CommentDetailListState extends State<CommentDetailList> {
         borderRadius:
             BorderRadius.vertical(top: Radius.circular(Constants.SPACE_16)),
       ),
-      backgroundColor: Colors.white,
+      backgroundColor: ThemeColors.getBackgroundColor(settingInfo.darkSwitch),
       isDismissible: false,
       builder: (context) {
         return Container(
@@ -255,7 +265,7 @@ class _CommentDetailListState extends State<CommentDetailList> {
               title,
               style: TextStyle(
                 fontSize: Constants.FONT_16,
-                color: textColor,
+                color: ThemeColors.getBackgroundColor(settingInfo.darkSwitch),
                 fontWeight: FontWeight.w500,
               ),
             ),
@@ -296,10 +306,11 @@ class _CommentDetailListState extends State<CommentDetailList> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(authorName,
-                        style: const TextStyle(
+                        style: TextStyle(
                             fontSize: Constants.FONT_14,
                             fontWeight: FontWeight.bold,
-                            color: Colors.black87)),
+                            color: ThemeColors.getFontPrimary(
+                                settingInfo.darkSwitch))),
                     const SizedBox(height: Constants.SPACE_6),
                     GestureDetector(
                         onLongPress: () {
@@ -322,17 +333,19 @@ class _CommentDetailListState extends State<CommentDetailList> {
                           }
                         },
                         child: Text(commentContent,
-                            style: const TextStyle(
+                            style: TextStyle(
                                 fontSize: Constants.FONT_15,
-                                color: Colors.black87),
+                                color: ThemeColors.getFontPrimary(
+                                    settingInfo.darkSwitch)),
                             softWrap: true)),
                     const SizedBox(height: Constants.SPACE_6),
                     Row(
                       children: [
                         Text(formattedTime,
-                            style: const TextStyle(
+                            style: TextStyle(
                                 fontSize: Constants.FONT_12,
-                                color: Colors.grey)),
+                                color: ThemeColors.getFontSecondary(
+                                    settingInfo.darkSwitch))),
                         const SizedBox(width: Constants.SPACE_20),
                         GestureDetector(
                           onTap: () {
@@ -383,6 +396,13 @@ class _CommentDetailListState extends State<CommentDetailList> {
                                 : Constants.giveLikeImage,
                             width: Constants.SPACE_16,
                             height: Constants.SPACE_16,
+                            colorFilter: parentComment.isLiked
+                                ? null
+                                : ColorFilter.mode(
+                              ThemeColors.getFontPrimary(
+                                  settingInfo.darkSwitch),
+                              BlendMode.srcIn,
+                            ),
                           ),
                         ),
                         const SizedBox(width: Constants.SPACE_5),
@@ -428,21 +448,26 @@ class _CommentDetailListState extends State<CommentDetailList> {
             children: [
               Row(children: [
                 Text(authorName,
-                    style: const TextStyle(
+                    style: TextStyle(
                         fontSize: Constants.FONT_14,
                         fontWeight: FontWeight.bold,
-                        color: Colors.black87)),
+                        color: ThemeColors.getFontPrimary(
+                            settingInfo.darkSwitch))),
                 const SizedBox(width: Constants.SPACE_8)
               ]),
               const SizedBox(height: Constants.SPACE_4),
               Text(comment.commentBody ?? "无评论内容",
-                  style: const TextStyle(
-                      fontSize: Constants.FONT_14, color: Colors.black87)),
+                  style: TextStyle(
+                      fontSize: Constants.FONT_14,
+                      color:
+                          ThemeColors.getFontPrimary(settingInfo.darkSwitch))),
               Row(
                 children: [
                   Text(formattedTime,
-                      style: const TextStyle(
-                          fontSize: Constants.FONT_12, color: Colors.grey)),
+                      style: TextStyle(
+                          fontSize: Constants.FONT_12,
+                          color: ThemeColors.getFontSecondary(
+                              settingInfo.darkSwitch))),
                   const SizedBox(width: Constants.SPACE_20),
                   const Spacer(),
                   TextButton(

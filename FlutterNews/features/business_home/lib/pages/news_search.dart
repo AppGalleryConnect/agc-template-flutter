@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:lib_common/lib_common.dart';
+import 'package:lib_common/utils/theme_colors.dart';
 import 'package:lib_news_api/constants/constants.dart';
-import 'package:lib_common/constants/router_map.dart';
-import 'package:lib_common/utils/router_utils.dart';
 import 'package:business_video/models/video_model.dart';
 import 'package:module_newsfeed/components/news_detail_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -30,7 +30,7 @@ class _NewsSearchState extends State<NewsSearch> {
   String _searchKeyword = '';
   bool _isFullResultsMode = false;
   bool _cleanHistory = true;
-
+  final settingInfo = SettingModel.getInstance();
   @override
   void initState() {
     super.initState();
@@ -189,8 +189,8 @@ class _NewsSearchState extends State<NewsSearch> {
         !text.toLowerCase().contains(_searchKeyword.toLowerCase())) {
       return Text(
         text,
-        style: const TextStyle(
-          color: Colors.black,
+        style: TextStyle(
+          color: ThemeColors.getFontPrimary(settingInfo.darkSwitch),
           fontSize: BusinessConstants.Constants.newsSearchNormalFontSize,
         ),
         maxLines: 1,
@@ -209,8 +209,8 @@ class _NewsSearchState extends State<NewsSearch> {
         spans.add(
           TextSpan(
             text: text.substring(startIndex, keywordIndex),
-            style: const TextStyle(
-              color: BusinessConstants.Constants.newsSearchTextColorBlack,
+            style: TextStyle(
+              color: ThemeColors.getFontPrimary(settingInfo.darkSwitch),
               fontSize: BusinessConstants.Constants.newsSearchNormalFontSize,
             ),
           ),
@@ -233,8 +233,8 @@ class _NewsSearchState extends State<NewsSearch> {
     if (startIndex < text.length) {
       spans.add(TextSpan(
         text: text.substring(startIndex),
-        style: const TextStyle(
-          color: Colors.black,
+        style: TextStyle(
+          color: ThemeColors.getFontPrimary(settingInfo.darkSwitch),
           fontSize: BusinessConstants.Constants.newsSearchNormalFontSize,
         ),
       ));
@@ -249,6 +249,7 @@ class _NewsSearchState extends State<NewsSearch> {
 
   @override
   Widget build(BuildContext context) {
+    final settingInfo = SettingModel.getInstance();
     // 历史搜索部分
     final historySection = Container(
       padding: BusinessConstants.Constants.newsSearchSectionPadding,
@@ -326,16 +327,16 @@ class _NewsSearchState extends State<NewsSearch> {
                       padding: BusinessConstants
                           .Constants.newsSearchHistoryTagPadding,
                       decoration: BoxDecoration(
-                        color: BusinessConstants
-                            .Constants.newsSearchHistoryTagBackgroundColor,
+                        color: ThemeColors.getBackgroundTertiary(
+                            settingInfo.darkSwitch),
                         borderRadius: BorderRadius.circular(BusinessConstants
                             .Constants.newsSearchHistoryTagBorderRadius),
                       ),
                       child: Text(
                         searchText,
-                        style: const TextStyle(
-                          color: BusinessConstants
-                              .Constants.newsSearchHistoryTagTextColor,
+                        style: TextStyle(
+                          color: ThemeColors.getFontPrimary(
+                              settingInfo.darkSwitch),
                           fontSize: BusinessConstants
                               .Constants.newsSearchNormalFontSize,
                         ),
@@ -365,10 +366,10 @@ class _NewsSearchState extends State<NewsSearch> {
               ),
               const SizedBox(
                   width: BusinessConstants.Constants.newsSearchSpacingXs),
-              const Text(
+              Text(
                 '热搜榜',
                 style: TextStyle(
-                  color: BusinessConstants.Constants.newsSearchTextColorBlack,
+                  color: ThemeColors.getFontPrimary(settingInfo.darkSwitch),
                   fontSize: BusinessConstants.Constants.newsSearchTitleFontSize,
                   fontWeight: FontWeight.bold,
                 ),
@@ -410,8 +411,8 @@ class _NewsSearchState extends State<NewsSearch> {
                                         color: index <= 3
                                             ? BusinessConstants.Constants
                                                 .newsSearchHotRankColor
-                                            : BusinessConstants.Constants
-                                                .newsSearchTextColorBlack,
+                                            : ThemeColors.getFontPrimary(
+                                                settingInfo.darkSwitch),
                                         fontSize: BusinessConstants
                                             .Constants.newsSearchSmallFontSize,
                                         fontWeight: index <= 3
@@ -423,9 +424,9 @@ class _NewsSearchState extends State<NewsSearch> {
                                   Expanded(
                                     child: Text(
                                       news.title,
-                                      style: const TextStyle(
-                                        color: BusinessConstants
-                                            .Constants.newsSearchTextColorBlack,
+                                      style: TextStyle(
+                                        color: ThemeColors.getFontPrimary(
+                                            settingInfo.darkSwitch),
                                         fontSize: BusinessConstants
                                             .Constants.newsSearchSmallFontSize,
                                       ),
@@ -541,9 +542,10 @@ class _NewsSearchState extends State<NewsSearch> {
               )
             : Container();
     return Material(
-      color: BusinessConstants.Constants.newsSearchTextColorWhite,
+      color: ThemeColors.getBackgroundSecondary(settingInfo.darkSwitch),
       child: Scaffold(
-        backgroundColor: BusinessConstants.Constants.newsSearchTextColorWhite,
+        backgroundColor:
+            ThemeColors.getBackgroundSecondary(settingInfo.darkSwitch),
         appBar: AppBar(
           leading: const BackButton(),
           title: Container(
@@ -573,9 +575,12 @@ class _NewsSearchState extends State<NewsSearch> {
                     },
                   ),
                   hintText: '请输入关键词搜索',
+                  hintStyle: TextStyle(
+                    color: ThemeColors.getFontPrimary(settingInfo.darkSwitch),
+                  ),
                   filled: true,
-                  fillColor: BusinessConstants
-                      .Constants.newsSearchTextFieldBackgroundColor,
+                  fillColor:
+                      ThemeColors.getBackgroundColor(settingInfo.darkSwitch),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(BusinessConstants
                         .Constants.newsSearchTextFieldBorderRadius),
@@ -586,7 +591,8 @@ class _NewsSearchState extends State<NewsSearch> {
               onSubmitted: _handleSearchSubmit,
             ),
           ),
-          backgroundColor: BusinessConstants.Constants.newsSearchTextColorWhite,
+          backgroundColor:
+              ThemeColors.getBackgroundSecondary(settingInfo.darkSwitch),
           elevation: 0,
         ),
         body: LayoutBuilder(

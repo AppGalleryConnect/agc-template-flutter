@@ -216,7 +216,7 @@ class RouterUtils {
       bool animated = true,
       String stackName = 'main'}) {
     Logger.info(TAG, 'RouterUtil route: $name, param: $param');
-
+    final settingInfo = SettingModel.getInstance();
     // 特殊处理半模态登录页面，添加底部滑入动画
     bool isHalfModal = false; // 默认不使用半模态模式
     if (param is Map && param.containsKey('isHalfModal')) {

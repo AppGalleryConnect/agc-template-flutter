@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:lib_common/lib_common.dart';
 import 'package:lib_widget/components/nav_header_bar.dart';
 import '../components/fan_item.dart';
-import 'package:lib_common/models/window_model.dart';
-import 'package:lib_common/models/userInfo_model.dart';
 import 'package:lib_news_api/services/message_service.dart';
 import '../viewmodels/message_fans_vm.dart';
 import '../utils/font_scale_utils.dart';
@@ -49,8 +48,8 @@ class _MsgFansPageState extends State<MsgFansPage> {
 
   @override
   Widget build(BuildContext context) {
+    final settingInfo = SettingModel.getInstance();
     return Scaffold(
-      backgroundColor: const Color(0xFFF5F5F5),
       body: Column(
         children: [
           NavHeaderBar(
@@ -60,13 +59,17 @@ class _MsgFansPageState extends State<MsgFansPage> {
             onBack: () {
               Navigator.pop(context);
             },
-            backButtonBackgroundColor: const Color(0xFFF0F0F0),
-            backButtonPressedBackgroundColor: const Color(0xFFE0E0E0),
+            titleColor: ThemeColors.getFontPrimary(settingInfo.darkSwitch),
+            bgColor: ThemeColors.getBackgroundColor(settingInfo.darkSwitch),
+            backButtonBackgroundColor:
+                ThemeColors.getCompBackgroundSecondary(settingInfo.darkSwitch),
+            backButtonPressedBackgroundColor:
+                ThemeColors.getCompBackgroundSecondary(settingInfo.darkSwitch),
             customTitleSize: 20 * FontScaleUtils.fontSizeRatio,
           ),
           Expanded(
             child: Container(
-              color: Colors.grey.shade100,
+              color: ThemeColors.getBackgroundSecondary(settingInfo.darkSwitch),
               child: !_vm.userInfoModel.isLogin
                   ? _buildNotLoggedInState()
                   : (_vm.isLoading

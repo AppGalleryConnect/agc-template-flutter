@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lib_common/lib_common.dart';
 import 'package:lib_news_api/params/response/layout_response.dart';
 import 'package:lib_news_api/params/response/news_response.dart';
 import '../commons/constants.dart';
@@ -33,9 +34,10 @@ class _HotNewsServiceItemCardState extends State<HotNewsServiceItemCard> {
 
   @override
   Widget build(BuildContext context) {
+    final settingInfo = SettingModel.getInstance();
     return Container(
       decoration: BoxDecoration(
-        color: const Color.fromARGB(255, 229, 231, 234),
+        color: ThemeColors.getBackgroundColor(settingInfo.darkSwitch),
         borderRadius: BorderRadius.circular(20),
       ),
       margin: const EdgeInsets.only(
@@ -99,6 +101,7 @@ class _HotNewsServiceItemCardState extends State<HotNewsServiceItemCard> {
   }
 
   Widget _buildNewsItem(NewsResponse item, int index) {
+    final settingInfo = SettingModel.getInstance();
     final displayIndex = widget.showTabBar ? index : index;
     return SizedBox(
       height: 36,
@@ -108,7 +111,9 @@ class _HotNewsServiceItemCardState extends State<HotNewsServiceItemCard> {
           Text(
             '${displayIndex + 1}.',
             style: TextStyle(
-              color: displayIndex <= 2 ? Colors.red : Colors.black,
+              color: displayIndex <= 2
+                  ? Colors.red
+                  : ThemeColors.getFontPrimary(settingInfo.darkSwitch),
               fontSize: 13.0 * widget.fontSizeRatio,
             ),
           ),
@@ -120,7 +125,7 @@ class _HotNewsServiceItemCardState extends State<HotNewsServiceItemCard> {
               overflow: TextOverflow.ellipsis,
               style: TextStyle(
                 fontSize: 13.0 * widget.fontSizeRatio,
-                color: Colors.black,
+                color: ThemeColors.getFontPrimary(settingInfo.darkSwitch),
               ),
             ),
           ),

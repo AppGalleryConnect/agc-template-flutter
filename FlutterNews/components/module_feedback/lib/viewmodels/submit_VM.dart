@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lib_common/constants/pop_view_utils.dart';
 import '../common/constants.dart';
 import '../services/func_service.dart';
 import '../services/request_model.dart';
@@ -50,6 +51,10 @@ class SubmitVM with ChangeNotifier {
       final List<XFile> pickedFiles = await picker.pickMultiImage(
         imageQuality: 80,
       );
+      if (pickedFiles.length > 5) {
+        toast('最多只能上传5张图片');
+        return;
+      }
       if (pickedFiles.isNotEmpty) {
         final limitedFiles = pickedFiles.take(remainingCount).toList();
         for (var file in limitedFiles) {

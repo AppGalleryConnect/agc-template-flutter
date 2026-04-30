@@ -35,5 +35,8 @@ class AppConstants {
   static const Color unselectedItemVideoColor = Color(0xCCCCCCCC);
 
   static const String icStartBackgroundImage = 'assets/ic_start_background.png';
-  static const String startIconImage = 'assets/startIcon.png';  
+  static const String icStartBackgroundImageLight = 'assets/start_page.png';
+  static const String icStartBackgroundImageDark =
+      'assets/start_page_dark.png';
+  static const String startIconImage = 'assets/startIcon.png';
 }

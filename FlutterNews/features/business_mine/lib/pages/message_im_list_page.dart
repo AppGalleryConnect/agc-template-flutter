@@ -1,10 +1,8 @@
 import 'package:business_mine/components/message_bottom.dart';
 import 'package:flutter/material.dart';
+import 'package:lib_common/lib_common.dart';
 import 'package:provider/provider.dart';
-import 'package:lib_common/constants/common_constants.dart';
 import '../constants/constants.dart';
-import 'package:lib_common/constants/router_map.dart';
-import 'package:lib_common/utils/router_utils.dart';
 import 'package:lib_widget/components/nav_header_bar.dart';
 import 'package:lib_widget/components/empty_builder.dart';
 import 'package:lib_news_api/services/message_service.dart'
@@ -13,7 +11,6 @@ import '../components/im_item.dart';
 import '../components/set_read_icon.dart';
 import '../common/observed_model.dart';
 import '../viewmodels/message_im_list_vm.dart';
-import 'package:lib_common/models/window_model.dart';
 import 'package:lib_common/dialogs/common_toast_dialog.dart';
 import '../utils/font_scale_utils.dart';
 
@@ -31,6 +28,7 @@ class _MsgIMListPageState extends State<MsgIMListPage> {
 
   @override
   Widget build(BuildContext context) {
+    final settingInfo = SettingModel.getInstance();
     return ChangeNotifierProvider(
       create: (context) {
         final viewModel = MsgIMViewModel();
@@ -46,8 +44,16 @@ class _MsgIMListPageState extends State<MsgIMListPage> {
                 NavHeaderBar(
                   title: '私信',
                   windowModel: windowModel,
-                  backButtonBackgroundColor: Constants.messageItemIconBgColor,
-                  backButtonPressedBackgroundColor: Constants.dividerColor,
+                  titleColor:
+                      ThemeColors.getFontPrimary(settingInfo.darkSwitch),
+                  bgColor:
+                      ThemeColors.getBackgroundColor(settingInfo.darkSwitch),
+                  backButtonBackgroundColor:
+                      ThemeColors.getCompBackgroundSecondary(
+                          settingInfo.darkSwitch),
+                  backButtonPressedBackgroundColor:
+                      ThemeColors.getCompBackgroundSecondary(
+                          settingInfo.darkSwitch),
                   customTitleSize:
                       Constants.textHeaderSize * FontScaleUtils.fontSizeRatio,
                   rightPartBuilder: (context) => Container(
@@ -64,7 +70,10 @@ class _MsgIMListPageState extends State<MsgIMListPage> {
                                   '取消',
                                   style: TextStyle(
                                       fontSize: Constants.textPrimarySize *
-                                          FontScaleUtils.fontSizeRatio),
+                                          FontScaleUtils.fontSizeRatio,
+                                      color: ThemeColors.getFontSecondary(
+                                          settingInfo.darkSwitch)),
+
                                 )
                               : Image.asset(
                                   Constants.icPublicDelete,
@@ -84,6 +93,8 @@ class _MsgIMListPageState extends State<MsgIMListPage> {
                   ),
                 ),
                 Expanded(
+                    child: Container(
+                  color: ThemeColors.getBackgroundColor(settingInfo.darkSwitch),
                   child: () {
                     if (viewModel.chatList.isEmpty) {
                       return EmptyState(
@@ -110,8 +121,9 @@ class _MsgIMListPageState extends State<MsgIMListPage> {
                                 Constants.messageItemHorizontalSpacing,
                             padding:
                                 const EdgeInsets.all(CommonConstants.SPACE_M),
-                            decoration: const BoxDecoration(
-                              color: Colors.white,
+                            decoration: BoxDecoration(
+                              color: ThemeColors.getBackgroundColor(
+                                  settingInfo.darkSwitch),
                             ),
                             child: IMItem(
                               info: info,
@@ -126,19 +138,25 @@ class _MsgIMListPageState extends State<MsgIMListPage> {
                                 showDialog(
                                   context: context,
                                   builder: (context) => AlertDialog(
-                                    backgroundColor: Colors.white,
+                                    backgroundColor:
+                                        ThemeColors.getBackgroundColor(
+                                            settingInfo.darkSwitch),
                                     title: Text(
                                       '确认删除',
                                       style: TextStyle(
                                           fontSize: Constants.textPrimarySize *
-                                              FontScaleUtils.fontSizeRatio),
+                                              FontScaleUtils.fontSizeRatio,
+                                          color: ThemeColors.getFontTertiary(
+                                              settingInfo.darkSwitch)),
                                     ),
                                     content: Text(
                                       '确定要删除这条私信吗？',
                                       style: TextStyle(
                                           fontSize:
                                               Constants.textSecondarySize *
-                                                  FontScaleUtils.fontSizeRatio),
+                                                  FontScaleUtils.fontSizeRatio,
+                                          color: ThemeColors.getFontTertiary(
+                                              settingInfo.darkSwitch)),
                                     ),
                                     actions: [
                                       TextButton(
@@ -149,7 +167,10 @@ class _MsgIMListPageState extends State<MsgIMListPage> {
                                           style: TextStyle(
                                               fontSize: Constants
                                                       .textSecondarySize *
-                                                  FontScaleUtils.fontSizeRatio),
+                                                  FontScaleUtils.fontSizeRatio,
+                                              color:
+                                                  ThemeColors.getFontTertiary(
+                                                      settingInfo.darkSwitch)),
                                         ),
                                       ),
                                       TextButton(
@@ -167,7 +188,10 @@ class _MsgIMListPageState extends State<MsgIMListPage> {
                                           style: TextStyle(
                                               fontSize: Constants
                                                       .textSecondarySize *
-                                                  FontScaleUtils.fontSizeRatio),
+                                                  FontScaleUtils.fontSizeRatio,
+                                              color:
+                                                  ThemeColors.getFontTertiary(
+                                                      settingInfo.darkSwitch)),
                                         ),
                                       ),
                                     ],
@@ -180,6 +204,7 @@ class _MsgIMListPageState extends State<MsgIMListPage> {
                       },
                     );
                   }(),
+                )
                 ),
                 if (viewModel.isShowSelect)
                   MessageBottom(
@@ -191,18 +216,23 @@ class _MsgIMListPageState extends State<MsgIMListPage> {
                       showDialog(
                         context: context,
                         builder: (context) => AlertDialog(
-                          backgroundColor: Colors.white,
+                          backgroundColor: ThemeColors.getBackgroundColor(
+                              settingInfo.darkSwitch),
                           title: Text(
                             '确认删除',
                             style: TextStyle(
                                 fontSize: Constants.textPrimarySize *
-                                    FontScaleUtils.fontSizeRatio),
+                                    FontScaleUtils.fontSizeRatio,
+                                color: ThemeColors.getFontPrimary(
+                                    settingInfo.darkSwitch)),
                           ),
                           content: Text(
                             '确定要删除这些私信吗？',
                             style: TextStyle(
                                 fontSize: Constants.textSecondarySize *
-                                    FontScaleUtils.fontSizeRatio),
+                                    FontScaleUtils.fontSizeRatio,
+                                color: ThemeColors.getFontPrimary(
+                                    settingInfo.darkSwitch)),
                           ),
                           actions: [
                             TextButton(

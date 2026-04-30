@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import '../constants/constants.dart';
-import 'package:lib_common/constants/router_map.dart';
+import 'package:lib_common/lib_common.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../constants/constants.dart';
 
 class SplashPage extends StatefulWidget {
   const SplashPage({super.key});
@@ -12,11 +12,12 @@ class SplashPage extends StatefulWidget {
 
 class _SplashPageState extends State<SplashPage> {
   // todo: 自行调整是否支持开屏广告
-  bool isShowAd = false;
+  bool isShowAd = true;
 
   @override
   void initState() {
     super.initState();
+    SplashUtils.initRouterLis(context);
     Future.delayed(
       const Duration(seconds: 2),
       () async {
@@ -33,51 +34,24 @@ class _SplashPageState extends State<SplashPage> {
 
   @override
   Widget build(BuildContext context) {
+    final settingInfo = SettingModel.getInstance();
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: ThemeColors.getBackgroundColor(settingInfo.darkSwitch),
       body: Stack(
         children: [
           Container(
             width: double.infinity,
             height: double.infinity,
-            decoration: const BoxDecoration(
+            decoration: BoxDecoration(
+              color: settingInfo.darkSwitch
+                  ? Colors.black
+                  : const Color(0xFF6180DC),
               image: DecorationImage(
-                image: AssetImage(AppConstants.icStartBackgroundImage),
-                fit: BoxFit.cover,
+                image: AssetImage(settingInfo.darkSwitch
+                    ? AppConstants.icStartBackgroundImageDark
+                    : AppConstants.icStartBackgroundImageLight),
+                fit: BoxFit.contain,
               ),
-            ),
-          ),
-          Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Image.asset(
-                  AppConstants.startIconImage,
-                  width: AppConstants.SPACE_116,
-                  height: AppConstants.SPACE_116,
-                  fit: BoxFit.contain,
-                ),
-                const SizedBox(height: AppConstants.SPACE_258),
-                const Text(
-                  '新闻模板',
-                  style: TextStyle(
-                    fontSize: AppConstants.FONT_20,
-                    fontWeight: FontWeight.w500,
-                    color: AppConstants.textColor,
-                    height: AppConstants.SPACE_1_6,
-                  ),
-                ),
-                const SizedBox(height: AppConstants.SPACE_20),
-                const Text(
-                  '新闻也是如此精彩',
-                  style: TextStyle(
-                    fontSize: AppConstants.FONT_16,
-                    fontWeight: FontWeight.normal,
-                    color: AppConstants.textColor,
-                    height: AppConstants.SPACE_1_31,
-                  ),
-                ),
-              ],
             ),
           ),
         ],

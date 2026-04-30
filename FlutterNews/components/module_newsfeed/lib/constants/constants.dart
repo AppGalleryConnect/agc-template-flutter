@@ -49,28 +49,41 @@ class Constants {
   static const double FONT_18 = 18.0;
   static const double FONT_17 = 17.0;
   static const double FONT_20 = 20.0;
- 
+
   static const Color TEXT_COLOR = Color(0xFFE84026);
   static const Color WATCH_COLOR = Color(0xFFF5F5F5);
   static const Color PUBLISH_TEXT_COLOR = Color(0xFF8C8C8E);
-  
-  static const String starFillImage = 'star_fill.png';
-  static const String starImage = 'star.png';
-  static const String opForwardImage = 'packages/module_newsfeed/assets/op_forward.svg';
+
+  static const String starImage = 'comment_like_active.svg';
+  static const String starImageActive = 'comment_like.svg';
+  static const String starImageDark = 'comment_like_active_dark.svg';
+
+  static const String opForwardImage =
+      'packages/module_newsfeed/assets/op_forward.svg';
   static const String opCommentImage = 'assets/icons/op_comment.png';
   static const String iconDefaultImage = 'assets/icon_default.png';
   static const String iconsIconDefaultImage = 'assets/icons/icon_default.png';
-  static const String giveLikeActiveImage = 'packages/module_newsfeed/assets/give_like_active.svg';
-  static const String giveLikeImage = 'packages/module_newsfeed/assets/give_like.svg';
-  static const String icUserUnloginImage = 'packages/business_mine/assets/ic_user_unlogin.svg';
+  static const String giveLikeActiveImage =
+      'packages/module_newsfeed/assets/give_like_active.svg';
+  static const String giveLikeImage =
+      'packages/module_newsfeed/assets/give_like.svg';
+  static const String icUserUnloginImage =
+      'packages/business_mine/assets/ic_user_unlogin.svg';
   static const String likeDarkImage = 'assets/icons/like_dark.png';
   static const String likeImage = 'assets/icons/like.png';
   static const String likeActiveImage = 'assets/icons/like_active.png';
   static const String likeImagePath = 'like.svg';
   static const String likeActiveImagePath = 'like_active.svg';
   static const String icWechatImage = 'ic_wechat.png';
-  static const String icHeadsetImage = 'packages/module_newsfeed/assets/ic_headset.svg';
+  static const String icHeadsetImage =
+      'packages/module_newsfeed/assets/ic_headset.svg';
   static const String messageActiveImage = 'message_active.svg';
+  static const String fullScreen =
+      'packages/module_newsfeed/assets/full_screen.png';
+  static const String splitScreen =
+      'packages/module_newsfeed/assets/split_screen.png';
+  static const String fullScreenDark =
+      'packages/module_newsfeed/assets/dark_full_screen.png';
+  static const String splitScreenDark =
+      'packages/module_newsfeed/assets/dark_split_screen.png';
 }
-
-

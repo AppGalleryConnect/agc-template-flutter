@@ -5,4 +5,7 @@ enum EventEnum {
   networkChanged,
   themeChanged,
   postPublished,
+  breakpointChange,
+  homeIndexChange,
+  actionIndexChange
 }

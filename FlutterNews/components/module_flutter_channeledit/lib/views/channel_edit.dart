@@ -14,13 +14,21 @@ class ChannelEdit extends StatefulWidget {
   final Function(int index, TabInfo item) onChange;
   final int index;
   final bool isDark;
+  final Color fontColor;
+  final Color backgroundColor;
+  final Color backgroundColorTertiary;
+  final String editType;
 
   const ChannelEdit({
     super.key,
     this.currentIndex = 1,
     this.channelsList = const [],
     this.fontSizeRatio = 1.0,
+    this.editType = '',
     this.isShowEdit = true,
+    this.fontColor = Colors.black,
+    this.backgroundColor = Colors.white,
+    this.backgroundColorTertiary = Colors.grey,
     required this.onSave,
     required this.onChange,
     this.index = 0,
@@ -70,6 +78,7 @@ class _ChannelEditState extends State<ChannelEdit> {
             child: CustomTabBar(
               listScroller: listScroller,
               myChannels: selectChannelList,
+              fontColor: widget.fontColor,
               fontSizeRatio: widget.fontSizeRatio,
               currentIndex: widget.currentIndex,
               onIndexChange: (index, item) => widget.onChange(index, item),
@@ -84,7 +93,13 @@ class _ChannelEditState extends State<ChannelEdit> {
               width: Constants.SPACE_24,
               height: Constants.SPACE_24,
               colorFilter: widget.currentIndex < widget.index
-                  ? const ColorFilter.mode(Colors.white, BlendMode.srcIn)
+                  ? ColorFilter.mode(
+                      widget.editType == 'video'
+                          ? Colors.white
+                          : widget.isDark
+                              ? Colors.white
+                              : Colors.black,
+                      BlendMode.srcIn)
                   : ColorFilter.mode(
                       widget.isDark ? Colors.white : Colors.black,
                       BlendMode.srcIn),
@@ -102,47 +117,58 @@ class _ChannelEditState extends State<ChannelEdit> {
   }
 
   void _showEditSheet(BuildContext context) {
+    List<TabInfo> localSelected = List.from(selectChannelList);
+    List<TabInfo> localUnSelected = List.from(unselectChannelList);
+
     showModalBottomSheet(
       context: context,
-      builder: (ctx) => ChannelsSortEdit(
-        selectChannelList: selectChannelList,
-        unselectChannelList: unselectChannelList,
-        fontSizeRatio: widget.fontSizeRatio,
-        onSave: (index, item) => {
-          setState(
-            () {
-              if (item.selected) {
-                selectChannelList.add(item);
-                unselectChannelList.remove(item);
-                widget.onSave(selectChannelList + unselectChannelList);
-              } else {
-                selectChannelList.remove(item);
-                unselectChannelList.add(item);
-                widget.onSave(selectChannelList + unselectChannelList);
-                if (widget.currentIndex == index) {
-                  if (index <= selectChannelList.length - 1) {
-                    widget.onChange(index, item);
-                  } else {
-                    widget.onChange(1, item);
-                  }
-                }
-              }
-            },
-          )
-        },
-        onChannelClick: (index, item) => {
-          setState(
-            () {
-              widget.onChange(index, item);
-            },
-          )
-        },
-      ),
+      isScrollControlled: true,
       shape: const RoundedRectangleBorder(
         borderRadius:
             BorderRadius.vertical(top: Radius.circular(Constants.SPACE_20)),
       ),
       clipBehavior: Clip.antiAlias,
+      builder: (ctx) {
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return ConstrainedBox(
+              constraints: BoxConstraints(
+                maxHeight:
+                    MediaQuery.of(context).size.height * 0.7,
+              ),
+              child: ChannelsSortEdit(
+                selectChannelList: localSelected,
+                unselectChannelList: unselectChannelList,
+                fontSizeRatio: widget.fontSizeRatio,
+                backgroundColor: widget.backgroundColor,
+                backgroundColorTertiary: widget.backgroundColorTertiary,
+                fontColor: widget.fontColor,
+                onSave: (index, item) {
+                  setState(() {
+                    if (item.selected) {
+                      localSelected.add(item);
+                      localUnSelected.remove(item);
+                    } else {
+                      localSelected.remove(item);
+                      localUnSelected.add(item);
+                    }
+                  });
+
+                  this.setState(() {
+                    selectChannelList = List.from(localSelected);
+                    unselectChannelList = List.from(localUnSelected);
+                  });
+
+                  widget.onSave(selectChannelList + unselectChannelList);
+                },
+                onChannelClick: (index, item) {
+                  widget.onChange(index, item);
+            },
+              ),
+            );
+          },
+        );
+      },
     );
   }
 }

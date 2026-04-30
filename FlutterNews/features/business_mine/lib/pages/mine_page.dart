@@ -4,8 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:lib_common/models/window_model.dart' as common_window;
 import 'package:business_mine/utils/font_scale_utils.dart';
 import 'package:business_mine/viewmodels/mine_vm.dart';
+import 'package:get/get.dart';
 import '../constants/constants.dart';
 import 'dart:io';
+
 
 class MinePage extends StatefulWidget {
   const MinePage({super.key});
@@ -178,11 +180,12 @@ class _MinePageState extends State<MinePage> {
                         ),
                       ),
                       const SizedBox(height: CommonConstants.SPACE_XXS),
-                      const Text(
+                      Text(
                         '登录后享受更多服务',
                         style: TextStyle(
                           fontSize: 12 * 1.0,
-                          color: Colors.black,
+                          color: ThemeColors.getFontPrimary(
+                              settingInfo.darkSwitch),
                         ),
                       ),
                     ],
@@ -211,7 +214,7 @@ class _MinePageState extends State<MinePage> {
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: ThemeColors.getBackgroundColor(settingInfo.darkSwitch),
         borderRadius: BorderRadius.circular(CommonConstants.RADIUS_XL),
       ),
       child: GridView.builder(
@@ -274,14 +277,18 @@ class _MinePageState extends State<MinePage> {
   }
 
   Widget listCard() {
+    return Obx(() {
+      final breakpointCtrl = Get.find<BreakpointController>();
+      final currentLanes = breakpointCtrl.lanes.value;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
+        Text(
           '常用服务',
           style: TextStyle(
             fontSize: 18 * 1.0,
-            color: Colors.black,
+            color: ThemeColors.getFontPrimary(settingInfo.darkSwitch),
             fontWeight: FontWeight.w500,
           ),
         ),
@@ -289,69 +296,86 @@ class _MinePageState extends State<MinePage> {
         Container(
           width: double.infinity,
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: ThemeColors.getBackgroundColor(settingInfo.darkSwitch),
             borderRadius: BorderRadius.circular(CommonConstants.RADIUS_XL),
           ),
-          child: Column(
-            children: [
-              for (int i = 0; i < vm.serviceList.length; i++)
-                Column(
-                  children: [
-                    InkWell(
-                      onTap: () {
-                        String routerName = vm.serviceList[i].routerName;
-                        String label = vm.serviceList[i].label;
-                        if (label == '意见反馈' && !vm.userInfoModel.isLogin) {
-                          vm.jumpLogin(useHalfModal: true);
-                          return;
-                        }
-                        RouterUtils.of.pushPathByName(routerName);
-                      },
-                      child: Padding(
-                        padding:
-                            const EdgeInsets.all(CommonConstants.PADDING_M),
-                        child: Row(
-                          children: [
-                            Image.asset(
-                              vm.serviceList[i].icon,
-                              width: 24,
-                              height: 24,
-                            ),
-                            const SizedBox(width: CommonConstants.SPACE_M),
-                            Expanded(
-                              child: Text(
-                                vm.serviceList[i].label,
-                                style: TextStyle(
-                                  fontSize: 14 * FontScaleUtils.fontSizeRatio,
-                                  color: ThemeColors.getFontPrimary(
-                                      settingInfo.darkSwitch),
-                                ),
+            child: LayoutBuilder(
+              builder: (context, constraints) {
+                double itemWidth = constraints.maxWidth / currentLanes;
+                return Wrap(
+                  spacing: 0,
+                  runSpacing: 0,
+                  children: List.generate(vm.serviceList.length, (i) {
+                    return SizedBox(
+                      width: itemWidth,
+                      child: Column(
+                        children: [
+                          InkWell(
+                            onTap: () {
+                              String routerName = vm.serviceList[i].routerName;
+                              String label = vm.serviceList[i].label;
+                              if (label == '意见反馈' &&
+                                  !vm.userInfoModel.isLogin) {
+                                vm.jumpLogin(useHalfModal: true);
+                                return;
+                              }
+                              RouterUtils.of.pushPathByName(routerName);
+                            },
+                            child: Padding(
+                              padding: const EdgeInsets.all(
+                                  CommonConstants.PADDING_M),
+                              child: Row(
+                                children: [
+                                  Image.asset(
+                                    vm.serviceList[i].icon,
+                                    width: 24,
+                                    height: 24,
+                                    color: ThemeColors.getFontPrimary(
+                                        settingInfo.darkSwitch),
+                                  ),
+                                  const SizedBox(
+                                      width: CommonConstants.SPACE_M),
+                                  Expanded(
+                                    child: Text(
+                                      vm.serviceList[i].label,
+                                      style: TextStyle(
+                                        fontSize:
+                                            14 * FontScaleUtils.fontSizeRatio,
+                                        color: ThemeColors.getFontPrimary(
+                                            settingInfo.darkSwitch),
+                                      ),
+                                    ),
+                                  ),
+                                  Icon(
+                                    Icons.chevron_right,
+                                    size: 16,
+                                    color: ThemeColors.getFontSecondary(
+                                        settingInfo.darkSwitch),
+                                  ),
+                                ],
                               ),
                             ),
-                            const Icon(
-                              Icons.chevron_right,
-                              size: 16,
-                              color: Colors.grey,
+                          ),
+                          if (i < vm.serviceList.length - 1)
+                            Container(
+                              height: 1,
+                              color: settingInfo.darkSwitch
+                                  ? const Color(0xFF3A3A3A)
+                                  : Colors.grey.shade100,
+                              margin:
+                                  const EdgeInsets.only(left: 25, right: 25),
                             ),
-                          ],
-                        ),
+                        ],
                       ),
-                    ),
-                    if (i < vm.serviceList.length - 1)
-                      Container(
-                        height: 1,
-                        color: settingInfo.darkSwitch
-                            ? const Color(0xFF3A3A3A)
-                            : Colors.grey.shade100,
-                        margin: const EdgeInsets.only(left: 25, right: 25),
-                      ),
-                  ],
-                ),
-            ],
+                    );
+                  }),
+                );
+              },
           ),
         ),
       ],
     );
+    });
   }
 }
 

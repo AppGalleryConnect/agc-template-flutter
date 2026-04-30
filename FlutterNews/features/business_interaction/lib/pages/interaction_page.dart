@@ -4,6 +4,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:lib_account/utils/login_sheet_utils.dart';
 import 'package:lib_common/lib_common.dart';
 import 'package:lib_widget/lib_widget.dart';
+import 'package:get/get.dart';
 import 'package:lib_account/viewmodels/login_vm.dart' as login_vm;
 import '../constants/constants.dart';
 import '../components/top_bar.dart';
@@ -41,6 +42,13 @@ class _InteractionPageState extends BaseStatefulWidgetState<InteractionPage>
     pageController = PageController(initialPage: 0);
     // 添加应用生命周期监听
     WidgetsBinding.instance.addObserver(this);
+    EventHubUtils.getInstance().on(EventEnum.actionIndexChange, (args) {
+      if (mounted) {
+        setState(() {
+          pageController.jumpToPage(1);
+        });
+      }
+    });
   }
 
   @override
@@ -115,9 +123,10 @@ class _InteractionPageState extends BaseStatefulWidgetState<InteractionPage>
 
   Widget _buildMainContent() {
     final double statusBarHeight = MediaQuery.of(context).padding.top;
-
+    final breakpointCtrl = Get.find<BreakpointController>();
     return Scaffold(
-      backgroundColor: Colors.transparent,
+      backgroundColor:
+          ThemeColors.getBackgroundSecondary(settingInfo.darkSwitch),
       body: Column(
         children: [
           NavHeaderBar(
@@ -178,7 +187,8 @@ class _InteractionPageState extends BaseStatefulWidgetState<InteractionPage>
             ),
           ),
           SizedBox(
-            height: MediaQuery.of(context).padding.bottom + Constants.SPACE_50,
+            height: MediaQuery.of(context).padding.bottom +
+                (breakpointCtrl.isTabVertical ? 0 : Constants.SPACE_50),
           ),
         ],
       ),

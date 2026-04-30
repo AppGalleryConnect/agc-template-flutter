@@ -29,6 +29,7 @@ class _FeedDetailState extends State<FeedDetail> {
   late UserInfoModel userInfoModel;
   bool _isExpanded = false;
   final int _maxLines = Constants.feedDetailMaxLines;
+  final settingInfo = SettingModel.getInstance();
 
   @override
   void initState() {
@@ -254,8 +255,9 @@ class _FeedDetailState extends State<FeedDetail> {
                         children: [
                           Text(
                             _authorName,
-                            style: const TextStyle(
-                              color: Colors.black87,
+                            style: TextStyle(
+                              color: ThemeColors.getFontPrimary(
+                                  settingInfo.darkSwitch),
                               fontSize: Constants.fontSizeSmall,
                               fontWeight: FontWeight.w500,
                             ),
@@ -361,7 +363,8 @@ class _FeedDetailState extends State<FeedDetail> {
       ),
       decoration: BoxDecoration(
         color: isWatched
-            ? Constants.feedDetailColorF5F5F5
+            ? ThemeColors.getBackgroundTertiary(
+                                settingInfo.darkSwitch)
             : Constants.feedDetailAppThemeColor,
         borderRadius: BorderRadius.circular(
           Constants.feedDetailButtonBorderRadius,
@@ -383,10 +386,10 @@ class _FeedDetailState extends State<FeedDetail> {
   Widget _buildTextContent() {
     return LayoutBuilder(
       builder: (context, constraints) {
-        const textStyle = TextStyle(
+        final textStyle = TextStyle(
           fontSize: Constants.fontSizeTitle,
           fontWeight: FontWeight.w500,
-          color: Colors.black87,
+          color: ThemeColors.getFontPrimary(settingInfo.darkSwitch),
           height: Constants.feedDetailTextHeight,
         );
         final hasSearchKey =
@@ -403,7 +406,7 @@ class _FeedDetailState extends State<FeedDetail> {
                   keywords: [searchKey],
                   sourceString: widget.curFeedCardInfo.title,
                   highlightColor: Constants.highlightColor,
-                  textColor: Colors.black87,
+                  textColor: ThemeColors.getFontPrimary(settingInfo.darkSwitch),
                   fontSize: Constants.fontSizeTitle,
                 ),
                 Padding(
@@ -479,7 +482,7 @@ class _FeedDetailState extends State<FeedDetail> {
               keywords: [searchKey],
               sourceString: widget.curFeedCardInfo.title,
               highlightColor: Constants.highlightColor,
-              textColor: Colors.black87,
+              textColor: ThemeColors.getFontPrimary(settingInfo.darkSwitch),
               fontSize: Constants.fontSizeTitle,
               maxLines: 3,
               overflow: TextOverflow.ellipsis,

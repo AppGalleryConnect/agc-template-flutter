@@ -1,7 +1,6 @@
-import 'package:lib_common/constants/common_constants.dart';
+import 'package:lib_common/lib_common.dart';
 import 'package:lib_common/utils/time_utils.dart';
 import 'package:lib_widget/components/nav_header_bar.dart';
-import 'package:lib_common/models/window_model.dart';
 import 'package:lib_news_api/services/message_service.dart';
 import '../common/observed_model.dart';
 import '../viewmodels/message_comment_vm.dart';
@@ -10,8 +9,6 @@ import '../utils/content_navigation_utils.dart';
 import '../utils/font_scale_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:lib_common/utils/router_utils.dart';
-import 'package:lib_common/constants/router_map.dart';
 import '../constants/constants.dart' as MineConstants;
 
 class MsgCommentReplyPage extends StatefulWidget {
@@ -23,7 +20,7 @@ class MsgCommentReplyPage extends StatefulWidget {
 
 class _MsgCommentReplyPageState extends State<MsgCommentReplyPage> {
   final WindowModel windowModel = WindowModel();
-
+  final settingInfo = SettingModel.getInstance();
   @override
   void initState() {
     super.initState();
@@ -47,10 +44,16 @@ class _MsgCommentReplyPageState extends State<MsgCommentReplyPage> {
                   onBack: () {
                     viewModel.onBackPressed();
                   },
+                  titleColor:
+                      ThemeColors.getFontPrimary(settingInfo.darkSwitch),
+                  bgColor:
+                      ThemeColors.getBackgroundColor(settingInfo.darkSwitch),
                   backButtonBackgroundColor:
-                      MineConstants.Constants.messageItemIconBgColor,
+                      ThemeColors.getCompBackgroundSecondary(
+                          settingInfo.darkSwitch),
                   backButtonPressedBackgroundColor:
-                      MineConstants.Constants.dividerColor,
+                      ThemeColors.getCompBackgroundSecondary(
+                          settingInfo.darkSwitch),
                   customTitleSize: MineConstants.Constants.textHeaderSize *
                       FontScaleUtils.fontSizeRatio,
                 ),
@@ -69,27 +72,30 @@ class _MsgCommentReplyPageState extends State<MsgCommentReplyPage> {
       BuildContext context, MsgCommentViewModel viewModel) {
     return RefreshIndicator(
       onRefresh: () => viewModel.onRefresh(),
-      child: ListView.separated(
-        padding: EdgeInsets.only(
-          left: CommonConstants.PADDING_PAGE,
-          right: CommonConstants.PADDING_PAGE,
-          top: CommonConstants.SPACE_S,
-          bottom: windowModel.windowBottomPadding,
+      child: Container(
+        color: ThemeColors.getBackgroundColor(settingInfo.darkSwitch),
+        child: ListView.separated(
+          padding: EdgeInsets.only(
+            left: CommonConstants.PADDING_PAGE,
+            right: CommonConstants.PADDING_PAGE,
+            top: CommonConstants.SPACE_S,
+            bottom: windowModel.windowBottomPadding,
+          ),
+          itemCount: viewModel.list.length,
+          separatorBuilder: (context, index) => const SizedBox(
+            height: CommonConstants.SPACE_L,
+          ),
+          itemBuilder: (context, index) {
+            final item = viewModel.list[index];
+            return _buildCommentItem(
+              context,
+              viewModel,
+              item,
+            );
+          },
         ),
-        itemCount: viewModel.list.length,
-        separatorBuilder: (context, index) => const SizedBox(
-          height: CommonConstants.SPACE_L,
-        ),
-        itemBuilder: (context, index) {
-          final item = viewModel.list[index];
-          return _buildCommentItem(
-            context,
-            viewModel,
-            item,
-          );
-        },
       ),
-    );
+);
   }
 
   Widget _buildCommentItem(BuildContext context, MsgCommentViewModel viewModel,
@@ -224,7 +230,7 @@ class _MsgCommentReplyPageState extends State<MsgCommentReplyPage> {
       child: Container(
         width: double.infinity,
         decoration: BoxDecoration(
-          color: MineConstants.Constants.backgroundLightGrayColor,
+          color: ThemeColors.getCompBackgroundSecondary(settingInfo.darkSwitch),
           borderRadius: BorderRadius.circular(
               MineConstants.Constants.newsCardBorderRadius / 2),
         ),

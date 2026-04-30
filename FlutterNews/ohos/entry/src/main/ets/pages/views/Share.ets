@@ -4,7 +4,6 @@ import { PosterSharePop } from '../buider/PosterShareBuilder'
 import { Screenshot } from '../ComponentScreenshot/Screenshot';
 import { ShareEventDispatcher } from '../utils/EventDispatcher';
 import { WxShareViewModel } from '../viewModel/WxShareViewModel';
-// import { QqShareViewModel } from '../viewModel/QqShareViewModel';
 import { ShareOptions, ShareSheetParams } from '../model/Model';
 import { PopViewUtils } from '../utils/PopViewUtils';
 

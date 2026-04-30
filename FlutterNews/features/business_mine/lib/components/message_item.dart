@@ -18,6 +18,7 @@ class MsgMenuItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final settingInfo = SettingModel.getInstance();
     return GestureDetector(
       onTap: () {
         RouterUtils.of.pushPathByName(info.routerName,
@@ -52,7 +53,7 @@ class MsgMenuItem extends StatelessWidget {
                     info.menuTitle,
                     style: TextStyle(
                       fontSize: Constants.textPrimarySize * fontSizeRatio,
-                      color: Constants.textPrimaryColor,
+                      color: ThemeColors.getFontPrimary(settingInfo.darkSwitch),
                       fontWeight: FontWeight.w500,
                     ),
                     overflow: TextOverflow.ellipsis,
@@ -89,7 +90,7 @@ class MsgMenuItem extends StatelessWidget {
                         (Theme.of(context).textTheme.bodySmall?.fontSize ??
                                 Constants.textSecondarySize) *
                             FontScaleUtils.fontSizeRatio,
-                    color: Theme.of(context).textTheme.bodySmall?.color,
+                    color: ThemeColors.getFontPrimary(settingInfo.darkSwitch),
                   ),
                   overflow: TextOverflow.ellipsis,
                   maxLines: 1,

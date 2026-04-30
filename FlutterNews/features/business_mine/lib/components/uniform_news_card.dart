@@ -1,6 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:lib_common/constants/common_constants.dart';
+import 'package:lib_common/lib_common.dart';
 import 'package:lib_news_api/observedmodels/news_model.dart';
 import 'package:lib_news_api/constants/constants.dart';
 import 'package:lib_common/utils/time_utils.dart';
@@ -43,6 +43,7 @@ class UniformNewsCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final settingInfo = SettingModel.getInstance();
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -59,8 +60,7 @@ class UniformNewsCard extends StatelessWidget {
                       fontSize: (customStyle.bodyFg ??
                               MineConstants.Constants.textPrimarySize) *
                           FontScaleUtils.fontSizeRatio,
-                      color: customStyle.bodyFgColor ??
-                          MineConstants.Constants.newsCardTextPrimaryColor,
+                      color: ThemeColors.getFontPrimary(settingInfo.darkSwitch),
                     ),
                     maxLines: 3,
                     overflow: TextOverflow.ellipsis,
@@ -102,15 +102,22 @@ class UniformNewsCard extends StatelessWidget {
     );
   }
 
-  Widget authorInfo() {
+Widget authorInfo() {
     return Row(
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        Text(
-          newsInfo.author?.authorNickName ?? '',
-          style: TextStyle(
-            fontSize: MineConstants.Constants.textTertiarySize *
-                FontScaleUtils.fontSizeRatio,
-            color: MineConstants.Constants.newsCardTextSecondaryColor,
+        ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 180),
+          child: Text(
+            newsInfo.author?.authorNickName ?? '',
+            style: TextStyle(
+              fontSize: MineConstants.Constants.textTertiarySize *
+                  FontScaleUtils.fontSizeRatio,
+              color: MineConstants.Constants.newsCardTextSecondaryColor,
+            ),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            softWrap: false,
           ),
         ),
         const SizedBox(width: CommonConstants.PADDING_S),
@@ -209,9 +216,9 @@ class UniformNewsCard extends StatelessWidget {
           ClipRRect(
             borderRadius: BorderRadius.circular(
                 MineConstants.Constants.newsCardBorderRadius),
-            child: videoUrl.startsWith('file://')
+            child: videoUrl.startsWith('/data/storage/')
                 ? Image.file(
-                    File(videoUrl.substring(7)),
+                    File(videoUrl),
                     width: width,
                     height: height,
                     fit: BoxFit.cover,

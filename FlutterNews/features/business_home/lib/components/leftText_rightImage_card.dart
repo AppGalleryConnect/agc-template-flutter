@@ -1,5 +1,6 @@
 import 'package:business_home/components/topText_bottomImage_card.dart';
 import 'package:flutter/material.dart';
+import 'package:lib_common/lib_common.dart';
 import 'package:lib_common/utils/time_utils.dart';
 import 'package:lib_news_api/params/base/base_model.dart';
 import 'package:lib_news_api/params/response/news_response.dart';
@@ -62,6 +63,7 @@ class _NativeComponentState extends State<NativeComponent> {
   Widget build(BuildContext context) {
     final autoerInfo = widget.cardData.extraInfo?["isNeedAuthor"];
     final isNeedAuthor = autoerInfo != null && autoerInfo == true;
+    final settingInfo = SettingModel.getInstance();
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -92,8 +94,8 @@ class _NativeComponentState extends State<NativeComponent> {
                         fontSize: Constants.fontSizeTitle *
                             widget.fontSizeRatio, // * settingInfo.fontSizeRatio
                         fontWeight: FontWeight.w500,
-                        color: Constants
-                            .primaryTextColor, // $r('sys.color.font_primary')
+                        color: ThemeColors.getFontPrimary(settingInfo
+                            .darkSwitch), // $r('sys.color.font_primary')
                       ),
                     )
                   else
@@ -101,7 +103,8 @@ class _NativeComponentState extends State<NativeComponent> {
                       keywords: [widget.cardData.extraInfo?['searchKey'] ?? ''],
                       sourceString: itemData.title,
                       highlightColor: Constants.highlightColor,
-                      textColor: Constants.primaryTextColor,
+                      textColor:
+                          ThemeColors.getFontPrimary(settingInfo.darkSwitch),
                       fontSize: Constants.fontSizeTitle * widget.fontSizeRatio,
                     ),
                   const SizedBox(height: Constants.leftRightCardTitleSpacing),
@@ -110,10 +113,9 @@ class _NativeComponentState extends State<NativeComponent> {
                     Text(
                       '${itemData.author?.authorNickName ?? ''} ${TimeUtils.formatDate(itemData.createTime)}',
                       style: TextStyle(
-                        fontSize: Constants.fontSizeTiny *
-                            widget.fontSizeRatio, // * settingInfo.fontSizeRatio
-                        color: Constants
-                            .secondaryTextColor, // $r('sys.color.font_tertiary')
+                        fontSize: Constants.fontSizeTiny * widget.fontSizeRatio,
+                        color: ThemeColors.getFontSecondary(
+                            settingInfo.darkSwitch),
                       ),
                       maxLines: 1, // 强制单行显示
                       overflow: TextOverflow.ellipsis, // 超出部分显示省略号

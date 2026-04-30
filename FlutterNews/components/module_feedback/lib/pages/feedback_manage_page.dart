@@ -1,3 +1,6 @@
+import 'package:lib_common/models/setting_model.dart';
+import 'package:lib_common/utils/theme_colors.dart';
+
 import '../components/nav_header_bar.dart';
 import '../common/constants.dart';
 import '../components/setting_list.dart';
@@ -15,16 +18,17 @@ class FeedbackManagePage extends StatefulWidget {
 }
 
 class _FeedbackManagePageState extends State<FeedbackManagePage> {
+  final settingInfo = SettingModel.getInstance();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey.shade100,
+      backgroundColor: ThemeColors.getBackgroundSecondary(settingInfo.darkSwitch),
       body: Column(
         children: [
           // 导航头部栏
          const NavHeaderBar(
             title: '意见反馈',
-            hasBgColor: false,
+            hasBgColor: true,
             showBackBtn: true,
           ),
 

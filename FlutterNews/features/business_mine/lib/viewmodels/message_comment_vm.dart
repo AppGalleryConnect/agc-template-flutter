@@ -1,5 +1,4 @@
-import 'package:lib_common/utils/router_utils.dart';
-import 'package:lib_common/constants/router_map.dart';
+import 'package:lib_common/lib_common.dart';
 import 'package:lib_news_api/services/mine_service.dart';
 import 'package:lib_news_api/services/message_service.dart';
 import 'package:lib_news_api/params/request/common_request.dart';
@@ -13,6 +12,7 @@ class MsgCommentViewModel extends ChangeNotifier {
   List<AggregateNewsCommentModel> list = [];
   bool loading = false;
   double fontSizeRatio = 1.0;
+  final settingInfo = SettingModel.getInstance();
 
   MsgCommentViewModel() {
     queryList();
@@ -27,7 +27,7 @@ class MsgCommentViewModel extends ChangeNotifier {
       final resp = await messageServiceApi.queryCommentReplyList();
       list = resp.map((v) => AggregateNewsCommentModel(v)).toList();
     } catch (error) {
-      print('获取评论回复列表失败: $error');
+      Logger.info('获取评论回复列表失败: $error');
     } finally {
       loading = false;
       notifyListeners();
@@ -35,14 +35,14 @@ class MsgCommentViewModel extends ChangeNotifier {
   }
 
   void replyComment(BuildContext context, AggregateNewsCommentModel v) {
-    commentSheetOpen(
-      context,
-      v.author?.authorNickName ?? '',
-      (content) {
-        publishReply(v, content);
-      },
-      false,
-    );
+    commentSheetOpen(context, v.author?.authorNickName ?? '', (content) {
+      publishReply(v, content);
+    },
+        false,
+        null,
+        ThemeColors.getFontPrimary(settingInfo.darkSwitch),
+        ThemeColors.getBackgroundColor(settingInfo.darkSwitch),
+        ThemeColors.getBackgroundSecondary(settingInfo.darkSwitch));
   }
 
   void jumpProfile(String authorId) {

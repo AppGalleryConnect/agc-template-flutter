@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:lib_common/constants/common_constants.dart';
+import 'package:lib_common/lib_common.dart';
 import '../commons/constants.dart';
 
 /// 返回按钮组件
@@ -34,6 +35,8 @@ class AppBackButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final settingInfo = SettingModel.getInstance();
+
     void defaultOnPressed() {
       Navigator.of(context).pop();
     }
@@ -48,13 +51,11 @@ class AppBackButton extends StatelessWidget {
       ),
       child: IconButton(
         icon: SvgPicture.asset(
-          CommonConstants.iconBackPath,
+          settingInfo.darkSwitch
+              ? CommonConstants.iconBackPathDark
+              : CommonConstants.iconBackPath,
           width: Constants.backButtonWidth,
           height: Constants.backButtonHeight,
-          colorFilter: ColorFilter.mode(
-            Theme.of(context).colorScheme.primary,
-            BlendMode.srcIn,
-          ),
           fit: BoxFit.contain,
         ),
         onPressed: onPressed ?? defaultOnPressed,

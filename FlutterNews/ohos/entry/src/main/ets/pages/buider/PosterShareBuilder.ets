@@ -41,8 +41,8 @@ export struct PosterSharePopContent {
 
   init() {
     display.getAllDisplays((err, data) => {
-      this.screenWidth = px2vp(data[0].width)
-      this.screenHeight = px2vp(data[0].height)
+      this.screenWidth = this.getUIContext().px2vp(data[0].width)
+      this.screenHeight = this.getUIContext().px2vp(data[0].height)
     })
     this.transY = '100%'
   }

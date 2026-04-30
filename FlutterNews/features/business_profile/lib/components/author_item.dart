@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lib_common/lib_common.dart';
 import 'package:lib_news_api/observedmodels/author_model.dart';
 import 'package:lib_common/constants/common_constants.dart';
 import '../components/watch_button.dart';
@@ -22,6 +23,7 @@ class AuthorItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     String pageType = 'normal';
+    final settingInfo = SettingModel.getInstance();
     if (viewModel != null) {
       if (viewModel is FollowerPageViewModel) {
         pageType = 'follower';
@@ -54,14 +56,14 @@ class AuthorItem extends StatelessWidget {
                   style: TextStyle(
                     fontSize: 16 * fontSizeRatio,
                     fontWeight: FontWeight.w500,
-                    color: Colors.black,
+                    color: ThemeColors.getFontPrimary(settingInfo.darkSwitch),
                   ),
                 ),
                 Text(
                   author.authorDesc,
                   style: TextStyle(
                     fontSize: 12 * fontSizeRatio,
-                    color: Colors.grey[600],
+                    color: ThemeColors.getFontTertiary(settingInfo.darkSwitch),
                   ),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,

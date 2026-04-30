@@ -123,17 +123,28 @@ class NewsResponse {
     this.relationId,
   });
 
-  /// 从JSON数据创建NewsResponse实例
   factory NewsResponse.fromJson(Map<String, dynamic> json) {
+    String? safeToString(dynamic value) {
+      if (value == null) return null;
+      if (value is String) return value;
+      return value.toString();
+    }
+
+    String safeToNonNullString(dynamic value, {String defaultValue = ''}) {
+      if (value == null) return defaultValue;
+      if (value is String) return value;
+      return value.toString();
+    }
+
     return NewsResponse(
-      id: json['id'] as String,
+      id: safeToNonNullString(json['id']),
       type: _parseNewsEnum(json['type']),
-      title: json['title'] as String,
+      title: safeToNonNullString(json['title']),
       author: json['author'] != null
           ? AuthorResponse.fromJson(json['author'] as Map<String, dynamic>)
           : null,
       createTime: json['createTime'] as int? ?? 0,
-      relativeTime: json['relativeTime'] as String?,
+      relativeTime: safeToString(json['relativeTime']),
       comments: _parseComments(json['comments']),
       commentCount: json['commentCount'] as int? ?? 0,
       markCount: json['markCount'] as int? ?? 0,
@@ -141,23 +152,24 @@ class NewsResponse {
       shareCount: json['shareCount'] as int? ?? 0,
       isLiked: json['isLiked'] as bool? ?? false,
       isMarked: json['isMarked'] as bool? ?? false,
-      richContent: json['richContent'] as String?,
+      richContent: safeToString(json['richContent']),
       recommends: _parseRecommends(json['recommends']),
-      videoUrl: json['videoUrl'] as String?,
-      coverUrl: json['coverUrl'] as String?,
-      videoType: _parseVideoEnum(json['videoType'] as String?),
+      videoUrl: safeToString(json['videoUrl']),
+      coverUrl: safeToString(json['coverUrl']),
+      videoType: _parseVideoEnum(safeToString(json['videoType'])),
       videoDuration: json['videoDuration'] as int?,
-      postBody: json['postBody'] as String?,
+      postBody: safeToString(json['postBody']),
       postImgList: _parsePostImgList(json['postImgList']),
       navInfo: _parseNavInfo(json['navInfo']),
       extraInfo: json['extraInfo'] as Map<String, dynamic>?,
-      articleFrom: json['articleFrom'] as String?,
-      playCount: json['playCount'] as String?,
+      articleFrom: safeToString(json['articleFrom']),
+
+      playCount: safeToString(json['playCount']),
       totalCount: json['totalCount'] as int?,
-      relationId: json['relationId'] as String?,
+
+      relationId: safeToString(json['relationId']),
     );
   }
-
   Map<String, dynamic> toJson() {
     return {
       'id': id,
@@ -191,7 +203,6 @@ class NewsResponse {
     };
   }
 
-  // 辅助方法：解析NewsEnum
   static NewsEnum _parseNewsEnum(value) {
     if (value == null) return NewsEnum.article;
     if (value is String) {

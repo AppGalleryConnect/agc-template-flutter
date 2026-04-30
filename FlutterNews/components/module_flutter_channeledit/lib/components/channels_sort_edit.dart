@@ -7,6 +7,10 @@ class ChannelsSortEdit extends StatefulWidget {
   final List<TabInfo> selectChannelList;
   final List<TabInfo> unselectChannelList;
   final double fontSizeRatio;
+  final Color fontColor;
+  final Color backgroundColor;
+  final Color backgroundColorTertiary;
+
   final Function(int index, TabInfo item) onSave;
   final Function(int index, TabInfo item) onChannelClick;
   const ChannelsSortEdit({
@@ -14,6 +18,10 @@ class ChannelsSortEdit extends StatefulWidget {
     this.selectChannelList = const [],
     this.unselectChannelList = const [],
     this.fontSizeRatio = 1.0,
+    this.fontColor = Colors.black,
+    this.backgroundColor = Colors.white,
+    this.backgroundColorTertiary = Colors.grey,
+
     required this.onSave,
     required this.onChannelClick,
   });
@@ -29,7 +37,7 @@ class _ChannelSortEditState extends State<ChannelsSortEdit> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: Colors.white,
+      color: widget.backgroundColor,
       child: Column(
         children: [
           const SizedBox(height: Constants.SPACE_8),
@@ -83,13 +91,13 @@ class _ChannelSortEditState extends State<ChannelsSortEdit> {
             style: TextStyle(
                 fontSize: Constants.FONT_16 * widget.fontSizeRatio,
                 fontWeight: FontWeight.w500,
-                color: const Color.fromARGB(255, 0, 0, 0)),
+                color: widget.fontColor),
           ),
           Container(
             width: Constants.SPACE_40,
             height: Constants.SPACE_40,
             decoration: BoxDecoration(
-              color: const Color.fromARGB(255, 228, 230, 231), // 浅灰色背景
+              color: widget.backgroundColorTertiary, // 浅灰色背景
               borderRadius: BorderRadius.circular(
                 Constants.SPACE_25,
               ),
@@ -102,8 +110,8 @@ class _ChannelSortEditState extends State<ChannelsSortEdit> {
                 Constants.deleteImage,
                 width: Constants.SPACE_15,
                 height: Constants.SPACE_15,
-                colorFilter: const ColorFilter.mode(
-                  Color.fromARGB(255, 0, 0, 0),
+                colorFilter: ColorFilter.mode(
+                  widget.fontColor,
                   BlendMode.srcIn,
                 ),
                 fit: BoxFit.contain,
@@ -166,7 +174,7 @@ class _ChannelSortEditState extends State<ChannelsSortEdit> {
                     style: TextStyle(
                       fontSize: Constants.FONT_16 * widget.fontSizeRatio,
                       fontWeight: FontWeight.w500,
-                      color: const Color.fromARGB(255, 0, 0, 0),
+                      color: widget.fontColor,
                     ),
                   ),
                   const SizedBox(
@@ -224,7 +232,7 @@ class _ChannelSortEditState extends State<ChannelsSortEdit> {
               border: Border.all(
                   color: const Color.fromARGB(31, 229, 231, 232),
                   width: Constants.SPACE_1),
-              color: const Color.fromARGB(255, 229, 231, 232),
+              color: widget.backgroundColorTertiary,
             ),
             child: Center(
               child: GestureDetector(
@@ -270,8 +278,8 @@ class _ChannelSortEditState extends State<ChannelsSortEdit> {
                         Constants.addImage,
                         width: Constants.SPACE_10,
                         height: Constants.SPACE_10,
-                        colorFilter: const ColorFilter.mode(
-                            Color.fromARGB(255, 0, 0, 0), BlendMode.srcIn),
+                        colorFilter:
+                            ColorFilter.mode(widget.fontColor, BlendMode.srcIn),
                         fit: BoxFit.contain,
                       ),
                     const SizedBox(
@@ -286,8 +294,8 @@ class _ChannelSortEditState extends State<ChannelsSortEdit> {
                         Constants.deleteImage,
                         width: Constants.SPACE_10,
                         height: Constants.SPACE_10,
-                        colorFilter: const ColorFilter.mode(
-                            Color.fromARGB(255, 0, 0, 0), BlendMode.srcIn),
+                        colorFilter:
+                            ColorFilter.mode(widget.fontColor, BlendMode.srcIn),
                         fit: BoxFit.contain,
                       ),
                   ],

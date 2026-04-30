@@ -8,7 +8,8 @@
   "license": "",
   "dependencies": {
     "@ohos/axios": "^2.2.6",
-    "@pura/harmony-utils": "^1.3.8"
+    "@pura/harmony-utils": "^1.3.8",
+    "@hw-agconnect/util-log": "^1.0.0"
   },
   "devDependencies": {
     "@ohos/hypium": "1.0.6"

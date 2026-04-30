@@ -8,6 +8,8 @@ import 'package:business_video/services/video_services.dart';
 import 'package:business_video/models/video_model.dart';
 import 'package:lib_common/lib_common.dart';
 import 'package:lib_news_api/services/mine_service.dart';
+import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
+import 'package:get/get.dart';
 import '../constants/constants.dart';
 
 class VideoListPage extends StatefulWidget {
@@ -26,7 +28,8 @@ class VideoListPage extends StatefulWidget {
   State<VideoListPage> createState() => _VideoListPageState();
 }
 
-class _VideoListPageState extends State<VideoListPage> {
+class _VideoListPageState extends State<VideoListPage>
+    with WidgetsBindingObserver {
   final EasyRefreshController _controller = EasyRefreshController();
   final ScrollController _scrollController = ScrollController();
 
@@ -37,16 +40,27 @@ class _VideoListPageState extends State<VideoListPage> {
   @override
   void initState() {
     super.initState();
-
+    WidgetsBinding.instance.addObserver(this);
     _videoList = VideoService.queryVideoList();
     MineService().addToHistory(_videoList[0].id);
   }
 
   @override
   dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     _controller.dispose();
     _scrollController.dispose();
     super.dispose();
+  }
+
+@override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    super.didChangeAppLifecycleState(state);
+    if (state == AppLifecycleState.paused) {
+      setState(() {
+        _currentIndex = -999;
+      });
+    }
   }
 
   @override
@@ -102,83 +116,102 @@ class _VideoListPageState extends State<VideoListPage> {
   }
 
   Widget _buildvideoListWidget() {
-    double height = MediaQuery.of(context).size.width > Constants.SPACE_400
-        ? Constants.SPACE_480
-        : Constants.SPACE_290;
     return EasyRefresh(
-      controller: _controller,
-      header: const MaterialHeader(),
-      footer: const MaterialFooter(),
-      onRefresh: _onRefresh,
-      onLoad: _onLoad,
-      child: ListView.builder(
-          padding: EdgeInsets.zero,
-          controller: _scrollController,
-          itemCount: _videoList.length,
-          cacheExtent: 0,
-          itemBuilder: (context, index) {
-            return Container(
-              height: height,
-              color: ThemeColors.getBackgroundSecondary(
-                  widget.settingInfo.darkSwitch),
-              child: VideoView(
-                videoModel: _getVideoModel(index),
-                canPlayVideo: index == _currentIndex &&
-                    widget.isVideo &&
-                    ModalRoute.of(context)!.isCurrent &&
-                    _canPlayVideo,
-                autoPlayVideo: widget.settingInfo.network.autoPlayTabRecommend,
-                isDark: widget.settingInfo.darkSwitch,
-                onClick: () => {
-                  setState(() {
-                    _currentIndex = index;
-                    MineService().addToHistory(_videoList[index].id);
-                    _scrollController.animateTo(
-                      0 + height * index,
-                      duration: const Duration(milliseconds: 300),
-                      curve: Curves.easeInOut,
-                    );
-                  })
-                },
-                onPushDetail: (Duration duration) => {
-                  _videoList[index].currentDuration = duration.inMilliseconds,
-                  RouterUtils.of.pushPathByName(
-                    RouterMap.VIDEO_PLAY_PAGE,
-                    param: _videoList[index],
-                    onPop: (p0) {
-                      if (_currentIndex == index) {
-                        setState(() {
-                          Duration duration = p0.result as Duration;
-                          _videoList[index].currentDuration =
-                              duration.inMilliseconds;
-                        });
-                      }
+        controller: _controller,
+        header: const MaterialHeader(),
+        footer: const MaterialFooter(),
+        onRefresh: _onRefresh,
+        onLoad: _onLoad,
+        child: Obx(() {
+          final breakpointCtrl = Get.find<BreakpointController>();
+          final currentLanes = breakpointCtrl.lanes.value;
+          return MasonryGridView.count(
+              padding: const EdgeInsets.only(
+                left: 0,
+                right: 0,
+                top: 0,
+                bottom: 24.0,
+              ),
+              controller: _scrollController,
+              itemCount: _videoList.length,
+              cacheExtent: 0,
+              crossAxisCount: currentLanes,
+              crossAxisSpacing: 4.0,
+              mainAxisSpacing: 4.0,
+              shrinkWrap: false,
+              physics: const AlwaysScrollableScrollPhysics(),
+              itemBuilder: (context, index) {
+                return Container(
+                  height: 300,
+                  color: ThemeColors.getBackgroundSecondary(
+                      widget.settingInfo.darkSwitch),
+                  child: VideoView(
+                    videoModel: _getVideoModel(index),
+                    canPlayVideo: index == _currentIndex &&
+                        widget.isVideo &&
+                        ModalRoute.of(context)!.isCurrent &&
+                        _canPlayVideo,
+                    autoPlayVideo:
+                        widget.settingInfo.network.autoPlayTabRecommend,
+                    isDark: widget.settingInfo.darkSwitch,
+                    onClick: () => {
+                      setState(() {
+                        _currentIndex = index;
+                        MineService().addToHistory(_videoList[index].id);
+                        final rowIndex = index ~/ currentLanes;
+                        final scrollOffset = rowIndex * (300 + 4.0);
+                        _scrollController.animateTo(
+                          scrollOffset,
+                          duration: const Duration(milliseconds: 300),
+                          curve: Curves.easeInOut,
+                        );
+                      })
+                    },
+                    onPushDetail: (Duration duration) => {
+                      _videoList[index].currentDuration =
+                          duration.inMilliseconds,
+                      RouterUtils.of.pushPathByName(
+                        RouterMap.VIDEO_PLAY_PAGE,
+                        param: _videoList[index],
+                        onPop: (p0) {
+                          if (_currentIndex == index) {
+                            setState(() {
+                              Duration duration = p0.result as Duration;
+                              _videoList[index].currentDuration =
+                                  duration.inMilliseconds;
+                            });
+                          }
+                        },
+                      ),
+                    },
+                    onFinish: () => {
+                      setState(() {
+                        if (widget.settingInfo.network.autoPlayTabRecommend &&
+                            widget.settingInfo.network.autoPlayNext &&
+                            _currentIndex < _videoList.length - 1) {
+                          _currentIndex += 1;
+                          final rowIndex = _currentIndex ~/ 2;
+                          final scrollOffset = rowIndex * (300 + 4.0);
+                          _scrollController.animateTo(
+                            scrollOffset,
+                            duration: const Duration(milliseconds: 300),
+                            curve: Curves.easeInOut,
+                          );
+                        }
+                      }),
+                    },
+                    onClose: () => {
+                      setState(() {
+                        _videoList.removeAt(index);
+                        if (_currentIndex > index) {
+                          _currentIndex -= 1;
+                        }
+                      }),
                     },
                   ),
-                },
-                onFinish: () => {
-                  setState(() {
-                    if (widget.settingInfo.network.autoPlayTabRecommend &&
-                        widget.settingInfo.network.autoPlayNext &&
-                        _currentIndex < _videoList.length) {
-                      _currentIndex += 1;
-                      _scrollController.animateTo(
-                        0 + height * _currentIndex,
-                        duration: const Duration(milliseconds: 300),
-                        curve: Curves.easeInOut,
-                      );
-                    }
-                  }),
-                },
-                onClose: () => {
-                  setState(() {
-                    _videoList.removeAt(index);
-                  }),
-                },
-              ),
-            );
-          }),
-    );
+                );
+              });
+        }));
   }
 
   VideoModel _getVideoModel(int index) {

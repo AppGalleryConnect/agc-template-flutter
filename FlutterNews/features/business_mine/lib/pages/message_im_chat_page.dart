@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'dart:io';
 import 'package:image_picker/image_picker.dart';
+import 'package:lib_common/lib_common.dart';
 import 'package:lib_news_api/params/response/layout_response.dart'
     show AuthorInfo;
 import 'package:lib_widget/components/nav_header_bar.dart';
 import 'package:business_mine/viewmodels/message_im_chat_vm.dart' as chat_vm;
 import 'package:lib_news_api/constants/constants.dart' show ChatEnum;
 import 'package:lib_news_api/database/message_type.dart' show ChatInfoDetail;
-import 'package:lib_common/models/window_model.dart';
 import '../constants/constants.dart';
 import '../utils/font_scale_utils.dart';
 
@@ -24,7 +24,7 @@ class _MsgIMChatPageState extends State<MsgIMChatPage> {
   late final chat_vm.MsgIMChatViewModel _vm;
   final TextEditingController textController = TextEditingController();
   final WindowModel windowModel = WindowModel();
-
+  final settingInfo = SettingModel.getInstance();
   @override
   void initState() {
     super.initState();
@@ -47,7 +47,7 @@ class _MsgIMChatPageState extends State<MsgIMChatPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Constants.backgroundLightGrayColor,
+      backgroundColor: ThemeColors.getBackgroundColor(settingInfo.darkSwitch),
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(56),
         child: NavHeaderBar(
@@ -55,6 +55,12 @@ class _MsgIMChatPageState extends State<MsgIMChatPage> {
           onBack: () {
             _vm.onBackPressed();
           },
+          titleColor: ThemeColors.getFontPrimary(settingInfo.darkSwitch),
+          bgColor: ThemeColors.getBackgroundColor(settingInfo.darkSwitch),
+          backButtonBackgroundColor:
+              ThemeColors.getCompBackgroundSecondary(settingInfo.darkSwitch),
+          backButtonPressedBackgroundColor:
+              ThemeColors.getCompBackgroundSecondary(settingInfo.darkSwitch),
           windowModel: windowModel,
           customTitleSize:
               Constants.textHeaderSize * FontScaleUtils.fontSizeRatio,
@@ -64,7 +70,7 @@ class _MsgIMChatPageState extends State<MsgIMChatPage> {
         children: [
           Expanded(
             child: Container(
-              color: Constants.newsCardWhiteColor,
+              color: ThemeColors.getBackgroundColor(settingInfo.darkSwitch),
               child: ListView.builder(
                 padding: const EdgeInsets.all(Constants.dialogPadding),
                 itemCount: _vm.chatList.length,
@@ -96,7 +102,7 @@ class _MsgIMChatPageState extends State<MsgIMChatPage> {
               style: TextStyle(
                   fontSize: Constants.textSecondarySize *
                       FontScaleUtils.fontSizeRatio,
-                  color: Constants.textSecondaryColor),
+                  color: ThemeColors.getFontTertiary(settingInfo.darkSwitch)),
             ));
       }
       return Container(
@@ -226,9 +232,9 @@ class _MsgIMChatPageState extends State<MsgIMChatPage> {
           right: Constants.messageItemHorizontalSpacing / 2,
           bottom: Constants.dialogPadding,
           top: Constants.messageItemHorizontalSpacing / 2),
-      decoration: const BoxDecoration(
-        color: Constants.newsCardWhiteColor,
-        border: Border(top: BorderSide(color: Constants.dividerColor)),
+      decoration: BoxDecoration(
+        color: ThemeColors.getBackgroundColor(settingInfo.darkSwitch),
+        border: const Border(top: BorderSide(color: Constants.dividerColor)),
       ),
       child: Row(
         children: [
@@ -244,7 +250,8 @@ class _MsgIMChatPageState extends State<MsgIMChatPage> {
                 contentPadding: const EdgeInsets.symmetric(
                     vertical: 2, horizontal: Constants.dialogPadding),
                 filled: true,
-                fillColor: Constants.backgroundLightGrayColor,
+                fillColor:
+                    ThemeColors.getBackgroundSecondary(settingInfo.darkSwitch),
               ),
               // 添加键盘发送功能
               onSubmitted: (text) {
@@ -290,9 +297,9 @@ class _MsgIMChatPageState extends State<MsgIMChatPage> {
         return Container(
           height: Constants.messageBottomContainerHeight * 6.25,
           padding: const EdgeInsets.all(Constants.dialogPadding),
-          decoration: const BoxDecoration(
-            color: Constants.newsCardWhiteColor,
-            borderRadius: BorderRadius.only(
+          decoration: BoxDecoration(
+            color: ThemeColors.getBackgroundColor(settingInfo.darkSwitch),
+            borderRadius: const BorderRadius.only(
               topLeft: Radius.circular(Constants.dialogBorderRadius * 0.57),
               topRight: Radius.circular(Constants.dialogBorderRadius * 0.57),
             ),
@@ -306,6 +313,7 @@ class _MsgIMChatPageState extends State<MsgIMChatPage> {
                   fontSize:
                       Constants.textPrimarySize * FontScaleUtils.fontSizeRatio,
                   fontWeight: FontWeight.bold,
+                  color: ThemeColors.getFontTertiary(settingInfo.darkSwitch),
                 ),
               ),
               const SizedBox(height: Constants.dialogPadding),
@@ -348,9 +356,9 @@ class _MsgIMChatPageState extends State<MsgIMChatPage> {
       builder: (BuildContext context) {
         return Container(
           padding: const EdgeInsets.all(Constants.dialogPadding),
-          decoration: const BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.only(
+          decoration: BoxDecoration(
+            color: ThemeColors.getBackgroundColor(settingInfo.darkSwitch),
+            borderRadius: const BorderRadius.only(
               topLeft: Radius.circular(Constants.dialogCircular),
               topRight: Radius.circular(Constants.dialogCircular),
             ),
@@ -363,7 +371,9 @@ class _MsgIMChatPageState extends State<MsgIMChatPage> {
                 title: Text('拍照',
                     style: TextStyle(
                         fontSize: Constants.textPrimarySize *
-                            FontScaleUtils.fontSizeRatio)),
+                            FontScaleUtils.fontSizeRatio,
+                        color: ThemeColors.getFontPrimary(
+                            settingInfo.darkSwitch))),
                 onTap: () async {
                   Navigator.pop(context);
                   await _getImage(ImageSource.camera);
@@ -374,7 +384,9 @@ class _MsgIMChatPageState extends State<MsgIMChatPage> {
                 title: Text('从相册选择',
                     style: TextStyle(
                         fontSize: Constants.textPrimarySize *
-                            FontScaleUtils.fontSizeRatio)),
+                            FontScaleUtils.fontSizeRatio,
+                        color: ThemeColors.getFontPrimary(
+                            settingInfo.darkSwitch))),
                 onTap: () async {
                   Navigator.pop(context);
                   await _getImage(ImageSource.gallery);
@@ -385,7 +397,9 @@ class _MsgIMChatPageState extends State<MsgIMChatPage> {
                 title: Text('取消',
                     style: TextStyle(
                         fontSize: Constants.textPrimarySize *
-                            FontScaleUtils.fontSizeRatio)),
+                            FontScaleUtils.fontSizeRatio,
+                        color: ThemeColors.getFontPrimary(
+                            settingInfo.darkSwitch))),
                 onTap: () {
                   Navigator.pop(context);
                 },
@@ -422,7 +436,7 @@ class _MsgIMChatPageState extends State<MsgIMChatPage> {
         );
       }
     } catch (e) {
-      print('选择图片失败: $e');
+      Logger.error('选择图片失败: $e');
       // 显示错误提示
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(

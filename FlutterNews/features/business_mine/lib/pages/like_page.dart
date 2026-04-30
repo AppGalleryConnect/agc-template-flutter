@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:lib_common/lib_common.dart';
 import 'package:lib_widget/components/nav_header_bar.dart';
 import '../components/base_mark_like_page.dart';
 import '../viewmodels/like_vm.dart';
-import 'package:lib_common/models/window_model.dart';
 import 'package:module_setfontsize/utils/font_scale_utils.dart';
 
 class LikePage extends StatefulWidget {
@@ -24,20 +24,28 @@ class _LikePageState extends State<LikePage> {
 
   @override
   Widget build(BuildContext context) {
+    final settingInfo = SettingModel.getInstance();
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: ThemeColors.getBackgroundColor(settingInfo.darkSwitch),
       body: Column(
         children: [
           NavHeaderBar(
             title: '我的点赞',
             windowModel: _windowModel,
-            backButtonBackgroundColor: const Color(0xFFF0F0F0),
-            backButtonPressedBackgroundColor: const Color(0xFFE0E0E0),
+            titleColor: ThemeColors.getFontPrimary(settingInfo.darkSwitch),
+            bgColor: ThemeColors.getBackgroundColor(settingInfo.darkSwitch),
+            backButtonBackgroundColor:
+                ThemeColors.getCompBackgroundSecondary(settingInfo.darkSwitch),
+            backButtonPressedBackgroundColor:
+                ThemeColors.getCompBackgroundSecondary(settingInfo.darkSwitch),
             customTitleSize: 20 * FontScaleUtils.fontSizeRatio,
           ),
+
           Expanded(
-            child: BaseMarkLikePage(
+            child: SingleChildScrollView(
+              child: BaseMarkLikePage(
               vm: _vm,
+              ),
             ),
           ),
         ],

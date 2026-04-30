@@ -11,6 +11,7 @@ import 'package:business_video/models/video_enevtbus.dart';
 import 'dart:async';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:lib_news_api/services/mine_service.dart';
+import 'package:newsflutterstemplate/notifier/fullScreenProvider.dart';
 import '../constants/constants.dart';
 import 'package:lib_common/services/location_service.dart';
 
@@ -47,6 +48,7 @@ class _VideoPageState extends State<VideoPage> implements MarkLikeObserver {
   @override
   void initState() {
     super.initState();
+    FullScreenProvider().addListener(_onFullScreenChanged);
     _tabbarSub = eventBus.on().listen((event) {
       setState(() {
         if (event is ShowTabbarEvent) isHideBack = event.isShow;
@@ -68,7 +70,11 @@ class _VideoPageState extends State<VideoPage> implements MarkLikeObserver {
     _dynamicChannelsList = List.from(Constants.videoChannelsList);
     _updateLocationInfo();
   }
-
+  void _onFullScreenChanged() {
+    if (mounted) {
+      setState(() {});
+    }
+  }
   Future<void> _updateLocationInfo() async {
     try {
       String? location = await LocationService.getLocation();
@@ -96,6 +102,7 @@ class _VideoPageState extends State<VideoPage> implements MarkLikeObserver {
 
   @override
   void dispose() {
+    FullScreenProvider().removeListener(_onFullScreenChanged);
     _tabbarSub?.cancel();
     userInfoModel.removeListener(_listener);
     settingInfo.removeListener(_listener);
@@ -123,21 +130,31 @@ class _VideoPageState extends State<VideoPage> implements MarkLikeObserver {
   @override
   Widget build(BuildContext context) {
     Orientation orientation = MediaQuery.of(context).orientation;
-    bool isLandscape = orientation == Orientation.portrait;
+    bool isPortrait = orientation == Orientation.portrait;
+    final fullScreen = FullScreenProvider();
+    getChannelFontColor(currentPageIndex) {
+      if (currentPageIndex > 2) {
+        return ThemeColors.getFontPrimary(settingInfo.darkSwitch);
+      } else {
+        return Colors.white;
+      }
+    }
 
-    return Stack(children: [
+    return Stack(
+      children: [
+        // 视频页面（全屏，横屏竖屏都占满）
       PageView(
-        physics: isLandscape && !isCommending
+          physics: isPortrait && !isCommending
             ? const ScrollPhysics()
             : const NeverScrollableScrollPhysics(),
         allowImplicitScrolling: true,
         controller: pageController,
-        onPageChanged: (index) => {
+          onPageChanged: (index) {
           setState(() {
             currentPageIndex = index;
             eventBus.fire(ShowTabbarEvent(true));
             eventBus.fire(VideoIsBlackEvent(index < 3));
-          })
+            });
         },
         children: [
           userInfoModel.isLogin
@@ -146,8 +163,8 @@ class _VideoPageState extends State<VideoPage> implements MarkLikeObserver {
                   type: PageType.FOLLOW,
                   settingInfo: settingInfo,
                   isCommend: isCommending,
-                  onCommend: (isCommend) =>
-                      setState(() => isCommending = isCommend),
+                    onCommend: (isCommend) =>
+                        setState(() => isCommending = isCommend),
                 )
               : const VideoNodata(),
           VideoSliderPage(
@@ -172,11 +189,12 @@ class _VideoPageState extends State<VideoPage> implements MarkLikeObserver {
           VideoLivePage(settingInfo: settingInfo),
         ],
       ),
-      if (isLandscape && !isCommending)
+
+        if (!FullScreenProvider().isFullScreen && !isCommending)
         Positioned(
-          left: Constants.SPACE_0,
-          right: Constants.SPACE_0,
-          top: Constants.SPACE_0,
+            left: 0,
+            right: 0,
+            top: 0,
           child: SizedBox(
             height: MediaQuery.of(context).padding.top + Constants.SPACE_44,
             child: Column(
@@ -190,8 +208,8 @@ class _VideoPageState extends State<VideoPage> implements MarkLikeObserver {
                     children: [
                       if (!isHideBack)
                         GestureDetector(
-                          onTap: () => {
-                            eventBus.fire(ShowTabbarEvent(true)),
+                            onTap: () {
+                              eventBus.fire(ShowTabbarEvent(true));
                           },
                           child: SizedBox(
                             width: Constants.SPACE_40,
@@ -209,17 +227,18 @@ class _VideoPageState extends State<VideoPage> implements MarkLikeObserver {
                         child: ChannelEdit(
                           fontSizeRatio: fontSizeRatio,
                           channelsList: _dynamicChannelsList,
+                            editType: 'video',
+                          fontColor: getChannelFontColor(currentPageIndex),
                           currentIndex: currentPageIndex,
                           isShowEdit: false,
                           index: 3,
                           isDark: settingInfo.darkSwitch,
-                          onSave: (channelsList) => {
-                            RouterUtils.of.push(RouterMap.NEWS_SEARCH_PAGE),
+                            onSave: (channelsList) {
+                              RouterUtils.of.push(RouterMap.NEWS_SEARCH_PAGE);
                           },
-                          onChange: (index, item) => {
-                            if (currentPageIndex != index)
-                              {
-                                pageController.jumpToPage(index),
+                            onChange: (index, item) {
+                              if (currentPageIndex != index) {
+                                pageController.jumpToPage(index);
                               }
                           },
                         ),
@@ -231,6 +250,7 @@ class _VideoPageState extends State<VideoPage> implements MarkLikeObserver {
             ),
           ),
         ),
-    ]);
+      ],
+    );
   }
 }

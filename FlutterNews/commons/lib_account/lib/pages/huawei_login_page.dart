@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:lib_common/constants/common_constants.dart';
-import 'package:lib_common/utils/router_utils.dart';
+import 'package:lib_common/lib_common.dart';
 import 'package:provider/provider.dart';
 import '../components/agree_privacy_box.dart';
 import '../constants/Constants.dart';
@@ -39,6 +38,7 @@ class _LoginPageContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final settingInfo = SettingModel.getInstance();
     if (loginVM.isHalfModal) {
       return Scaffold(
         backgroundColor: Colors.transparent,
@@ -81,6 +81,10 @@ class _LoginPageContent extends StatelessWidget {
                       ),
                       child: Stack(
                         children: [
+                          Positioned.fill(
+                              child: Container(
+                                  color: ThemeColors.getBackgroundColor(
+                                      settingInfo.darkSwitch))),
                           // 内容区域
                           Column(
                             mainAxisSize: MainAxisSize.min,
@@ -118,16 +122,21 @@ class _LoginPageContent extends StatelessWidget {
                                           width: Constants.CLOSE_BUTTON_SIZE,
                                           height: Constants.CLOSE_BUTTON_SIZE,
                                           decoration: BoxDecoration(
-                                            color: Colors.grey[200],
+                                            color: ThemeColors
+                                                .getCompBackgroundSecondary(
+                                                    settingInfo.darkSwitch),
                                             borderRadius: BorderRadius.circular(
                                                 Constants
                                                     .CLOSE_BUTTON_BORDER_RADIUS),
                                           ),
                                           child: IconButton(
-                                            icon: const Icon(Icons.close,
+                                            icon: Icon(Icons.close,
                                                 size: Constants
                                                     .CLOSE_BUTTON_ICON_SIZE,
-                                                color: Colors.grey),
+                                                color: ThemeColors
+                                                    .getFontPrimary(
+                                                        settingInfo
+                                                            .darkSwitch)),
                                             padding: const EdgeInsets.all(
                                                 Constants
                                                     .CLOSE_BUTTON_INNER_PADDING),
@@ -179,10 +188,11 @@ class _LoginPageContent extends StatelessWidget {
                                       ),
                                       Text(
                                         loginVM.anonymousPhone,
-                                        style: const TextStyle(
+                                        style: TextStyle(
                                           fontSize: Constants.TITLE_FONT_SIZE,
                                           fontWeight: FontWeight.bold,
-                                          color: Colors.black,
+                                          color: ThemeColors.getFontPrimary(
+                                              settingInfo.darkSwitch),
                                         ),
                                       ),
                                       const Padding(
@@ -214,17 +224,20 @@ class _LoginPageContent extends StatelessWidget {
                                             loginVM.jumpOtherLogin();
                                           },
                                           style: ElevatedButton.styleFrom(
-                                            backgroundColor: Colors.grey[100],
+                                            backgroundColor: ThemeColors
+                                                .getBackgroundSecondary(
+                                                    settingInfo.darkSwitch),
                                             minimumSize: const Size(
                                                 double.infinity,
                                                 Constants.BTN_HEIGHT),
                                           ),
-                                          child: const Text(
+                                          child: Text(
                                             '其他方式登录',
                                             style: TextStyle(
                                               fontSize:
                                                   Constants.BUTTON_FONT_SIZE,
-                                              color: Colors.black,
+                                              color: ThemeColors.getFontPrimary(
+                                                  settingInfo.darkSwitch),
                                               fontWeight: FontWeight.w500,
                                             ),
                                           ),
@@ -247,7 +260,8 @@ class _LoginPageContent extends StatelessWidget {
                                 right: CommonConstants.PADDING_XL,
                                 top: CommonConstants.PADDING_S,
                               ),
-                              color: Colors.white,
+                              color: ThemeColors.getBackgroundColor(
+                                  settingInfo.darkSwitch),
                               width: double.infinity,
                               child: const AgreePrivacyBox(),
                             ),
@@ -266,7 +280,7 @@ class _LoginPageContent extends StatelessWidget {
 
     // 正常模式下的登录页面
     return Scaffold(
-        backgroundColor: loginVM.pageBgColor(),
+        backgroundColor: ThemeColors.getBackgroundColor(settingInfo.darkSwitch),
         body: SafeArea(
           child: Padding(
             padding: const EdgeInsets.only(
@@ -295,10 +309,11 @@ class _LoginPageContent extends StatelessWidget {
                       ),
                       Text(
                         loginVM.anonymousPhone,
-                        style: const TextStyle(
+                          style: TextStyle(
                           fontSize: Constants.PHONE_NUMBER_FONT_SIZE,
                           fontWeight: FontWeight.bold,
-                          color: Colors.black,
+                            color: ThemeColors.getFontPrimary(
+                                settingInfo.darkSwitch),
                         ),
                       ),
                       const Padding(
@@ -328,15 +343,18 @@ class _LoginPageContent extends StatelessWidget {
                             loginVM.jumpOtherLogin();
                           },
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.grey[100],
+                              backgroundColor:
+                                  ThemeColors.getBackgroundSecondary(
+                                      settingInfo.darkSwitch),
                             minimumSize: const Size(
                                 double.infinity, Constants.BTN_HEIGHT),
                           ),
-                          child: const Text(
+                            child: Text(
                             '其他方式登录',
                             style: TextStyle(
                               fontSize: Constants.BUTTON_FONT_SIZE,
-                              color: Colors.black,
+                                color: ThemeColors.getFontPrimary(
+                                    settingInfo.darkSwitch),
                               fontWeight: FontWeight.w500,
                             ),
                           ),

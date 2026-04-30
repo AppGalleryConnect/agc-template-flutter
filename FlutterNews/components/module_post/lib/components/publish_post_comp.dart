@@ -2,6 +2,7 @@ import 'dart:io';
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:lib_common/constants/pop_view_utils.dart';
+import 'package:lib_common/lib_common.dart';
 import 'package:module_post/constants/constants.dart';
 import 'package:module_post/utils/media_utils.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -35,6 +36,7 @@ class PublishPostComp extends StatefulWidget {
 }
 
 class PublishPostCompState extends State<PublishPostComp> {
+  final settingInfo = SettingModel.getInstance();
   // 内容文本
   String body = '';
   // 图片列表
@@ -67,7 +69,7 @@ class PublishPostCompState extends State<PublishPostComp> {
   Widget buildVideoWidget(String url, int index) {
     if (url.isEmpty) {
       return Container(
-        color: Colors.grey.shade200,
+        color: ThemeColors.getBackgroundTertiary(settingInfo.darkSwitch),
         child: const Center(
           child: Icon(Icons.video_library,
               size: Constants.SPACE_48, color: Colors.grey),
@@ -240,7 +242,7 @@ class PublishPostCompState extends State<PublishPostComp> {
       onTap: () => plusBtnClick(),
       child: Container(
         decoration: BoxDecoration(
-          color: Constants.UPLOAD_COLOR,
+          color: ThemeColors.getBackgroundTertiary(settingInfo.darkSwitch),
           borderRadius: BorderRadius.circular(Constants.SPACE_16),
         ),
         child: Center(
@@ -296,7 +298,7 @@ class PublishPostCompState extends State<PublishPostComp> {
   Widget _buildImageWidget(String url) {
     if (url.isEmpty) {
       return Container(
-        color: Colors.grey.shade200,
+        color: ThemeColors.getBackgroundTertiary(settingInfo.darkSwitch),
         child: const Icon(Icons.image_not_supported),
       );
     }

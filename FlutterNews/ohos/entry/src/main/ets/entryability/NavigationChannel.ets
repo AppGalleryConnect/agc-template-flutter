@@ -7,7 +7,8 @@ import { scanBarcode, scanCore } from '@kit.ScanKit';
 import { emitter, BusinessError } from '@kit.BasicServicesKit';
 import geoLocationManager from '@ohos.geoLocationManager';
 import { LogUtil } from '@pura/harmony-utils';
-import { abilityAccessCtrl, bundleManager, common, Permissions} from "@kit.AbilityKit"
+import { abilityAccessCtrl, bundleManager, common, Permissions } from '@kit.AbilityKit'
+import { SystemShareUtils } from '../utils/SystemShareUtils';
 
 const TAG = '[NavigationChannel]';
 
@@ -29,14 +30,14 @@ export class NavigationChannel implements FlutterPlugin {
 
     this.channel = new MethodChannel(
       binding.getBinaryMessenger(),
-      'com.news.flutter/navigation'
+      'com.news.flutter/navigation',
     );
 
     this.channel.setMethodCallHandler({
       onMethodCall: (call: MethodCall, result: MethodResult): void => {
         console.info(TAG, `⚡ 收到方法调用: ${call.method}`);
         this.handleMethodCall(call, result);
-      }
+      },
     });
 
     console.info(TAG, '✅ NavigationChannel 注册成功');
@@ -54,11 +55,8 @@ export class NavigationChannel implements FlutterPlugin {
   private handleMethodCall(call: MethodCall, result: MethodResult): void {
     console.info(TAG, `处理方法: ${call.method}`);
     console.info(TAG, `处理参数: ${call.args}`);
-
+    let systemShareUtils = SystemShareUtils.instance
     switch (call.method) {
-      case 'pushNativePage':
-        this.pushNativePage(call.args, result);
-        break;
       case 'popNativePage':
         this.popNativePage(result);
         break;
@@ -68,21 +66,26 @@ export class NavigationChannel implements FlutterPlugin {
       case 'location':
         this.location(result);
         break;
+      case 'onKnockShare':
+        const knockArgsMap = call.args as Map<string, Object>;
+        let knockParams = this.getShareParams(knockArgsMap)
+        systemShareUtils.getShareData(knockParams)
+        systemShareUtils.onKnockShare()
+        break;
+      case 'offKnockShare':
+        systemShareUtils.offKnockShare()
+        break;
+      case 'onGestureShare':
+        const gestureArgsMap = call.args as Map<string, Object>;
+        let gestureParams = this.getShareParams(gestureArgsMap)
+        systemShareUtils.registerGestureShareListener(this.context, gestureParams)
+        break;
+      case 'offGestureShare':
+        systemShareUtils.unRegisterGestureShareListener(this.context)
+        break;
       case 'share':
         const argsMap = call.args as Map<string, Object>;
-        const paramsRaw = argsMap.get('params');
-        let params: Record<string, Object> = {};
-        if (paramsRaw) {
-          if (paramsRaw instanceof Map) {
-            console.info(TAG, `params 是 Map，转换中...`);
-            const paramsMap = paramsRaw as Map<string, Object>;
-            paramsMap.forEach((value: Object, key: string) => {
-              params[key] = value;
-            });
-          } else {
-            params = paramsRaw as Record<string, Object>;
-          }
-        }
+        let params = this.getShareParams(argsMap)
         let event: emitter.InnerEvent = {
           eventId: 10000,
           priority: emitter.EventPriority.IMMEDIATE,
@@ -141,56 +144,21 @@ export class NavigationChannel implements FlutterPlugin {
     }
   }
 
-  /**
-   * 跳转到鸿蒙原生页面
-   */
-  private pushNativePage(args: Object, result: MethodResult): void {
-    try {
-
-      // args 是一个 Map 对象，使用 Map 的 API 访问
-      const argsMap = args as Map<string, Object>;
-
-      // 使用 Map.get() 方法获取值
-      const pageName = argsMap.get('pageName') as string;
-      const paramsRaw = argsMap.get('params');
-
-
-      // 将 params 转换为普通对象
-      let params: Record<string, Object> = {};
-
-      if (paramsRaw) {
-        // 如果 params 也是 Map，需要转换
-        if (paramsRaw instanceof Map) {
-          console.info(TAG, `params 是 Map，转换中...`);
-          const paramsMap = paramsRaw as Map<string, Object>;
-          paramsMap.forEach((value: Object, key: string) => {
-            params[key] = value;
-          });
-        } else {
-          // 如果是普通对象，直接使用
-          params = paramsRaw as Record<string, Object>;
-        }
+  private getShareParams(argsMap: Map<string, Object>) {
+    const paramsRaw = argsMap.get('params');
+    let params: Record<string, Object> = {};
+    if (paramsRaw) {
+      if (paramsRaw instanceof Map) {
+        console.info(TAG, `params 是 Map，转换中...`);
+        const paramsMap = paramsRaw as Map<string, Object>;
+        paramsMap.forEach((value: Object, key: string) => {
+          params[key] = value;
+        });
+      } else {
+        params = paramsRaw as Record<string, Object>;
       }
-
-      // 直接使用 router.pushUrl 跳转
-      const pageUrl = `pages/${pageName}`;
-
-      router.pushUrl({
-        url: pageUrl,
-        params: params
-      }).then(() => {
-        console.info(TAG, `✅ 跳转成功: ${pageName}`);
-        result.success(true);
-      }).catch((err: Error) => {
-        console.error(TAG, `❌ router.pushUrl 失败: ${err.message}`);
-        result.success(true);
-      });
-
-    } catch (err) {
-      const error = err as Error;
-      console.error(TAG, `处理异常: ${error.message}`);
-      result.error('ERROR', error.message, null);
     }
+    return params
   }
 
   /**
@@ -217,17 +185,17 @@ export class NavigationChannel implements FlutterPlugin {
         let reverseGeocodeRequest: geoLocationManager.ReverseGeoCodeRequest = {
           'latitude': location.latitude,
           'longitude': location.longitude,
-          'maxItems': 1
+          'maxItems': 1,
         };
-          const result = await geoLocationManager.getAddressesFromLocation(reverseGeocodeRequest);
-          if (result.length > 0) {
-            const firstAddress: geoLocationManager.GeoAddress = result[0];
-            const city: string = firstAddress.locality || ''; // 城市
-            console.log(TAG, '获取地址成功：' + JSON.stringify(firstAddress));
-            scanResult.success({
-              city: city,
-            });
-          }
+        const result = await geoLocationManager.getAddressesFromLocation(reverseGeocodeRequest);
+        if (result.length > 0) {
+          const firstAddress: geoLocationManager.GeoAddress = result[0];
+          const city: string = firstAddress.locality || ''; // 城市
+          console.log(TAG, '获取地址成功：' + JSON.stringify(firstAddress));
+          scanResult.success({
+            city: city,
+          });
+        }
       }).catch((err: BusinessError) => {
         LogUtil.error(TAG, 'getCurrentLocation catch err: ' + JSON.stringify(err))
       })

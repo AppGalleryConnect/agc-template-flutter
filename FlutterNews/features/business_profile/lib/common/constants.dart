@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 
 class Constants {
+  static const double SPACE_12 = 12;
+  static const double SPACE_16 = 16;
+  static const double SPACE_500 = 500;
   static const double userIconWidth = 48;
   static const double mediumIconWidth = 48;
   static const double smallBtnWidth = 72;
@@ -88,7 +91,8 @@ class Constants {
   static const double brushIconSize = 20;
   static const String PROFILE_HOME_PATH = '/profile_home';
   // 用户简介相关常量
-  static const String DEFAULT_USER_ICON_PATH = 'packages/business_interaction/assets/ic_user_default.png';
+  static const String DEFAULT_USER_ICON_PATH =
+      'packages/business_interaction/assets/ic_user_default.png';
   static const double INTRO_TEXT_FONT_SIZE = 12;
   static const String DEFAULT_AUTHOR_DESC = '这家伙很神秘，没有写个人简介。';
   static const double ERROR_ICON_SIZE = 20;

@@ -181,7 +181,7 @@ class MockArticle {
       postImgList: [
         PostImgList(
           picVideoUrl:
-              'https://agc-storage-drcn.platform.dbankcloud.cn/v0/news-hnp2d/news_4.jpg',
+              'https://agc-storage-drcn.platform.dbankcloud.cn/v0/news-hnp2d/news_3.jpg',
           surfaceUrl: '',
         ),
       ],
@@ -306,7 +306,7 @@ class MockArticle {
                     <p style="line-height:35px;">2024年全国社会物流总额，即经济运行中的物流实物量价值总额，为360.6万亿元，同比增长5.8%，比2023年加快0.6个百分点，全年物流运行总体延续稳中有进的发展态势。</p>
                     <p style="line-height:35px;">从物流费用来看，衡量物流运行效率的重要指标——社会物流总费用与 GDP 的比率，降至近年内的最低点，有效降低全社会物流成本行动取得初步成效。2024年，社会物流总费用与GDP的比率为14.1%，比上年下降0.3个百分点。</p>
                     </div>
-                    
+
                     ''',
       articleFrom: '2号选手',
       navInfo: NavInfo(

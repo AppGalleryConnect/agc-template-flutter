@@ -1,5 +1,5 @@
 import 'package:flutter_svg/svg.dart';
-import 'package:lib_common/constants/common_constants.dart';
+import 'package:lib_common/lib_common.dart';
 import 'package:module_setfontsize/utils/font_scale_utils.dart';
 import '../common/constants.dart';
 import 'package:flutter/material.dart';
@@ -22,8 +22,11 @@ class NavHeaderBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final settingInfo = SettingModel.getInstance();
     return Container(
-      color: hasBgColor ? Colors.white : Colors.transparent,
+      color: hasBgColor
+          ? ThemeColors.getBackgroundColor(settingInfo.darkSwitch)
+          : Colors.transparent,
       child: SafeArea(
         top: true,
         left: true,
@@ -44,13 +47,16 @@ class NavHeaderBar extends StatelessWidget {
                         height: Constants.SPACE_40,
                         alignment: Alignment.center,
                         child: SvgPicture.asset(
-                          CommonConstants.iconBackPath,
-                          width: Constants.SPACE_15, 
-                          height: Constants.SPACE_15,
+                          settingInfo.darkSwitch
+                              ? CommonConstants.iconBackPathDark
+                              : CommonConstants.iconBackPath,
+                          width: Constants.SPACE_40,
+                          height: Constants.SPACE_40,
                           colorFilter: ColorFilter.mode(
-                              Theme.of(context).colorScheme.primary,
-                              BlendMode.srcIn), 
-                          fit: BoxFit.contain, 
+                              ThemeColors.getFontPrimary(
+                                  settingInfo.darkSwitch),
+                              BlendMode.srcIn),
+                          fit: BoxFit.contain,
                         ),
                       ),
                     ),
@@ -63,7 +69,7 @@ class NavHeaderBar extends StatelessWidget {
                     style: TextStyle(
                       fontSize:
                           (isSubTitle ? Constants.FONT_18 : Constants.FONT_20) * FontScaleUtils.fontSizeRatio,
-                      color: Colors.black,
+                      color: ThemeColors.getFontPrimary(settingInfo.darkSwitch),
                       fontWeight: FontWeight.bold,
                     ),
                   ),

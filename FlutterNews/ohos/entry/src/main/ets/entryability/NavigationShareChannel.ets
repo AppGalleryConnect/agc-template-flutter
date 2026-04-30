@@ -12,7 +12,7 @@ const TAG = '[NavigationChannel]';
 
 
 export class NavigationChannel implements FlutterPlugin {
-  private channel?: MethodChannel;
+  private navigationChannel?: MethodChannel;
   private context: common.UIAbilityContext;
 
   constructor(context: common.UIAbilityContext) {
@@ -26,15 +26,15 @@ export class NavigationChannel implements FlutterPlugin {
   onAttachedToEngine(binding: FlutterPluginBinding): void {
     console.info(TAG, '🚀 开始注册 NavigationChannel');
 
-    this.channel = new MethodChannel(
+    this.navigationChannel = new MethodChannel(
       binding.getBinaryMessenger(),
       'com.news.flutter/navigation'
     );
 
-    this.channel.setMethodCallHandler({
+    this.navigationChannel.setMethodCallHandler({
       onMethodCall: (call: MethodCall, result: MethodResult): void => {
         console.info(TAG, `⚡ 收到方法调用: ${call.method}`);
-        this.handleMethodCall(call, result);
+        this.handleNavigationMethodCall(call, result);
       }
     });
 
@@ -42,15 +42,15 @@ export class NavigationChannel implements FlutterPlugin {
   }
 
   onDetachedFromEngine(binding: FlutterPluginBinding): void {
-    if (this.channel) {
-      this.channel.setMethodCallHandler(null);
+    if (this.navigationChannel) {
+      this.navigationChannel.setMethodCallHandler(null);
     }
   }
 
   /**
    * 处理 Flutter 的方法调用
    */
-  private handleMethodCall(call: MethodCall, result: MethodResult): void {
+  private handleNavigationMethodCall(call: MethodCall, result: MethodResult): void {
     console.info(TAG, `处理方法: ${call.method}`);
 
     switch (call.method) {
@@ -58,10 +58,10 @@ export class NavigationChannel implements FlutterPlugin {
         this.pushNativePage(call.args, result);
         break;
       case 'popNativePage':
-        this.popNativePage(result);
+        this.popShareNativePage(result);
         break;
       case 'scan':
-        this.scan(result);
+        this.navigationShareScan(result);
         break;
       default:
         console.warn(TAG, `未实现的方法: ${call.method}`);
@@ -125,7 +125,7 @@ export class NavigationChannel implements FlutterPlugin {
   /**
    * 返回上一页
    */
-  private popNativePage(result: MethodResult): void {
+  private popShareNativePage(result: MethodResult): void {
     try {
       console.info(TAG, '🔙 请求返回上一页');
 
@@ -141,7 +141,7 @@ export class NavigationChannel implements FlutterPlugin {
     }
   }
 
-  private scan(scanResult: MethodResult): void {
+  private navigationShareScan(scanResult: MethodResult): void {
     // 定义扫码参数options
     let options: scanBarcode.ScanOptions = {
       scanTypes: [scanCore.ScanType.ALL],

@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 
 class BaseImage extends StatelessWidget {
@@ -19,7 +21,7 @@ class BaseImage extends StatelessWidget {
     return ClipRRect(
       borderRadius: BorderRadius.circular(imgRadius),
       child: Image(
-        image: _isAssetImage(url) ? AssetImage(url) : NetworkImage(url),
+        image: _getImageProvider(url),
         fit: fit,
         loadingBuilder: (context, child, loadingProgress) {
           if (loadingProgress == null) return child;
@@ -45,7 +47,16 @@ class BaseImage extends StatelessWidget {
     );
   }
 
-  bool _isAssetImage(String url) {
-    return url.startsWith('assets/') || url.startsWith('res/');
+
+ImageProvider _getImageProvider(String url) {
+    if (url.startsWith('http')) {
+      return NetworkImage(url);
+    } else if (url.startsWith('/') || url.startsWith('file:')) {
+      final filePath = url.startsWith('file://') ? url.substring(7) : url;
+      return FileImage(File(filePath));
+    } else {
+      // asset 资源
+      return AssetImage(url);
+    }
   }
 }

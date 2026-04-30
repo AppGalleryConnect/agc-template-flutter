@@ -21,6 +21,10 @@ class ThemeColors {
     return isDark ? const Color(0xFF3A3A3A) : const Color(0xFFF1F3F5);
   }
 
+  static Color getStickygroundSecondary(bool isDark) {
+    return isDark ? const Color(0xFFF1F3F5) : const Color(0xFF3A3A3A);
+  }
+
   static Color getFontPrimary(bool isDark) {
     return isDark ? const Color(0xFFFFFFFF) : const Color(0xFF000000);
   }
@@ -35,6 +39,10 @@ class ThemeColors {
 
   static Color getDivider(bool isDark) {
     return isDark ? const Color(0x33FFFFFF) : const Color(0x33000000);
+  }
+
+  static Color getBackModelground(bool isDark) {
+    return isDark ? const Color(0xFF3A3A3A) : const Color(0xFF000000);
   }
 
   static Color getCardBackground(bool isDark) {

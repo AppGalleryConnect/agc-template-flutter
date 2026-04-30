@@ -56,33 +56,33 @@ class _SettingPageState extends BaseStatefulWidgetState<SettingPage> {
               ),
               children: [
                 // 第一组：个人信息、隐私设置
-                _buildSettingGroupFromList(
-                  controller.list1,
-                ),
+                Obx(() {
+                  return _buildSettingGroupFromList(controller.list1);
+                }),
                 const SizedBox(
                   height: Constants.SPACE_16,
                 ),
 
                 // 第二组：通知开关、播放与网络设置、清理缓存
-                _buildSettingGroupFromList(
-                  controller.list2,
-                ),
+                Obx(() {
+                  return _buildSettingGroupFromList(controller.list2);
+                }),
                 const SizedBox(
                   height: Constants.SPACE_16,
                 ),
 
                 // 第三组：夜间模式、字体大小
-                _buildSettingGroupFromList(
-                  controller.list3,
-                ),
+                Obx(() {
+                  return _buildSettingGroupFromList(controller.list3);
+                }),
                 const SizedBox(
                   height: Constants.SPACE_16,
                 ),
 
                 // 第四组：检测版本、关于我们
-                _buildSettingGroupFromList(
-                  controller.list4,
-                ),
+                Obx(() {
+                  return _buildSettingGroupFromList(controller.list4);
+                }),
               ],
             ),
           ),
@@ -127,6 +127,9 @@ class _SettingPageState extends BaseStatefulWidgetState<SettingPage> {
           ),
           isLast: isLast,
         ));
+      } else if (item.typeSelect == true &&
+          item.tag == SettingItemTag.darkMode) {
+        itemWidgets.add(_buildMenuSelect());
       } else {
         itemWidgets.add(_buildNormalItem(
           item: item,
@@ -160,6 +163,152 @@ class _SettingPageState extends BaseStatefulWidgetState<SettingPage> {
       ),
       child: Column(
         children: itemWidgets,
+      ),
+    );
+  }
+
+  Widget _buildMenuSelect() {
+    final settingInfo = SettingModel.getInstance();
+
+    final List<Map<String, dynamic>> themeOptions = [
+      {'label': '跟随系统', 'value': 0},
+      {'label': '普通模式', 'value': 1},
+      {'label': '夜间模式', 'value': 2},
+    ];
+    String getCurrentThemeLabel() {
+      return themeOptions.firstWhere(
+        (option) => option['value'] == settingInfo.currentThemeMode,
+        orElse: () => {'label': '跟随系统'},
+      )['label'];
+    }
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            '夜间模式',
+            style: TextStyle(
+              fontSize: 16,
+              color: ThemeColors.getFontPrimary(settingInfo.darkSwitch),
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+          InkWell(
+            onTap: () {
+              _showThemeModeDialog();
+            },
+            highlightColor: Colors.transparent,
+            splashColor: Colors.transparent,
+            child: Row(
+              children: [
+                Text(
+                  getCurrentThemeLabel(),
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: ThemeColors.getFontPrimary(settingInfo.darkSwitch),
+                  ),
+                ),
+                const SizedBox(width: 4),
+                Icon(
+                  Icons.arrow_forward_ios,
+                  size: 12,
+                  color: ThemeColors.getFontPrimary(settingInfo.darkSwitch),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<void> toDarkSwitch(int mode) async {
+    switch (mode) {
+      case 0:
+        // 跟随系统
+        final isSystemDark = await DarkModeUtils.querySystemMode();
+        settingInfo.darkSwitch = isSystemDark;
+        break;
+      case 1:
+        // 关闭暗黑模式
+        settingInfo.darkSwitch = false;
+        break;
+      case 2:
+        // 开启暗黑模式
+        settingInfo.darkSwitch = true;
+        break;
+      default:
+        break;
+    }
+  }
+
+  void _showThemeModeDialog() {
+    final options = ['跟随系统', '普通模式', '夜间模式'];
+    final currentIndex = settingInfo.currentThemeMode;
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: ThemeColors.getCardBackground(
+          settingInfo.darkSwitch,
+        ),
+        title: Text(
+          '模式设置',
+          style: TextStyle(
+            fontSize: Constants.FONT_18 * settingInfo.fontSizeRatio,
+            fontWeight: FontWeight.w600,
+            color: ThemeColors.getFontPrimary(
+              settingInfo.darkSwitch,
+            ),
+          ),
+        ),
+        contentPadding: const EdgeInsets.symmetric(
+          vertical: Constants.SPACE_8,
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: List.generate(options.length, (index) {
+            return RadioListTile<int>(
+              title: Text(
+                options[index],
+                style: TextStyle(
+                  fontSize: Constants.FONT_16 * settingInfo.fontSizeRatio,
+                  color: ThemeColors.getFontPrimary(
+                    settingInfo.darkSwitch,
+                  ),
+                ),
+              ),
+              value: index,
+              groupValue: currentIndex,
+              activeColor: ThemeColors.appTheme,
+              onChanged: (value) async {
+                if (value != null) {
+                  settingInfo.currentThemeMode = value;
+                  await toDarkSwitch(settingInfo.currentThemeMode);
+                  DarkModeUtils.setDarkMode(settingInfo.darkSwitch);
+                  RouterUtils.of.pop();
+                }
+              },
+            );
+          }),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(
+              context,
+            ),
+            child: Text(
+              '取消',
+              style: TextStyle(
+                fontSize: Constants.FONT_16 * settingInfo.fontSizeRatio,
+                color: ThemeColors.getFontSecondary(
+                  settingInfo.darkSwitch,
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

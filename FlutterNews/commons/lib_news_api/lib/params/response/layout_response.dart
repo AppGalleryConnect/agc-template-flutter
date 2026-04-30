@@ -157,7 +157,9 @@ class RequestListData {
           .map((e) => NewsResponse.fromJson(e as Map<String, dynamic>))
           .toList(),
       extraInfo: json['extraInfo'] as Map<String, dynamic>? ?? {},
-      navInfo: NavInfo(),
+      navInfo: json['navInfo'] != null
+          ? NavInfo.fromJson(json['navInfo'] as Map<String, dynamic>)
+          : NavInfo(),
     );
   }
 

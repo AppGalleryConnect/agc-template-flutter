@@ -172,14 +172,23 @@ class _TotalCommentState extends State<TotalComment> {
             ),
             child: GestureDetector(
               onTap: () {
-                commentSheetOpen(
-                  context,
-                  feedCommentVM.commentDetailInfo.author.authorNickName,
-                  (String replyContent) {
-                    feedCommentVM.addComment(
-                        feedCommentVM.commentDetailInfo, replyContent);
-                  },
-                );
+                commentSheetOpen(context,
+                    feedCommentVM.commentDetailInfo.author.authorNickName,
+                    (String replyContent) {
+                  feedCommentVM.addComment(
+                      feedCommentVM.commentDetailInfo, replyContent);
+                },
+                    null,
+                    null,
+                    feedCommentVM.isDark
+                        ? const Color(0xFFFFFFFF)
+                        : const Color(0xFF000000),
+                    feedCommentVM.isDark
+                        ? const Color(0xFF1F1F1F)
+                        : const Color(0xFFFFFFFF),
+                    feedCommentVM.isDark
+                        ? const Color(0x99FFFFFF)
+                        : const Color(0x99000000));
               },
               child: Container(
                 width: double.infinity,

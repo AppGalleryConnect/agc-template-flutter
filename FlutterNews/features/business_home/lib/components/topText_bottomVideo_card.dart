@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:lib_common/models/userInfo_model.dart';
+import 'package:lib_common/lib_common.dart';
 import 'package:lib_news_api/params/response/news_response.dart';
 import 'package:lib_news_api/services/mockdata/mock_user.dart';
 import 'package:module_flutter_highlight/views/high_light.dart';
@@ -61,6 +61,7 @@ class _TopTextBottomVideoState extends State<TopTextBottomVideo> {
         MockUser.myself.watchers.contains(widget.cardData.author?.authorId);
     final bool isFeedSelf =
         MockUser.myself.authorId == widget.cardData.author?.authorId;
+    final settingInfo = SettingModel.getInstance();
     return Column(
       children: [
         AuthorCard(
@@ -86,7 +87,7 @@ class _TopTextBottomVideoState extends State<TopTextBottomVideo> {
                     ],
                     sourceString: widget.cardData.title,
                     highLightColor: Constants.highlightColor,
-                    textColor: Constants.primaryTextColor,
+                    textColor: ThemeColors.getFontPrimary(settingInfo.darkSwitch),
                     highLightFontSize:
                         Constants.topBottomVideoCardHighlightFontSize *
                             widget.fontSizeRatio,
@@ -106,7 +107,7 @@ class _TopTextBottomVideoState extends State<TopTextBottomVideo> {
                       fontSize: Constants.topBottomVideoCardTitleFontSize *
                           widget.fontSizeRatio,
                       fontWeight: FontWeight.w500,
-                      color: Constants.primaryTextColor,
+                      color: ThemeColors.getFontPrimary(settingInfo.darkSwitch),
                     ),
                   ),
                 const SizedBox(

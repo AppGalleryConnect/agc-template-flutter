@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:lib_common/constants/common_constants.dart';
-import 'package:lib_common/utils/global_context.dart';
+import 'package:lib_common/lib_common.dart';
 import 'package:module_newsfeed/components/native_navigation_utils.dart';
 import '../constants/Constants.dart';
 import '../constants/Types.dart';
@@ -259,9 +258,9 @@ class LoginVM extends ChangeNotifier {
       dynamic result;
       try {
         result = await NativeNavigationUtils.pushToShareWX();
-        print('pushToNativePage调用完成，结果: $result');
+        Logger.info('pushToNativePage调用完成，结果: $result');
       } catch (e) {
-        print('pushToNativePage调用异常: $e');
+        Logger.info('pushToNativePage调用异常: $e');
       }
     } catch (e) {
       showToast(Constants.TOAST_INSTALL_WECHAT);

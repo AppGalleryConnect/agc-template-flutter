@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lib_common/lib_common.dart';
 import 'package:lib_news_api/params/response/news_response.dart';
 import '../commons/constants.dart';
 import '../home_page/widgets/article_source_builder.dart';
@@ -23,6 +24,8 @@ class TopTextBottomImageCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final autoerInfo = cardData.extraInfo?["isNeedAuthor"];
     final isNeedAuthor = autoerInfo != null && autoerInfo == true;
+    final settingInfo = SettingModel.getInstance();
+    
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -40,7 +43,7 @@ class TopTextBottomImageCard extends StatelessWidget {
             keywords: [cardData.extraInfo!["searchKey"].toString()],
             sourceString: cardData.title,
             highlightColor: Constants.highlightColor,
-            textColor: Constants.primaryTextColor,
+            textColor: ThemeColors.getFontPrimary(settingInfo.darkSwitch),
             fontSize:
                 Constants.topBottomImageCardHighlightFontSize * fontSizeRatio,
           )
@@ -49,7 +52,7 @@ class TopTextBottomImageCard extends StatelessWidget {
             cardData.title,
             style: TextStyle(
               fontWeight: FontWeight.w500,
-              color: Constants.primaryTextColor,
+              color: ThemeColors.getFontPrimary(settingInfo.darkSwitch),
               fontSize:
                   Constants.topBottomImageCardTitleFontSize * fontSizeRatio,
             ),

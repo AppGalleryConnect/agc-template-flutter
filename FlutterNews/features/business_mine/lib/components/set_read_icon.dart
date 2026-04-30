@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:lib_common/dialogs/common_confirm_dialog.dart';
 import 'package:lib_common/dialogs/common_toast_dialog.dart';
+import 'package:lib_common/lib_common.dart';
 import '../constants/constants.dart';
 
 class SetReadIcon extends StatelessWidget {
@@ -15,6 +17,7 @@ class SetReadIcon extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final settingInfo = SettingModel.getInstance();
     return Container(
       width: Constants.setReadIconSize,
       height: Constants.setReadIconSize,
@@ -41,22 +44,26 @@ class SetReadIcon extends StatelessWidget {
             );
           }
         },
-        child: Image.asset(
+        child: SvgPicture.asset(
           Constants.icPublicClean,
           width: Constants.setReadIconSize,
           height: Constants.setReadIconSize,
           fit: BoxFit.contain,
-          errorBuilder: (context, error, stackTrace) {
-            return Container(
-              width: Constants.setReadIconPlaceholderSize,
-              height: Constants.setReadIconPlaceholderSize,
-              color: Constants.setReadIconPlaceholderColor,
-              alignment: Alignment.center,
-              child: const Icon(Icons.mark_email_read,
-                  size: Constants.setReadIconPlaceholderIconSize,
-                  color: Colors.white),
-            );
-          },
+
+          colorFilter: ColorFilter.mode(
+              ThemeColors.getFontPrimary(settingInfo.darkSwitch),
+              BlendMode.srcIn),
+          placeholderBuilder: (context) => Container(
+            width: Constants.setReadIconPlaceholderSize,
+            height: Constants.setReadIconPlaceholderSize,
+            color: Constants.setReadIconPlaceholderColor,
+            alignment: Alignment.center,
+            child: const Icon(
+              Icons.mark_email_read,
+              size: Constants.setReadIconPlaceholderIconSize,
+              color: Colors.white,
+            ),
+          ),
         ),
       ),
     );

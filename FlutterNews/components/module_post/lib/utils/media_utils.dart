@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:image_picker/image_picker.dart';
+import 'package:lib_common/constants/pop_view_utils.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:video_thumbnail/video_thumbnail.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -35,7 +36,6 @@ class MediaUtils {
 
     bool hasPermission = await requestMediaPermissions();
     if (!hasPermission) {
-      
       return uris;
     }
     if (params.type == 'IMAGE_TYPE') {
@@ -48,7 +48,6 @@ class MediaUtils {
       uris = images.map((image) => image.path).toList();
       if (params.maxLimit > 0 && uris.length > params.maxLimit) {
         uris = uris.take(params.maxLimit).toList();
-        
       }
     } else if (params.type == 'VIDEO_TYPE') {
       final XFile? video = await _picker.pickVideo(
@@ -61,10 +60,11 @@ class MediaUtils {
           final File videoFile = File(video.path);
           final int fileSize = await videoFile.length();
           final double sizeInMB = fileSize / (1024 * 1024);
-
-          if (sizeInMB <= params.maxSize!) {
+          if (sizeInMB > params.maxSize!) {
+            toast('上传视频大小超过500M限制！');
+          } else {
             uris.add(video.path);
-          } 
+          }
         } else {
           uris.add(video.path);
         }
@@ -103,17 +103,15 @@ class MediaUtils {
         );
 
         if (fileName != null && fileName.isNotEmpty) {
-          
           return fileName;
         } else {
-          
           return null;
         }
       } catch (e) {
         return null;
       }
     } catch (e) {
-      return null; 
+      return null;
     }
   }
 
@@ -122,10 +120,10 @@ class MediaUtils {
     VideoSizeData videoSize = VideoSizeData();
 
     videoSize.photoSize = {
-      'width': 1280, 
-      'height': 720, 
+      'width': 1280,
+      'height': 720,
     };
-    videoSize.totalTime = 60000; 
+    videoSize.totalTime = 60000;
     return videoSize;
   }
 }

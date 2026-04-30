@@ -36,6 +36,8 @@ class CommonConstants {
   static const int COLOR_PAGE_BACKGROUND = 0xFFF1F3F5;
   static const int COLOR_BORDER = 0xFFE0E0E0;
   static const String iconBackPath = 'packages/lib_widget/assets/ic_back.svg';
+  static const String iconBackPathDark =
+      'packages/lib_widget/assets/ic_back_dark.svg';
   static const double RADIUS_M = 8.0;
   static const double RADIUS_L = 12.0;
   static const double RADIUS_XL = 16.0;

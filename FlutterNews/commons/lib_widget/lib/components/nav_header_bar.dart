@@ -4,10 +4,10 @@ import 'package:flutter_svg/flutter_svg.dart';
 
 /// 通用页面标题栏
 class NavHeaderBar extends StatelessWidget {
+  final settingInfo = SettingModel.getInstance();
   final String title;
   final bool showBackBtn;
   final Color bgColor;
-  final String backImg;
   final bool isSubTitle;
   final WidgetBuilder? rightPartBuilder;
   final VoidCallback onBack;
@@ -27,7 +27,6 @@ class NavHeaderBar extends StatelessWidget {
     this.title = '',
     this.showBackBtn = false,
     this.bgColor = Colors.transparent,
-    this.backImg = CommonConstants.iconBackPath,
     this.isSubTitle = true,
     this.rightPartBuilder,
     required this.windowModel,
@@ -75,7 +74,9 @@ class NavHeaderBar extends StatelessWidget {
           children: [
             if (showBackBtn || isSubTitle)
               PressableBackButton(
-                backImg: backImg,
+                backImg: settingInfo.darkSwitch
+                    ? CommonConstants.iconBackPathDark
+                    : CommonConstants.iconBackPath,
                 onBack: onBack,
                 iconColor: titleColor,
                 backgroundColor: backButtonBackgroundColor,
@@ -128,6 +129,7 @@ class PressableBackButton extends StatefulWidget {
 
 class _PressableBackButtonState extends State<PressableBackButton> {
   bool _isPressed = false;
+  final settingInfo = SettingModel.getInstance();
   @override
   Widget build(BuildContext context) {
     return Listener(
@@ -148,28 +150,18 @@ class _PressableBackButtonState extends State<PressableBackButton> {
         });
       },
       child: Container(
-        width: 40,
-        height: 40,
         margin: const EdgeInsets.only(right: 12, left: 12),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(20),
-          color: _isPressed
-              ? (widget.pressedBackgroundColor ?? const Color(0x0D000000))
-              : (widget.backgroundColor ?? Colors.transparent),
         ),
         alignment: Alignment.center,
         child: Transform.scale(
           scale: _isPressed ? 0.95 : 1.0,
           child: SvgPicture.asset(
             widget.backImg,
-            width: 16,
-            height: 16,
+            width: 40,
+            height: 40,
             fit: BoxFit.contain,
-            colorFilter: ColorFilter.mode(
-              widget.iconColor ??
-                  const Color(CommonConstants.COLOR_FONT_PRIMARY),
-              BlendMode.srcIn,
-            ),
           ),
         ),
       ),

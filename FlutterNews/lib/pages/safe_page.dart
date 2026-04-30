@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/gestures.dart';
 import 'package:lib_common/constants/common_constants.dart';
+import 'package:lib_common/lib_common.dart';
 import 'package:lib_common/models/window_model.dart';
 import '../viewmodels/safe_page_vm.dart';
 import 'agree_dialog_page.dart';
@@ -23,6 +24,7 @@ class _SafePageState extends State<SafePage> {
   @override
   Widget build(BuildContext context) {
     final windowModel = WindowModel();
+    final settingInfo = SettingModel.getInstance();
     return GestureDetector(
       onPanUpdate: (details) {
         if (details.delta.dx > 20 && details.localPosition.dx < 50) {
@@ -37,7 +39,8 @@ class _SafePageState extends State<SafePage> {
           }
         },
         child: Scaffold(
-          backgroundColor: Colors.white,
+          backgroundColor:
+              ThemeColors.getBackgroundColor(settingInfo.darkSwitch),
           body: Column(
             children: [
               Expanded(
@@ -54,22 +57,24 @@ class _SafePageState extends State<SafePage> {
                       ).margin(
                         top: 136,
                       ),
-                      const Text(
+                      Text(
                         '新闻阅读',
                         style: TextStyle(
                           fontSize: 30,
                           fontWeight: FontWeight.w500,
-                          color: Colors.black,
+                          color: ThemeColors.getFontPrimary(
+                              settingInfo.darkSwitch),
                         ),
                       ).margin(
                         top: CommonConstants.PADDING_XXL,
                         bottom: 2,
                       ),
-                      const Text(
+                      Text(
                         '业务描述',
                         style: TextStyle(
                           fontSize: 16,
-                          color: Color.fromARGB(255, 122, 122, 122),
+                          color: ThemeColors.getFontSecondary(
+                              settingInfo.darkSwitch),
                         ),
                       ),
                     ],
@@ -88,6 +93,7 @@ class _SafePageState extends State<SafePage> {
                       'assets/ic_security.svg',
                       width: 25,
                       fit: BoxFit.contain,
+                      color: ThemeColors.getFontPrimary(settingInfo.darkSwitch),
                     ),
                     RichText(
                       textAlign: TextAlign.left,

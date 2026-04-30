@@ -44,13 +44,21 @@ class _CommentCardState extends State<CommentCard> {
 
   void pressReply() {
     Navigator.of(context).pop();
-    commentSheetOpen(
-      context,
-      widget.commentInfo.author.authorNickName,
-      (String replyContent) {
-        feedCommentVM.addComment(widget.commentInfo, replyContent);
-      },
-    );
+    commentSheetOpen(context, widget.commentInfo.author.authorNickName,
+        (String replyContent) {
+      feedCommentVM.addComment(widget.commentInfo, replyContent);
+    },
+        null,
+        null,
+        feedCommentVM.isDark
+            ? const Color(0xFFFFFFFF)
+            : const Color(0xFF000000),
+        feedCommentVM.isDark
+            ? const Color(0xFF1F1F1F)
+            : const Color(0xFFFFFFFF),
+        feedCommentVM.isDark
+            ? const Color(0x99FFFFFF)
+            : const Color(0x99000000));
   }
 
   void pressDelete() {
@@ -216,14 +224,23 @@ class _CommentCardState extends State<CommentCard> {
                           ),
                           GestureDetector(
                             onTap: () {
-                              commentSheetOpen(
-                                context,
-                                widget.commentInfo.author.authorNickName,
-                                (String replyContent) {
-                                  feedCommentVM.addComment(
-                                      widget.commentInfo, replyContent);
-                                },
-                              );
+                              commentSheetOpen(context,
+                                  widget.commentInfo.author.authorNickName,
+                                  (String replyContent) {
+                                feedCommentVM.addComment(
+                                    widget.commentInfo, replyContent);
+                              },
+                                  null,
+                                  null,
+                                  feedCommentVM.isDark
+                                      ? const Color(0xFFFFFFFF)
+                                      : const Color(0xFF000000),
+                                  feedCommentVM.isDark
+                                      ? const Color(0xFF1F1F1F)
+                                      : const Color(0xFFFFFFFF),
+                                  feedCommentVM.isDark
+                                      ? const Color(0x99FFFFFF)
+                                      : const Color(0x99000000));
                             },
                             child: Text(
                               '回复',

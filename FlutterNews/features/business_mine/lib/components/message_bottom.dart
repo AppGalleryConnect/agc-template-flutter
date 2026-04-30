@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lib_common/lib_common.dart';
 import '../constants/constants.dart';
 
 class MessageBottom extends StatelessWidget {
@@ -20,6 +21,7 @@ class MessageBottom extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final settingInfo = SettingModel.getInstance();
     return SizedBox(
       height: Constants.messageBottomSpacing +
           Constants.messageBottomContainerHeight +
@@ -43,7 +45,8 @@ class MessageBottom extends StatelessWidget {
                   child: Container(
                     width: Constants.messageBottomContainerWidth,
                     decoration: BoxDecoration(
-                      color: Constants.messageBottomSelectAllBgColor,
+                      color: ThemeColors.getBackgroundSecondary(
+                          settingInfo.darkSwitch),
                       borderRadius: BorderRadius.circular(
                         Constants.messageBottomContainerRadius,
                       ),

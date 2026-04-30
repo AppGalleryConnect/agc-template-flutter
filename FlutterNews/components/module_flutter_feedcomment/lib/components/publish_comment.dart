@@ -41,9 +41,9 @@ class _PublishCommentState extends State<PublishComment> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: const BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.only(
+      decoration: BoxDecoration(
+        color: widget.commentParams.backgroundColor,
+        borderRadius: const BorderRadius.only(
           topLeft: Radius.circular(Constants.SPACE_24),
           topRight: Radius.circular(Constants.SPACE_24),
         ),
@@ -63,7 +63,7 @@ class _PublishCommentState extends State<PublishComment> {
                       : '发表评论',
                   hintStyle: TextStyle(
                     fontSize: Constants.FONT_14,
-                    color: Theme.of(context).textTheme.bodySmall?.color,
+                    color: widget.commentParams.fontColor,
                   ),
                   contentPadding: const EdgeInsets.only(
                       left: Constants.SPACE_16,
@@ -74,11 +74,11 @@ class _PublishCommentState extends State<PublishComment> {
                     borderSide: BorderSide.none,
                   ),
                   filled: true,
-                  fillColor: Colors.grey[200],
+                  fillColor: widget.commentParams.inputColor,
                 ),
                 style: TextStyle(
                   fontSize: Constants.FONT_14,
-                  color: Theme.of(context).colorScheme.onSurface,
+                  color: widget.commentParams.fontColor,
                 ),
                 keyboardType: TextInputType.text,
                 maxLines: null,

@@ -3,9 +3,8 @@ import 'package:business_home/components/widget_extent.dart';
 import 'package:business_home/commons/constants.dart';
 import 'package:business_video/views/video_sheet.dart';
 import 'package:flutter/material.dart';
-import 'package:lib_common/constants/router_map.dart';
+import 'package:lib_common/lib_common.dart';
 import 'package:lib_common/utils/time_utils.dart';
-import 'package:lib_common/utils/router_utils.dart';
 import 'package:lib_news_api/params/response/news_response.dart';
 import 'package:lib_news_api/services/author_service.dart';
 import 'package:lib_news_api/services/mockdata/mock_user.dart';
@@ -47,6 +46,7 @@ class _AuthorCardState extends State<AuthorCard> {
 
   @override
   Widget build(BuildContext context) {
+    final settingInfo = SettingModel.getInstance();
     return Visibility(
       visible: widget.isNeedAuthor,
       child: Row(
@@ -99,15 +99,22 @@ class _AuthorCardState extends State<AuthorCard> {
                         ? const EdgeInsets.only(
                             top: Constants.authorCardAvatarPadding)
                         : EdgeInsets.zero,
-                    child: Text(
-                      widget.cardData.author?.authorNickName ?? "未知作者",
-                      style: TextStyle(
-                        fontSize: Constants.authorCardAuthorNameFontSize *
-                            widget.fontSizeRatio,
-                        color: widget.isShowBigImage == true
-                            ? Constants.whiteColor
-                            : Theme.of(context).textTheme.bodyMedium?.color,
-                        fontWeight: FontWeight.w500,
+                    child: SizedBox(
+                      width: 120,
+                      child: Text(
+                        widget.cardData.author?.authorNickName ?? "未知作者",
+                        style: TextStyle(
+                          fontSize: Constants.authorCardAuthorNameFontSize *
+                              widget.fontSizeRatio,
+                          color: widget.isShowBigImage == true
+                              ? Constants.whiteColor
+                              : ThemeColors.getFontPrimary(
+                                  settingInfo.darkSwitch),
+                          fontWeight: FontWeight.w500,
+                        ),
+                        softWrap: true,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
                       ),
                     ),
                   ),
@@ -124,7 +131,8 @@ class _AuthorCardState extends State<AuthorCard> {
                             widget.fontSizeRatio,
                         color: widget.isShowBigImage == true
                             ? Constants.whiteColor
-                            : Colors.black54,
+                            : ThemeColors.getFontPrimary(
+                                settingInfo.darkSwitch),
                       ),
                     ),
                 ],
@@ -182,6 +190,7 @@ class _AuthorCardState extends State<AuthorCard> {
       widget.cardData.author!.authorId,
     );
     final loginVM = login_vm.LoginVM.getInstance();
+    final curSettingInfo = SettingModel.getInstance();
     if (!loginVM.accountInstance.userInfoModel.isLogin) {
       getWatch = false;
     }
@@ -197,7 +206,7 @@ class _AuthorCardState extends State<AuthorCard> {
         ),
         decoration: BoxDecoration(
           color: getWatch
-              ? Constants.authorCardButtonFollowedColor
+              ? ThemeColors.getBackgroundTertiary(curSettingInfo.darkSwitch)
               : Constants.authorCardButtonUnfollowedColor,
           borderRadius: BorderRadius.circular(
             Constants.authorCardButtonBorderRadius,

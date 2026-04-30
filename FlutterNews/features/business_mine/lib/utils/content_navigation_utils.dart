@@ -4,11 +4,9 @@ import 'package:lib_common/constants/router_map.dart';
 import 'package:lib_common/utils/router_utils.dart';
 import 'package:lib_common/utils/global_context.dart';
 import 'package:lib_news_api/constants/constants.dart';
+import 'package:lib_news_api/lib_news_api.dart';
 import 'package:lib_news_api/observedmodels/news_model.dart';
 import 'package:module_newsfeed/components/news_detail_page.dart';
-// import 'package:business_video/models/video_model.dart';
-// import 'package:module_newsfeed/components/news_detail_page.dart';
-
 /// 内容导航工具类
 /// 封装统一的新闻详情和视频跳转逻辑，支持从不同模块跳转到内容详情
 class ContentNavigationUtils {
@@ -16,16 +14,26 @@ class ContentNavigationUtils {
   /// 根据内容类型自动判断是跳转到文章详情还是视频详情
   static void navigateToContentDetail(NewsModel newsInfo) {
     try {
-      // 根据内容类型判断跳转到不同页面
+      final firstImage = newsInfo.postImgList?.firstOrNull;
+      final hasImage = firstImage?.surfaceUrl?.isNotEmpty == true;
+      if (newsInfo.type == NewsEnum.post && hasImage) {
+        final newModel = VideoServiceApi.queryVideoById(newsInfo.id);
+        VideoNewsData videoData = VideoNewsData.fromCommentResponse(newModel!);
+        RouterUtils.of.pushPathByName(
+          RouterMap.VIDEO_PLAY_PAGE,
+          param: videoData,
+        );
+        return;
+      }
+      //  跳视频页
       if (newsInfo.type == NewsEnum.video) {
-        // 视频类型，跳转到视频详情页
         _navigateToVideoDetail(newsInfo);
       } else {
-        // 文章或动态类型，跳转到文章详情页
+        //  跳文章页
         _navigateToArticleDetail(newsInfo);
       }
     } catch (e) {
-      // 降级方案：使用ID进行跳转
+      //  降级方案
       _navigateWithFallback(newsInfo);
     }
   }

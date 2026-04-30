@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:lib_common/constants/common_constants.dart';
+import 'package:lib_common/lib_common.dart';
 import 'package:lib_common/utils/pop_view_utils.dart';
 
 class CancelDialogParams {
@@ -13,6 +13,7 @@ class CancelDialogParams {
 }
 
 Widget cancelDialogBuilder(BuildContext context, CancelDialogParams params) {
+  final settingInfo = SettingModel.getInstance();
   return Container(
     width: double.infinity,
     padding: const EdgeInsets.only(
@@ -33,7 +34,7 @@ Widget cancelDialogBuilder(BuildContext context, CancelDialogParams params) {
               right: CommonConstants.PADDING_XXL,
             ),
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: ThemeColors.getBackgroundColor(settingInfo.darkSwitch),
               borderRadius: BorderRadius.circular(24.0),
             ),
             child: Column(
@@ -69,10 +70,11 @@ Widget cancelDialogBuilder(BuildContext context, CancelDialogParams params) {
                     fixedSize: const Size(
                         double.infinity, CommonConstants.MEDIUM_IMG_WIDTH),
                   ),
-                  child: const Text(
+                  child: Text(
                     '取消',
                     style: TextStyle(
                       fontSize: 16.0,
+                      color: ThemeColors.getFontPrimary(settingInfo.darkSwitch),
                       fontWeight: FontWeight.normal,
                     ),
                   ),

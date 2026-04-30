@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lib_common/lib_common.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'package:lib_common/constants/common_constants.dart';
 import 'package:lib_common/models/window_model.dart';
@@ -25,12 +26,13 @@ class _PrivacyPageState extends State<PrivacyPage> {
 
   @override
   Widget build(BuildContext context) {
+    final settingInfo = SettingModel.getInstance();
     return Scaffold(
       body: Container(
         padding: EdgeInsets.only(
           bottom: windowModel.windowBottomPadding,
         ),
-        color: const Color.fromARGB(255, 241, 243, 244),
+        color: ThemeColors.getBackgroundColor(settingInfo.darkSwitch),
         child: Column(
           children: [
             NavHeaderBar(

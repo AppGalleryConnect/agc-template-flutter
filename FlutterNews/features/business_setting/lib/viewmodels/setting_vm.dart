@@ -17,15 +17,19 @@ class SettingViewModel extends GetxController {
   final isLoggingOut = false.obs;
   final isCheckingUpdate = false.obs;
   final appVersion = '1.0.0'.obs;
+
   late final Rx<SettingItem> cacheSettingItem;
   late final Rx<SettingItem> colorSettingItem;
   late final Rx<SettingItem> pushSettingItem;
+
   late final RxList<SettingItem> list1;
   late final RxList<SettingItem> list2;
   late final RxList<SettingItem> list3;
   late final RxList<SettingItem> list4;
+
   late final UserInfoModel userInfoModel;
   late final SettingModel settingInfo;
+
   final WindowModel windowModel = StorageUtils.connect(
     create: () => WindowModel(),
     type: StorageType.appStorage,
@@ -34,32 +38,29 @@ class SettingViewModel extends GetxController {
   @override
   void onInit() {
     super.onInit();
+
     userInfoModel = AccountApi.getInstance().userInfoModel;
     settingInfo = StorageUtils.connect(
       create: () => SettingModel.getInstance(),
       type: StorageType.persistence,
     );
+
     userInfoModel.addListener(_updateLoginStatus);
     _updateLoginStatus();
+
+
     cacheSettingItem = SettingItem(
       label: '清理缓存',
-      extraLabel: getLocalCacheLabel(),
-      onClick: (_) {
-        clearCache();
-      },
+      extraLabel: '0M',
+      onClick: (_) => clearCache(),
     ).obs;
+
     colorSettingItem = SettingItem(
       label: '夜间模式',
       tag: SettingItemTag.darkMode,
-      typeSwitch: true,
-      switchV: settingInfo.darkSwitch,
-      onClick: (isOn) {
-        settingInfo.darkSwitch = isOn as bool;
-        colorSettingItem.value.switchV = isOn;
-        colorSettingItem.refresh();
-        setColorMode(settingInfo.darkSwitch);
-      },
+      typeSelect: true,
     ).obs;
+
     pushSettingItem = SettingItem(
       label: '通知开关',
       tag: SettingItemTag.notification,
@@ -71,6 +72,7 @@ class SettingViewModel extends GetxController {
         pushSettingItem.refresh();
       },
     ).obs;
+
     list1 = <SettingItem>[
       SettingItem(
         label: '个人信息',
@@ -95,6 +97,7 @@ class SettingViewModel extends GetxController {
         },
       ),
     ].obs;
+
     list2 = <SettingItem>[
       pushSettingItem.value,
       SettingItem(
@@ -106,7 +109,9 @@ class SettingViewModel extends GetxController {
       ),
       cacheSettingItem.value,
     ].obs;
+
     list3 = <SettingItem>[
+      colorSettingItem.value,
       SettingItem(
         label: '字体大小',
         routerName: RouterMap.SETTING_FONT,
@@ -115,6 +120,7 @@ class SettingViewModel extends GetxController {
         },
       ),
     ].obs;
+
     list4 = <SettingItem>[
       SettingItem(
         label: '检测版本',
@@ -130,6 +136,7 @@ class SettingViewModel extends GetxController {
         },
       ),
     ].obs;
+
     getCache();
   }
 
@@ -158,19 +165,25 @@ class SettingViewModel extends GetxController {
   Future<void> getCache() async {
     try {
       final cacheSizeBytes = await CacheUtils.getCache();
-      final cacheSizeMB = (cacheSizeBytes / 1024 / 1024).toStringAsFixed(2);
-      cacheSize.value = cacheSizeMB;
-      cacheSettingItem.value.extraLabel = getLocalCacheLabel();
-      cacheSettingItem.refresh();
+      cacheSize.value = cacheSizeBytes;
+      final newItem = SettingItem(
+        label: '清理缓存',
+        extraLabel: cacheSize.value,
+        onClick: (_) => clearCache(),
+      );
+
+      cacheSettingItem.value = newItem;
+      list2[2] = newItem;
+      list2.refresh();
+      update();
     } catch (e) {
       cacheSize.value = '0.00';
-      cacheSettingItem.value.extraLabel = getLocalCacheLabel();
-      cacheSettingItem.refresh();
     }
   }
 
+
   String getLocalCacheLabel() {
-    return '${cacheSize.value}M';
+    return cacheSize.value;
   }
 
   void onSignOutBtnClick(BuildContext context) {
@@ -235,17 +248,17 @@ class SettingViewModel extends GetxController {
 
   Future<void> clearCache() async {
     try {
-      await CacheUtils.clearCache();
-      await getCache();
-      list2[2] = cacheSettingItem.value;
-      list2.refresh();
-      toast('清除缓存成功');
+      CacheUtils.clearCache();
+      Future.delayed(const Duration(seconds: 1), () async {
+        await getCache();
+        toast('清除缓存成功');
+      });
+
     } catch (e) {
       toast('清除缓存失败');
     }
   }
 
-  /// 检查应用版本更新
   Future<void> checkAppVersion() async {
     try {
       final bool hasUpdate = await AppGalleryUtils.checkAppUpdate();
@@ -259,16 +272,13 @@ class SettingViewModel extends GetxController {
     }
   }
 
-  /// 检查更新
   Future<void> checkUpdate() async {
     await checkAppVersion();
   }
 
-  /// 退出登录
   Future<void> logout(BuildContext context) async {
     onSignOutBtnClick(context);
   }
 
-  /// 退出登录按钮标签
   String get logoutButtonLabel => signOutBtnLabel;
 }

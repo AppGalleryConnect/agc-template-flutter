@@ -1,17 +1,16 @@
 import 'package:business_mine/components/message_bottom.dart';
 import 'package:flutter/material.dart';
 import 'package:lib_common/dialogs/common_toast_dialog.dart';
+import 'package:lib_common/lib_common.dart';
 import 'package:provider/provider.dart';
-import 'package:lib_common/constants/common_constants.dart';
-import 'package:lib_common/utils/router_utils.dart';
 import 'package:lib_widget/components/nav_header_bar.dart';
 import 'package:lib_common/utils/time_utils.dart';
-import 'package:lib_common/models/window_model.dart';
 import 'package:lib_news_api/services/message_service.dart';
 import '../common/observed_model.dart';
 import '../viewmodels/message_system_vm.dart';
 import '../utils/font_scale_utils.dart';
 import '../constants/constants.dart';
+import 'package:flutter_svg/svg.dart';
 
 class MsgSystemPage extends StatefulWidget {
   const MsgSystemPage({super.key});
@@ -23,7 +22,7 @@ class MsgSystemPage extends StatefulWidget {
 class _MsgSystemPageState extends State<MsgSystemPage> {
   late MsgSystemViewModel vm;
   final WindowModel windowModel = WindowModel();
-
+  final settingInfo = SettingModel.getInstance();
   @override
   void initState() {
     super.initState();
@@ -33,8 +32,9 @@ class _MsgSystemPageState extends State<MsgSystemPage> {
 
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: ThemeColors.getBackgroundColor(settingInfo.darkSwitch),
       body: ChangeNotifierProvider(
         create: (context) => vm,
         child: Consumer<MsgSystemViewModel>(
@@ -48,8 +48,16 @@ class _MsgSystemPageState extends State<MsgSystemPage> {
                   onBack: () {
                     RouterUtils.of.pop();
                   },
-                  backButtonBackgroundColor: const Color(0xFFF0F0F0),
-                  backButtonPressedBackgroundColor: const Color(0xFFE0E0E0),
+                  titleColor:
+                      ThemeColors.getFontPrimary(settingInfo.darkSwitch),
+                  bgColor:
+                      ThemeColors.getBackgroundColor(settingInfo.darkSwitch),
+                  backButtonBackgroundColor:
+                      ThemeColors.getCompBackgroundSecondary(
+                          settingInfo.darkSwitch),
+                  backButtonPressedBackgroundColor:
+                      ThemeColors.getCompBackgroundSecondary(
+                          settingInfo.darkSwitch),
                   customTitleSize: 20 * FontScaleUtils.fontSizeRatio,
                   rightPartBuilder: (context) => Container(
                     alignment: Alignment.centerRight,
@@ -62,13 +70,19 @@ class _MsgSystemPageState extends State<MsgSystemPage> {
                           ? Text(
                               '取消',
                               style: TextStyle(
-                                  fontSize: 16 * FontScaleUtils.fontSizeRatio),
+                                fontSize: 16 * FontScaleUtils.fontSizeRatio,
+                                color: ThemeColors.getFontPrimary(
+                                    settingInfo.darkSwitch),
+                              ),
                             )
-                          : Image.asset(
+                          : SvgPicture.asset(
                               Constants.icMessageBatchDelete,
                               width: 40,
                               height: 40,
-                              // color: Colors.red,
+                              colorFilter: ColorFilter.mode(
+                                Theme.of(context).colorScheme.primary,
+                                BlendMode.srcIn,
+                              ),
                             ),
                     ),
                   ),
@@ -92,12 +106,16 @@ class _MsgSystemPageState extends State<MsgSystemPage> {
                           title: Text(
                             '确认删除',
                             style: TextStyle(
-                                fontSize: 16 * FontScaleUtils.fontSizeRatio),
+                                fontSize: 16 * FontScaleUtils.fontSizeRatio,
+                                color: ThemeColors.getFontPrimary(
+                                    settingInfo.darkSwitch)),
                           ),
                           content: Text(
                             '确定要删除这些系统消息吗？',
                             style: TextStyle(
-                                fontSize: 14 * FontScaleUtils.fontSizeRatio),
+                                fontSize: 14 * FontScaleUtils.fontSizeRatio,
+                                color: ThemeColors.getFontPrimary(
+                                    settingInfo.darkSwitch)),
                           ),
                           actions: [
                             TextButton(
@@ -106,7 +124,9 @@ class _MsgSystemPageState extends State<MsgSystemPage> {
                                 '取消',
                                 style: TextStyle(
                                     fontSize:
-                                        14 * FontScaleUtils.fontSizeRatio),
+                                        14 * FontScaleUtils.fontSizeRatio,
+                                    color: ThemeColors.getFontPrimary(
+                                        settingInfo.darkSwitch)),
                               ),
                             ),
                             TextButton(
@@ -122,7 +142,9 @@ class _MsgSystemPageState extends State<MsgSystemPage> {
                                 '删除',
                                 style: TextStyle(
                                     fontSize:
-                                        14 * FontScaleUtils.fontSizeRatio),
+                                        14 * FontScaleUtils.fontSizeRatio,
+                                    color: ThemeColors.getFontPrimary(
+                                        settingInfo.darkSwitch)),
                               ),
                             ),
                           ],
@@ -184,7 +206,7 @@ class _MsgSystemPageState extends State<MsgSystemPage> {
           horizontal: CommonConstants.PADDING_M,
         ),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: ThemeColors.getBackgroundColor(settingInfo.darkSwitch),
           borderRadius: BorderRadius.circular(8),
         ),
         child: Column(
@@ -215,7 +237,8 @@ class _MsgSystemPageState extends State<MsgSystemPage> {
                       '系统消息',
                       style: TextStyle(
                         fontSize: 16 * FontScaleUtils.fontSizeRatio,
-                        color: const Color(CommonConstants.COLOR_FONT_PRIMARY),
+                        color:
+                            ThemeColors.getFontPrimary(settingInfo.darkSwitch),
                       ),
                     ),
                     const SizedBox(height: CommonConstants.SPACE_XXS),
@@ -241,7 +264,7 @@ class _MsgSystemPageState extends State<MsgSystemPage> {
               style: TextStyle(
                 fontSize:
                     CommonConstants.TITLE_S * FontScaleUtils.fontSizeRatio,
-                color: const Color(CommonConstants.COLOR_FONT_PRIMARY),
+                color: ThemeColors.getFontPrimary(settingInfo.darkSwitch),
               ),
               softWrap: true,
             ),
@@ -262,12 +285,16 @@ class _MsgSystemPageState extends State<MsgSystemPage> {
         width: 54,
         height: 100,
         child: Center(
-          child: Image.asset(
+          child: SvgPicture.asset(
             item.isSelect
                 ? Constants.icMessageUnselect
                 : Constants.icMessageSelect,
             width: 18,
             height: 18,
+            colorFilter: ColorFilter.mode(
+              Theme.of(context).colorScheme.primary,
+              BlendMode.srcIn,
+            ),
           ),
         ),
       ),
@@ -282,15 +309,23 @@ class _MsgSystemPageState extends State<MsgSystemPage> {
           builder: (context) => AlertDialog(
             backgroundColor: Colors.white,
             title: Text('确认删除',
-                style: TextStyle(fontSize: 16 * FontScaleUtils.fontSizeRatio)),
+                style: TextStyle(
+                  fontSize: 16 * FontScaleUtils.fontSizeRatio,
+                  color: ThemeColors.getFontPrimary(settingInfo.darkSwitch),
+                )),
             content: Text('确定要删除这条系统消息吗？',
-                style: TextStyle(fontSize: 14 * FontScaleUtils.fontSizeRatio)),
+                style: TextStyle(
+                    fontSize: 14 * FontScaleUtils.fontSizeRatio,
+                    color: ThemeColors.getFontPrimary(settingInfo.darkSwitch))),
             actions: [
               TextButton(
                 onPressed: () => Navigator.of(context).pop(true),
                 child: Text('取消',
                     style:
-                        TextStyle(fontSize: 14 * FontScaleUtils.fontSizeRatio)),
+                        TextStyle(
+                        fontSize: 14 * FontScaleUtils.fontSizeRatio,
+                        color: ThemeColors.getFontPrimary(
+                            settingInfo.darkSwitch))),
               ),
               TextButton(
                 onPressed: () async {
@@ -303,7 +338,10 @@ class _MsgSystemPageState extends State<MsgSystemPage> {
                 },
                 child: Text('删除',
                     style:
-                        TextStyle(fontSize: 14 * FontScaleUtils.fontSizeRatio)),
+                        TextStyle(
+                        fontSize: 14 * FontScaleUtils.fontSizeRatio,
+                        color: ThemeColors.getFontPrimary(
+                            settingInfo.darkSwitch))),
               ),
             ],
           ),

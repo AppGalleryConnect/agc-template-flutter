@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:lib_common/lib_common.dart';
 import 'package:lib_news_api/params/base/base_model.dart';
 import 'package:lib_news_api/params/response/news_response.dart';
+import 'package:module_setfontsize/module_setfontsize.dart';
 import '../commons/constants.dart';
 
 class HotNewsServiceCard extends StatelessWidget {
@@ -21,6 +23,7 @@ class HotNewsServiceCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final settingInfo = SettingModel.getInstance();
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -29,19 +32,16 @@ class HotNewsServiceCard extends StatelessWidget {
             height: Constants.hotNewsTabContainerHeight,
             margin: const EdgeInsets.only(bottom: Constants.spacingS),
             decoration: BoxDecoration(
-              color: Constants.hotNewsTabBackgroundColor,
+              color: ThemeColors.getBackgroundSecondary(settingInfo.darkSwitch),
               borderRadius:
                   BorderRadius.circular(Constants.hotNewsTabBorderRadius),
             ),
             padding: Constants.hotNewsTabPadding,
             child: Row(
-              mainAxisSize: MainAxisSize.min,
               children: [
-                _buildTabButton(0, context),
-                const SizedBox(width: Constants.hotNewsTabSpacing),
-                _buildTabButton(1, context),
-                const SizedBox(width: Constants.hotNewsTabSpacing),
-                _buildTabButton(2, context),
+                Expanded(child: _buildTabButton(0, context)),
+                Expanded(child: _buildTabButton(1, context)),
+                Expanded(child: _buildTabButton(2, context)),
               ],
             ),
           ),
@@ -52,45 +52,36 @@ class HotNewsServiceCard extends StatelessWidget {
 
   Widget _buildTabButton(int tabIndex, BuildContext context) {
     final isSelected = selectedTabIndex == tabIndex;
+    final settingInfo = SettingModel.getInstance();
+
     return SizedBox(
       height: Constants.hotNewsTabButtonHeight,
-      width: MediaQuery.of(context).size.width / 3 - 30,
+      width: double.infinity,
       child: GestureDetector(
         onTap: () => _handleTabTap(tabIndex),
         behavior: HitTestBehavior.opaque,
-        child: AnimatedContainer(
-          duration: Constants.hotNewsTabAnimationDuration,
-          curve: Curves.easeInOut,
+        child: Container(
           padding: Constants.hotNewsTabButtonPadding,
           alignment: Alignment.center,
           decoration: BoxDecoration(
-            color: isSelected ? Constants.whiteColor : Colors.transparent,
-            boxShadow: isSelected
-                ? [
-                    const BoxShadow(
-                      color: Constants.blackTransparentColor,
-                      blurRadius: Constants.hotNewsTabShadowBlurRadius,
-                      spreadRadius: Constants.hotNewsTabShadowSpreadRadius,
-                    )
-                  ]
-                : null,
+            color: isSelected
+                ? ThemeColors.getBackgroundTertiary(settingInfo.darkSwitch)
+                : Colors.transparent,
             borderRadius: BorderRadius.circular(
               Constants.hotNewsTabButtonBorderRadius,
             ),
           ),
-          child: AnimatedDefaultTextStyle(
-            duration: Constants.hotNewsTabAnimationDuration,
-            curve: Curves.easeInOut,
+          child: Text(
+            Constants.tabs[tabIndex],
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            textAlign: TextAlign.center,
             style: TextStyle(
               fontSize: Constants.fontSizeTiny,
               color: isSelected
-                  ? Constants.blackColor
+                  ? ThemeColors.getFontPrimary(settingInfo.darkSwitch)
                   : Constants.hotNewsTabTextColor,
               fontWeight: isSelected ? FontWeight.w500 : FontWeight.normal,
-            ),
-            child: Text(
-              Constants.tabs[tabIndex],
-              maxLines: 1,
             ),
           ),
         ),

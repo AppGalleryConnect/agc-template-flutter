@@ -1,13 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:lib_common/utils/router_utils.dart';
-import 'package:lib_common/constants/router_map.dart';
+import 'package:lib_common/lib_common.dart';
 import 'package:lib_news_api/observedmodels/comment_model.dart';
 import 'package:lib_news_api/services/message_service.dart';
 import 'package:lib_news_api/services/mine_service.dart';
 import 'package:lib_news_api/params/request/common_request.dart';
 import '../common/observed_model.dart';
 import '../utils/font_scale_utils.dart';
-import 'package:lib_common/utils/global_context.dart';
 import 'package:module_flutter_feedcomment/utils/utils.dart';
 import 'package:lib_common/dialogs/common_toast_dialog.dart'
     show CommonToastDialog, ToastDialogParams;
@@ -18,6 +16,7 @@ class MsgSingleCommentListViewModel extends ChangeNotifier {
   CommentDetailModel? data;
   List<CommentModel> publishList = [];
   double get fontSizeRatio => FontScaleUtils.fontSizeRatio;
+  final settingInfo = SettingModel.getInstance();
 
   void init() {
     getParams();
@@ -123,16 +122,18 @@ class MsgSingleCommentListViewModel extends ChangeNotifier {
         } else {}
 
         // 直接使用传入的context
-        commentSheetOpen(
-          context,
-          replyAuthor,
-          (content) {
-            // 调用发布回复方法
+        commentSheetOpen(context, replyAuthor, (content) {
+          // 调用发布回复方法
 
-            publishReply(comment, content);
-          },
-          false, // 不校验登录，因为我们已经添加了兜底逻辑
-        );
+          publishReply(comment, content);
+        },
+            false,
+            null,
+            ThemeColors.getFontPrimary(settingInfo.darkSwitch),
+            ThemeColors.getBackgroundColor(settingInfo.darkSwitch),
+            ThemeColors.getBackgroundSecondary(
+                settingInfo.darkSwitch) // 不校验登录，因为我们已经添加了兜底逻辑
+            );
       } else {
         // 添加详细错误日志
 

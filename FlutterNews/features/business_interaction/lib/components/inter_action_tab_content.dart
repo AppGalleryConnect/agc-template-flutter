@@ -1,10 +1,13 @@
 import 'package:easy_refresh/easy_refresh.dart';
 import 'package:flutter/material.dart';
 import 'package:lib_common/lib_common.dart';
+import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
+import 'package:get/get.dart';
 import '../constants/constants.dart';
 import '../viewmodels/interaction_view_model.dart';
 import 'interaction_feed_card.dart';
 import 'no_watcher.dart';
+
 
 /// 互动标签页内容组件
 class InterActionTabContent extends StatefulWidget {
@@ -71,45 +74,51 @@ class _InterActionTabContentState
     super.build(context);
 
     return EasyRefresh(
-      controller: vm.controller,
-      header: const MaterialHeader(),
-      onRefresh: vm.refresh,
-      footer: const MaterialFooter(),
-      onLoad: vm.onLoad,
-      child: widget.resource.id == TabEnum.watch.value &&
-              !vm.userInfoModel.isLogin
-          ? const NoLoginWidget()
-          : (vm.interactionList.isEmpty
-              ? const SingleChildScrollView(
-                  physics: AlwaysScrollableScrollPhysics(),
-                  child: SizedBox(
-                    height: Constants.SPACE_500,
-                    child: NoWatcher(),
-                  ),
-                )
-              : ListView.builder(
-                  padding: const EdgeInsets.only(
-                    left: Constants.SPACE_12,
-                    right: Constants.SPACE_12,
-                    top: Constants.SPACE_16,
-                  ),
-                  itemCount: vm.interactionList.length,
-                  itemBuilder: (context, index) {
-                    final item = vm.interactionList[index];
-                    return Container(
-                      margin: const EdgeInsets.only(bottom: Constants.SPACE_12),
-                      padding: const EdgeInsets.all(Constants.SPACE_12),
-                      decoration: BoxDecoration(
-                        color: ThemeColors.getCardBackground(
-                            settingInfo.darkSwitch),
-                        borderRadius: BorderRadius.circular(Constants.SPACE_16),
+        controller: vm.controller,
+        header: const MaterialHeader(),
+        onRefresh: vm.refresh,
+        footer: const MaterialFooter(),
+        onLoad: vm.onLoad,
+        child: Obx(() {
+          final breakpointCtrl = Get.find<BreakpointController>();
+          final currentLanes = breakpointCtrl.lanes.value;
+          return widget.resource.id == TabEnum.watch.value &&
+                  !vm.userInfoModel.isLogin
+              ? const NoLoginWidget()
+              : (vm.interactionList.isEmpty
+                  ? const SingleChildScrollView(
+                      physics: AlwaysScrollableScrollPhysics(),
+                      child: SizedBox(
+                        height: Constants.SPACE_500,
+                        child: NoWatcher(),
                       ),
-                      child: InteractionFeedCard(
-                        cardInfo: item,
-                      ),
-                    );
-                  },
-                )),
-    );
+                    )
+                  : MasonryGridView.count(
+                      shrinkWrap: true,
+                      physics: const AlwaysScrollableScrollPhysics(),
+                      crossAxisCount: currentLanes,
+                      crossAxisSpacing: 8.0,
+                      mainAxisSpacing: 8.0,
+                      itemCount: vm.interactionList.length,
+                      padding: const EdgeInsets.only(top: 0),
+                      itemBuilder: (context, index) {
+                        final item = vm.interactionList[index];
+                        return Container(
+                          margin:
+                              const EdgeInsets.only(bottom: Constants.SPACE_12),
+                          padding: const EdgeInsets.all(Constants.SPACE_12),
+                          decoration: BoxDecoration(
+                            color: ThemeColors.getCardBackground(
+                                settingInfo.darkSwitch),
+                            borderRadius:
+                                BorderRadius.circular(Constants.SPACE_16),
+                          ),
+                          child: InteractionFeedCard(
+                            cardInfo: item,
+                          ),
+                        );
+                      },
+                    ));
+        }));
   }
 }

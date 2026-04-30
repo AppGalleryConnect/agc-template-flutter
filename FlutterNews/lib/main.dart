@@ -1,7 +1,9 @@
 import 'package:business_home/components/harmony_qr_scanner.dart';
 import 'package:business_interaction/business_interaction.dart';
+import 'package:business_video/models/video_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:lib_common/dialogs/common_toast_dialog.dart';
 import 'package:lib_common/lib_common.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:business_home/pages/news_search.dart';
@@ -15,9 +17,13 @@ import 'package:business_mine/pages/message_fans_page.dart';
 import 'package:business_mine/pages/mark_page.dart';
 import 'package:business_mine/pages/like_page.dart';
 import 'package:business_mine/pages/history_page.dart';
+import 'package:lib_news_api/params/response/news_response.dart';
+import 'package:lib_news_api/services/video_service.dart';
 import 'package:module_feedback/pages/submit_page.dart';
 import 'package:module_feedback/pages/feedback_manage_page.dart';
 import 'package:module_feedback/pages/record_list_page.dart';
+import 'package:module_newsfeed/components/news_detail_page.dart';
+import 'package:newsflutterstemplate/notifier/fullScreenProvider.dart';
 import 'index_page.dart';
 import 'package:lib_account/pages/protocol_web_view.dart';
 import 'package:business_mine/pages/message_im_chat_page.dart';
@@ -41,7 +47,55 @@ void main() async {
   initializeDateFormatting('zh_CN');
   WidgetsFlutterBinding.ensureInitialized();
   await initSetting();
+  Get.put(BreakpointController());
+  await BreakponitUtils.initBreakponit();
+  // 监听原生侧卡片数据（应用存活状态）
+  FormCardUtils.initFormCard();
+  FormCardUtils.formCardDataNotifier.addListener(_onFormCardDataChanged);
+  // 监听原生侧快捷方式数据（应用存活状态）
+  ShortcutUtils.initShortcut();
   runApp(const MyApp());
+}
+
+void _onFormCardDataChanged() {
+  dynamic arguments = FormCardUtils.formCardDataNotifier.value;
+  if (arguments == null) return;
+  _pushToNewsDetailsById(arguments['newsId'], arguments['newsType']);
+}
+
+void _pushToNewsDetailsById(newsId, newsType) {
+  final newModel = VideoServiceApi.queryVideoById(newsId);
+  if (newModel == null) {
+    CommonToastDialog.show(ToastDialogParams(message: '暂无此新闻详情！'));
+    return;
+  }
+  Navigator.of(GlobalContext.context).popUntil((route) {
+    String? name = route.settings.name;
+    if (name == "/NewsDetailPage" || name == RouterMap.VIDEO_PLAY_PAGE) {
+      return false;
+    }
+    return true;
+  });
+
+  if (newsType == 0) {
+    // 新闻页
+    Navigator.push(
+      GlobalContext.context,
+      MaterialPageRoute(
+        settings: const RouteSettings(name: "/NewsDetailPage"),
+        builder: (context) => NewsDetailPage(
+          news: newModel as NewsResponse,
+        ),
+      ),
+    );
+  } else {
+    // 视频页
+    VideoNewsData videoData = VideoNewsData.fromCommentResponse(newModel!);
+    RouterUtils.of.pushPathByName(
+      RouterMap.VIDEO_PLAY_PAGE,
+      param: videoData,
+    );
+  }
 }
 
 Future<void> initSetting() async {
@@ -70,10 +124,37 @@ class MyApp extends StatefulWidget {
   State<MyApp> createState() => _MyAppState();
 }
 
-class _MyAppState extends State<MyApp> {
+class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
+  final settingModel = SettingModel.getInstance();
+
+  @override
+  void initState() {
+    super.initState();
+    queryBrightness();
+    WidgetsBinding.instance.addObserver(this);
+  }
+
+  @override
+  void didChangePlatformBrightness() {
+    super.didChangePlatformBrightness();
+    queryBrightness();
+  }
+
+  queryBrightness() {
+    final newBrightness = WidgetsBinding.instance.window.platformBrightness;
+    if (settingModel.currentThemeMode == 0) {
+      settingModel.darkSwitch = newBrightness == Brightness.dark;
+    }
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
-    final settingModel = SettingModel.getInstance();
     return Directionality(
       textDirection: TextDirection.ltr,
       child: ListenableBuilder(
@@ -90,7 +171,7 @@ class _MyAppState extends State<MyApp> {
             theme: ThemeData(
               brightness: Brightness.light,
               colorScheme: ColorScheme.fromSeed(
-                seedColor: Colors.deepPurple,
+                seedColor: const Color(0x66FFFFFF),
                 brightness: Brightness.light,
               ),
               useMaterial3: true,
@@ -98,7 +179,7 @@ class _MyAppState extends State<MyApp> {
             darkTheme: ThemeData(
               brightness: Brightness.dark,
               colorScheme: ColorScheme.fromSeed(
-                seedColor: Colors.deepPurple,
+                seedColor: const Color(0x66FFFFFF),
                 brightness: Brightness.dark,
                 surface: AppConstants.scaffoldBackgroundColor,
               ),

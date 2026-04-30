@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lib_common/lib_common.dart';
 import '../commons/constants.dart';
 
 class FeedSingleImageSize extends StatefulWidget {
@@ -26,6 +27,7 @@ class FeedSingleImageSize extends StatefulWidget {
 }
 
 class _FeedSingleImageSizeState extends State<FeedSingleImageSize> {
+  final settingInfo = SettingModel.getInstance();
   dynamic modifier;
 
   @override
@@ -73,11 +75,12 @@ class _FeedSingleImageSizeState extends State<FeedSingleImageSize> {
                           ),
                           child: Text(
                             '+ ${widget.truncatedCount}',
-                            style: const TextStyle(
+                            style: TextStyle(
                               fontSize: Constants
                                   .feedSingleImageTruncatedTextFontSize,
                               fontWeight: FontWeight.bold,
-                              color: Constants.whiteColor,
+                              color: ThemeColors.getFontPrimary(
+                                  settingInfo.darkSwitch),
                             ),
                           ),
                         ),

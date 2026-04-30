@@ -10,7 +10,7 @@ import { BusinessError } from '@kit.BasicServicesKit';
 const TAG = '[AppGalleryChannel]';
 
 export class AppGalleryChannel implements FlutterPlugin {
-  private channel?: MethodChannel;
+  private galleryChannel?: MethodChannel;
   private context: common.UIAbilityContext;
 
   constructor(context: common.UIAbilityContext) {
@@ -22,24 +22,24 @@ export class AppGalleryChannel implements FlutterPlugin {
   }
 
   onAttachedToEngine(binding: FlutterPluginBinding): void {
-    this.channel = new MethodChannel(binding.getBinaryMessenger(), 'com.news.flutter/app_gallery');
-    this.channel.setMethodCallHandler({
+    this.galleryChannel = new MethodChannel(binding.getBinaryMessenger(), 'com.news.flutter/app_gallery');
+    this.galleryChannel.setMethodCallHandler({
       onMethodCall: (call: MethodCall, result: MethodResult): void => {
-        this.handleMethodCall(call, result);
+        this.handleGalleryMethodCall(call, result);
       }
     });
   }
 
   onDetachedFromEngine(binding: FlutterPluginBinding): void {
-    if (this.channel) {
-      this.channel.setMethodCallHandler(null);
+    if (this.galleryChannel) {
+      this.galleryChannel.setMethodCallHandler(null);
     }
   }
 
   /**
    * 处理Flutter调用
    */
-  private handleMethodCall(call: MethodCall, result: MethodResult): void {
+  private handleGalleryMethodCall(call: MethodCall, result: MethodResult): void {
     console.info(TAG, `收到Flutter调用: ${call.method}`);
 
     switch (call.method) {

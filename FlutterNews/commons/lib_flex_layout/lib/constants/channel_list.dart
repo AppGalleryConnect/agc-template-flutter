@@ -43,6 +43,7 @@ const List<TabInfo> channelList = [
     id: 'location',
     selected: true,
     order: 4,
+    disabled: true,
   ),
   TabInfo(
     text: '金融',

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:lib_common/lib_common.dart';
 
 /// 弹窗配置项类
 class PopViewOptions {
@@ -63,13 +64,15 @@ class PopViewUtils {
 }
 
 toast(String string) {
+  final settingInfo = SettingModel.getInstance();
   Fluttertoast.showToast(
       msg: string,
       toastLength: Toast.LENGTH_SHORT,
       gravity: ToastGravity.BOTTOM,
       timeInSecForIosWeb: 1,
-      backgroundColor: Colors.white,
-      textColor: Colors.black87,
+      backgroundColor:
+          ThemeColors.getCompBackgroundSecondary(settingInfo.darkSwitch),
+      textColor: ThemeColors.getFontPrimary(settingInfo.darkSwitch),
       fontSize: 16.0);
 }
 

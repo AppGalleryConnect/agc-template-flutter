@@ -1,9 +1,13 @@
+import 'dart:async';
+
+import 'package:get/get.dart';
 import 'package:business_mine/viewmodels/mine_vm.dart';
 import 'package:business_video/models/video_model.dart';
 import 'package:business_video/views/video_sheet.dart';
 import 'package:easy_refresh/easy_refresh.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:lib_common/dialogs/common_toast_dialog.dart';
 import 'package:lib_common/lib_common.dart';
 import 'package:lib_news_api/params/response/layout_response.dart';
 import 'package:lib_news_api/params/response/news_response.dart';
@@ -13,14 +17,19 @@ import 'package:module_flutter_channeledit/model/model.dart';
 import 'package:module_flutter_channeledit/views/channel_edit.dart';
 import 'package:module_newsfeed/components/native_navigation_utils.dart';
 import 'package:module_newsfeed/components/news_detail_page.dart';
+import 'package:lib_account/viewmodels/login_vm.dart' as login_vm;
+import 'package:lib_common/services/location_service.dart';
+import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import '../components/search_button.dart';
 import '../items_card/custom_item_card.dart';
 import '../commons/constants.dart';
-import 'package:lib_account/viewmodels/login_vm.dart' as login_vm;
-import 'package:lib_common/services/location_service.dart';
 
 class HomePage extends StatefulWidget {
-  const HomePage({super.key});
+  final Function() onCallParentChangeIndex;
+  const HomePage({
+    super.key,
+    required this.onCallParentChangeIndex,
+  });
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -50,7 +59,6 @@ class _HomePageState extends State<HomePage> {
 
   List<TabInfo> _filteredChannelsList = [];
   List<TabInfo> _selectChannelList = [];
-
   int currentIndex = 1;
   int topBack = 0;
   final EasyRefreshController _controller = EasyRefreshController();
@@ -59,16 +67,16 @@ class _HomePageState extends State<HomePage> {
   final settingInfo = SettingModel.getInstance();
   late final VoidCallback _listener;
   late PageController _pageController;
+
   int currentPageIndex = 1;
   @override
   void initState() {
     super.initState();
-    getNewsDynamicData('recommend');
+    _getPreloadData();
     _pageController = PageController(initialPage: currentPageIndex);
     Logger.info(TAG, '-------RouterUtil route:$newsList');
     _sendPushNotice();
     vm.addListener(_refreshUI);
-
     _updateFilteredChannels();
 
     _listener = () {
@@ -89,8 +97,59 @@ class _HomePageState extends State<HomePage> {
       });
     };
     settingInfo.addListener(_listener);
-
+    EventHubUtils.getInstance().on(EventEnum.homeIndexChange, (args) {
+      if (mounted) {
+        _pageController.jumpToPage(0);
+      }
+    });
     getLocation();
+    // 获取原生侧卡片数据，应用失活状态
+    FormCardUtils.callFormCardData().then((isFormCard) {
+      if (isFormCard.isValid) {
+        final newModel = VideoServiceApi.queryVideoById(isFormCard.newsId);
+        Navigator.push(
+          GlobalContext.context,
+          MaterialPageRoute(
+            builder: (context) => NewsDetailPage(
+              news: newModel as NewsResponse,
+            ),
+          ),
+        );
+      }
+    });
+    // 获取原生侧AppLinking数据，应用失活状态
+    FormCardUtils.callFormAppLinkingData().then((isFormCard) {
+      if (isFormCard.isValid) {
+        final newModel = VideoServiceApi.queryVideoById(isFormCard.newsId);
+        if (newModel == null) {
+          CommonToastDialog.show(ToastDialogParams(message: '暂无此新闻详情！'));
+          return;
+        }
+        if (isFormCard.newsType == 0) {
+          Navigator.push(
+            GlobalContext.context,
+            MaterialPageRoute(
+              builder: (context) => NewsDetailPage(
+                news: newModel as NewsResponse,
+              ),
+            ),
+          );
+        } else {
+          final res = VideoService().queryVideoById(isFormCard.newsId);
+          VideoNewsData videoData = VideoNewsData.fromCommentResponse(res!);
+          RouterUtils.of
+              .pushPathByName(RouterMap.VIDEO_PLAY_PAGE, param: videoData);
+        }
+      }
+    });
+    // 获取原生侧快捷方式数据，应用失活状态
+    ShortcutUtils.callShortcutData().then((shortcutData) {
+      if (shortcutData.pageName == 'FollowPage') {
+        _pageController.jumpToPage(0);
+      } else if (shortcutData.pageName == 'ActionPage') {
+        widget.onCallParentChangeIndex();
+      }
+    });
   }
 
   void _updateFilteredChannels() {
@@ -136,6 +195,26 @@ class _HomePageState extends State<HomePage> {
       setState(() {
         getNewsDynamicData(resource);
       });
+    }
+  }
+
+  // 获取预加载数据
+  Future<void> _getPreloadData() async {
+    try {
+      final recommendList = await PreloadUtils.getPreloadData();
+      if (recommendList.isNotEmpty) {
+        setState(() {
+          newsList = recommendList;
+        });
+      } else {
+        final resource =
+            settingInfo.personalizedPush ? 'recommend' : 'hotService';
+        getNewsDynamicData(resource);
+      }
+    } catch (e) {
+      final resource =
+          settingInfo.personalizedPush ? 'recommend' : 'hotService';
+      getNewsDynamicData(resource);
     }
   }
 
@@ -202,7 +281,7 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     final Size screenSize = MediaQuery.of(context).size;
     final double statusBarHeight = MediaQuery.of(context).padding.top;
-
+    final breakpointCtrl = Get.find<BreakpointController>();
     return Container(
       color: ThemeColors.getBackgroundSecondary(settingInfo.darkSwitch),
       width: double.infinity,
@@ -218,22 +297,26 @@ class _HomePageState extends State<HomePage> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    const Text(
+                    Text(
                       '首页',
                       style: TextStyle(
                         fontSize: Constants.homePageTitleFontSize,
                         fontWeight: FontWeight.bold,
-                        color: Constants.primaryTextColor,
+                        color:
+                            ThemeColors.getFontPrimary(settingInfo.darkSwitch),
                       ),
                     ),
                     Row(
                       children: [
-                        const SearchButton(),
+                        SearchButton(
+                            backgroundColor: ThemeColors.getBackgroundColor(
+                                settingInfo.darkSwitch)),
                         const SizedBox(width: Constants.spacingS),
                         IconButton(
                           style: ButtonStyle(
                             backgroundColor: WidgetStateProperty.all(
-                                Constants.homePageIconButtonBackgroundColor),
+                                ThemeColors.getBackgroundColor(
+                                    settingInfo.darkSwitch)),
                             shape: WidgetStateProperty.all(
                               RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(
@@ -248,7 +331,8 @@ class _HomePageState extends State<HomePage> {
                             width: Constants.homePageIconSize,
                             height: Constants.homePageIconSize,
                             colorFilter: ColorFilter.mode(
-                              Theme.of(context).colorScheme.primary,
+                              ThemeColors.getFontPrimary(
+                                  settingInfo.darkSwitch),
                               BlendMode.srcIn,
                             ),
                             fit: BoxFit.contain,
@@ -288,7 +372,13 @@ class _HomePageState extends State<HomePage> {
                 child: ChannelEdit(
                   currentIndex: currentIndex,
                   channelsList: _filteredChannelsList,
+                  fontColor: ThemeColors.getFontPrimary(settingInfo.darkSwitch),
+                  backgroundColor:
+                      ThemeColors.getBackgroundColor(settingInfo.darkSwitch),
+                  backgroundColorTertiary:
+                      ThemeColors.getBackgroundTertiary(settingInfo.darkSwitch),
                   fontSizeRatio: settingInfo.fontSizeRatio,
+                  isDark: settingInfo.darkSwitch,
                   onChange: (index, item) => {
                     _pageController.jumpToPage(index),
                   },
@@ -301,58 +391,69 @@ class _HomePageState extends State<HomePage> {
                 ),
               ),
               Expanded(
-                child: PageView.builder(
-                  scrollDirection: Axis.horizontal,
-                  itemCount: _selectChannelList.length,
-                  physics: const AlwaysScrollableScrollPhysics(),
-                  controller: _pageController,
-                  onPageChanged: (index) {
-                    setState(() {
-                      currentIndex = index;
+                child: Obx(() {
+                  final breakpointCtrl = Get.find<BreakpointController>();
+                  final currentLanes = breakpointCtrl.lanes.value;
 
-                      resource = _selectChannelList[index].id;
-                      getNewsDynamicData(resource);
-                    });
-                  },
-                  itemBuilder: (BuildContext context, int pageIndex) {
-                    final currentChannel = _selectChannelList[pageIndex];
-                    return EasyRefresh(
-                      controller: EasyRefreshController(),
-                      header: const MaterialHeader(),
-                      onRefresh: () async {
-                        await getNewsDynamicData(currentChannel.id);
-                      },
-                      footer: const MaterialFooter(),
-                      onLoad: _onLoad,
-                      child: newsList.isNotEmpty
-                          ? ListView.builder(
-                              key: ValueKey(currentChannel.id),
-                              padding: EdgeInsets.zero,
-                              itemCount: newsList.length,
-                              itemBuilder: (context, index) {
-                                if (index < 0 || index >= newsList.length) {
-                                  return const SizedBox.shrink();
-                                }
-                                final news = newsList[index];
-                                return CustomItemCard(
-                                  context,
-                                  news,
-                                  onTap: (NewsResponse res) {
-                                    _pushToNewsDetail(context, res, index);
-                                  },
-                                  onWatchClick: (newsId) {},
-                                  fontSizeRatio: settingInfo.fontSizeRatio,
-                                );
-                              },
-                            )
-                          : noDataWidget(),
-                    );
-                  },
-                ),
+                  return PageView.builder(
+                    scrollDirection: Axis.horizontal,
+                    itemCount: _selectChannelList.length,
+                    physics: const AlwaysScrollableScrollPhysics(),
+                    controller: _pageController,
+                    onPageChanged: (index) {
+                      setState(() {
+                        currentIndex = index;
+                        resource = _selectChannelList[index].id;
+                        getNewsDynamicData(resource);
+                      });
+                    },
+                    itemBuilder: (BuildContext context, int pageIndex) {
+                      final currentChannel = _selectChannelList[pageIndex];
+                      return EasyRefresh(
+                        controller: EasyRefreshController(),
+                        header: const MaterialHeader(),
+                        onRefresh: () async {
+                          await getNewsDynamicData(currentChannel.id);
+                        },
+                        footer: const MaterialFooter(),
+                        onLoad: _onLoad,
+                        child: newsList.isNotEmpty
+                            ? MasonryGridView.count(
+                                shrinkWrap: true,
+                                physics: const AlwaysScrollableScrollPhysics(),
+                                crossAxisCount:
+                                    _filteredChannelsList[currentIndex].id ==
+                                            'hotService'
+                                        ? 1
+                                        : currentLanes,
+                                crossAxisSpacing: 8.0,
+                                mainAxisSpacing: 8.0,
+                                itemCount: newsList.length,
+                                padding: const EdgeInsets.only(top: 0),
+                                itemBuilder: (context, index) {
+                                  final news = newsList[index];
+                                  return CustomItemCard(
+                                    context,
+                                    news,
+                                    onTap: (NewsResponse res) {
+                                      _pushToNewsDetail(context, res, index);
+                                    },
+                                    onWatchClick: (newsId) {},
+                                    fontSizeRatio: settingInfo.fontSizeRatio,
+                                  );
+                                },
+                              )
+                            : noDataWidget(),
+                      );
+                    },
+                  );
+                }),
               ),
               SizedBox(
                 height: MediaQuery.of(context).padding.bottom +
-                    Constants.homePageBottomPadding,
+                    (breakpointCtrl.isTabVertical
+                        ? 0
+                        : Constants.homePageBottomPadding),
               ),
             ],
           ),

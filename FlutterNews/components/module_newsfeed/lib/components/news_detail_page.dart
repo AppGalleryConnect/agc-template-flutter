@@ -35,6 +35,7 @@ import 'comment_Input_bar.dart';
 import 'comment_list.dart';
 import 'package:lib_account/viewmodels/login_vm.dart' as login_vm;
 import 'package:module_newsfeed/constants/constants.dart';
+import 'package:get/get.dart';
 
 class NewsDetailPage extends StatefulWidget {
   final NewsResponse? news;
@@ -61,10 +62,16 @@ class _NewsDetailPageState extends State<NewsDetailPage>
   final GlobalKey commentDividerKey = GlobalKey();
   final ScrollController scrollController = ScrollController();
   final List<String> imageProviders = [];
-  List<RequestListData> newsInfoList = [];
+  final double bottomSheetHeight = 80.0;
+
   late StreamSubscription _subscription;
   late bool _isLike = false;
+
+  List<RequestListData> newsInfoList = [];
   bool _isCommentSheetOpen = false;
+  bool isSplit = false;
+  final settingInfo = SettingModel.getInstance();
+  static const Duration _animationDuration = Duration(milliseconds: 300);
 
   @override
   void initState() {
@@ -108,12 +115,30 @@ class _NewsDetailPageState extends State<NewsDetailPage>
         _scrollToCommentList();
       });
     }
+    final Map<String, dynamic> params = {
+      "title": widget.news!.title,
+      "author": widget.news!.author!.authorNickName,
+      "time": widget.news!.createTime,
+      "newsId": widget.news!.id,
+      "newsType": 0,
+      "newsImageUri": widget.news!.postImgList?.isNotEmpty == true
+          ? widget.news!.postImgList![0].picVideoUrl
+          : '',
+    };
+    // 开启碰一碰分享监听
+    NativeNavigationUtils.listenToKnockShare(params: params);
+    // 开启隔空抓取监听
+    NativeNavigationUtils.listenToGestureShare(params: params);
   }
 
   @override
   void dispose() {
     scrollController.dispose();
     MineServiceApi.removeObserver(this);
+    // 取消碰一碰分享监听
+    NativeNavigationUtils.listenToOffKnockShare();
+    // 取消隔空抓取监听
+    NativeNavigationUtils.listenToOffGestureShare();
     super.dispose();
   }
 
@@ -139,207 +164,338 @@ class _NewsDetailPageState extends State<NewsDetailPage>
 
   @override
   Widget build(BuildContext context) {
-    final screenHeight = MediaQuery.of(context).size.height;
-    const bottomSheetHeight = Constants.SPACE_80;
+    final breakpointCtrl = Get.find<BreakpointController>();
+    final currentLanes = breakpointCtrl.lanes.value;
 
+    breakpointCtrl.lanes.listen((lanes) {
+      if (lanes == 1) {
+        if (mounted) {
+          setState(() {
+            isSplit = false;
+          });
+        }
+      }
+    });
     List<CommentResponse>? cList =
         CommentServiceApi.queryCommentList(widget.news!.id);
     commentResponse = cList?.toList() ?? [];
 
     return Scaffold(
+      backgroundColor: ThemeColors.getBackgroundColor(settingInfo.darkSwitch),
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: ThemeColors.getBackgroundColor(settingInfo.darkSwitch),
         leading: IconButton(
           icon: SvgPicture.asset(
-            CommonConstants.iconBackPath,
-            width: Constants.SPACE_15,
-            height: Constants.SPACE_15,
-            colorFilter: ColorFilter.mode(
-                Theme.of(context).colorScheme.primary, BlendMode.srcIn),
+            settingInfo.darkSwitch
+                ? CommonConstants.iconBackPathDark
+                : CommonConstants.iconBackPath,
+            width: Constants.SPACE_40,
+            height: Constants.SPACE_40,
             fit: BoxFit.contain,
           ),
           onPressed: () {
             Navigator.of(context).pop();
           },
         ),
-        title: const Text('新闻详情'),
+        title: Text(
+          '新闻详情',
+          style: TextStyle(
+            color: ThemeColors.getFontPrimary(settingInfo.darkSwitch),
+          ),
+        ),
         actions: [
+          if (currentLanes >= 2)
+            IconButton(
+              icon: Image.asset(
+                isSplit
+                    ? (settingInfo.darkSwitch
+                        ? Constants.fullScreenDark
+                        : Constants.fullScreen)
+                    : (settingInfo.darkSwitch
+                        ? Constants.splitScreenDark
+                        : Constants.splitScreen),
+                width: Constants.SPACE_36,
+                height: Constants.SPACE_36,
+                fit: BoxFit.contain,
+              ),
+              onPressed: () {
+                setState(() {
+                  isSplit = !isSplit;
+                });
+              },
+            ),
           _AnimatedHeadsetButton(news: widget.news),
         ],
       ),
       body: Stack(
         children: [
           Container(
-            color: Colors.white,
-            child: SingleChildScrollView(
-              controller: scrollController,
-              physics: const AlwaysScrollableScrollPhysics(),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  if (widget.news!.type == NewsEnum.article) ...[
-                    Padding(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: Constants.SPACE_16,
-                          vertical: Constants.SPACE_12),
-                      child: Align(
-                        alignment: Alignment.centerLeft,
-                        child: Text(
-                          widget.news!.title,
-                          style: TextStyle(
-                            fontSize: Constants.FONT_20 * widget.fontSizeRatio,
-                            fontWeight: FontWeight.bold,
-                            height: 1.3,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                  // 作者+发布时间
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(
-                        Constants.SPACE_16,
-                        Constants.SPACE_16,
-                        Constants.SPACE_16,
-                        Constants.SPACE_8),
-                    child: AuthorCard(
-                        cardData: widget.news!,
-                        isNeedAuthor: true,
-                        watchBuilder: () {}),
-                  ),
-                  // 正文内容
-                  if (widget.news!.type == NewsEnum.article) ...[
-                    _buildTextFirstGroup(widget.news!.richContent ?? ''),
-                    if (widget.news!.postImgList != null &&
-                        widget.news!.postImgList!.isNotEmpty) ...[
-                      ...widget.news!.postImgList!.map((group) {
-                        return _buildImageFirstGroup(group);
-                      }),
-                    ],
-                  ] else if (widget.news!.type == NewsEnum.post) ...[
-                    Padding(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: Constants.SPACE_16,
-                          vertical: Constants.SPACE_0),
-                      child: ArticleTextEllipsis(
-                        text: widget.news!.title,
-                        fontSizeRatio: widget.fontSizeRatio,
-                        enableExpand: false,
-                        searchKey: widget.news!.extraInfo?['searchKey'] ?? '',
-                        maxLines: null,
-                      ),
-                    ),
-                    if (widget.news!.postImgList != null &&
-                        widget.news!.postImgList!.isNotEmpty) ...[
-                      _buildPostImageGrid(widget.news!.postImgList!),
-                    ],
-                  ],
-
-                  // 互动栏（评论/点赞/分享）
-                  Padding(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: Constants.SPACE_16,
-                        vertical: Constants.SPACE_12),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: [
-                        _buildInteractiveButton(
-                            iconPath: widget.news!.isLiked
-                                ? Constants.likeActiveImagePath
-                                : Constants.likeImagePath,
-                            isLiked: _isLike,
-                            text: widget.news!.likeCount.toString(),
-                            onTap: () {
-                              final loginVM = login_vm.LoginVM.getInstance();
-                              if (!loginVM
-                                  .accountInstance.userInfoModel.isLogin) {
-                                VideoSheet.showLoginSheet(context);
-                                return;
-                              }
-                              _handleLike(context);
-                            }),
-                        _buildInteractiveButton(
-                          iconPath: Constants.icWechatImage,
-                          text: NumberFormatter.formatCompact(
-                              widget.news!.commentCount ?? 0),
-                          onTap: () async {
-                            final Map<String, String> params = {
-                              "params": widget.news!.title
-                            };
-                            await NativeNavigationUtils.pushToShareWX(
-                                params: params);
-                          },
-                        ),
-                      ],
-                    ),
-                  ),
-                  Container(
-                    key: commentDividerKey,
-                    height: Constants.SPACE_10,
-                    color: Colors.grey[200],
-                  ),
-
-                  RecommendList(
-                    requestListDataList: HomeServiceApi.getRecommendList(
-                            MockFlexLayout.recommendList) ??
-                        [],
-                    titleStyle: const TextStyle(
-                      fontSize: Constants.FONT_16,
-                      fontWeight: FontWeight.w500,
-                      color: Colors.blue,
-                    ),
-                    subtitleStyle: const TextStyle(
-                      fontSize: Constants.FONT_11,
-                      color: Colors.grey,
-                      fontStyle: FontStyle.italic,
-                    ),
-                    imageWidth: Constants.SPACE_120,
-                    imageHeight: Constants.SPACE_90,
-                    padding: const EdgeInsets.all(Constants.SPACE_10),
-                  ),
-                  Container(
-                    height: Constants.SPACE_10,
-                    color: Colors.grey[200],
-                  ),
-                  ConstrainedBox(
-                    constraints: BoxConstraints(
-                      minHeight:
-                          screenHeight - bottomSheetHeight - Constants.SPACE_10,
-                    ),
-                    child: CommentList(
-                      cardData: widget.news,
-                      key: commentListKey,
-                      showInteractiveButtons: false,
-                      onPullUpKeyboard: () => showCommond('', ''),
-                      commentResponse: commentResponse,
-                      onCommentLike: (String commentId, bool isLiked) {
-                        final loginVM = login_vm.LoginVM.getInstance();
-                        if (!loginVM.accountInstance.userInfoModel.isLogin) {
-                          VideoSheet.showLoginSheet(context);
-                          return;
-                        }
-                        if (isLiked) {
-                          CommentServiceApi.addCommentLike(commentId);
-                        } else {
-                          CommentServiceApi.cancelCommentLike(commentId);
-                        }
-                      },
-                      onReplyToComment: (
-                          {required CommentResponse targetComment,
-                          CommentResponse? targetReply}) {
-                        showCommond(targetReply!.author!.authorNickName,
-                            targetComment.commentId);
-                      },
-                    ),
-                  ),
-                ],
-              ),
-            ),
+              color: ThemeColors.getBackgroundColor(settingInfo.darkSwitch),
+              padding: EdgeInsets.only(bottom: bottomSheetHeight),
+              child: AnimatedSwitcher(
+                duration: _animationDuration,
+                switchInCurve: Curves.easeOut,
+                switchOutCurve: Curves.easeIn,
+                transitionBuilder: (Widget child, Animation<double> animation) {
+                  return FadeTransition(
+                    opacity: animation,
+                    child: child,
+                  );
+                },
+                child: isSplit && currentLanes >= 2
+                    ? _buildSplitLayout(key: const ValueKey('split'))
+                    : _buildSingleLayout(key: const ValueKey('single')),
+              )),
+          Positioned(
+            left: 0,
+            right: 0,
+            bottom: 0,
+            height: bottomSheetHeight,
+            child: _buildBottomCommentInput(),
           ),
-          _buildBottomCommentInput(),
         ],
       ),
     );
+  }
+
+  // 单列布局
+  Widget _buildSingleLayout({required Key key}) {
+    return Container(
+      key: key,
+      color: ThemeColors.getBackgroundColor(settingInfo.darkSwitch),
+      child: SingleChildScrollView(
+        controller: scrollController,
+        physics: const AlwaysScrollableScrollPhysics(),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            ..._buildContentArea(),
+            ..._buildCommentArea(),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSplitLayout({required Key key}) {
+    final isPostType = widget.news!.type == NewsEnum.post;
+    final forceSplitForPost = isPostType || isSplit; // post类型强制为true
+
+    return SizedBox(
+      key: key,
+      height: MediaQuery.of(context).size.height - bottomSheetHeight,
+      width: double.infinity,
+      child: Row(
+        children: [
+          Expanded(
+            flex: 1,
+            child: Container(
+              color: ThemeColors.getBackgroundColor(settingInfo.darkSwitch),
+              height: double.infinity,
+              child: SingleChildScrollView(
+                physics: const AlwaysScrollableScrollPhysics(),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: _buildContentArea(),
+                ),
+              ),
+            ),
+          ),
+          AnimatedOpacity(
+            opacity: forceSplitForPost ? 1.0 : 0.0,
+            duration: _animationDuration,
+            child: Container(width: 1, color: Colors.grey[200]),
+          ),
+          Expanded(
+            flex: 1,
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(
+                minHeight: double.infinity,
+              ),
+              child: AnimatedSlide(
+                duration: _animationDuration,
+                curve: Curves.easeOut,
+                offset: forceSplitForPost ? Offset.zero : const Offset(1, 0),
+                child: Container(
+                  color: ThemeColors.getBackgroundColor(settingInfo.darkSwitch),
+                  height: double.infinity,
+                  child: Column(
+                    children: [
+                      Expanded(
+                        child: SingleChildScrollView(
+                          physics: const AlwaysScrollableScrollPhysics(),
+                          child: Column(
+                            children: _buildCommentArea(),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // 正文区域
+  List<Widget> _buildContentArea() {
+    return [
+      if (widget.news!.type == NewsEnum.article) ...[
+        Padding(
+          padding: const EdgeInsets.symmetric(
+              horizontal: Constants.SPACE_16, vertical: Constants.SPACE_12),
+          child: Align(
+            alignment: Alignment.centerLeft,
+            child: Text(
+              widget.news!.title,
+              style: TextStyle(
+                fontSize: Constants.FONT_20 * widget.fontSizeRatio,
+                fontWeight: FontWeight.bold,
+                height: 1.3,
+              ),
+            ),
+          ),
+        ),
+      ],
+      // 作者+发布时间
+      Padding(
+        padding: const EdgeInsets.fromLTRB(Constants.SPACE_16,
+            Constants.SPACE_16, Constants.SPACE_16, Constants.SPACE_8),
+        child: AuthorCard(
+            cardData: widget.news!, isNeedAuthor: true, watchBuilder: () {}),
+      ),
+      // 正文内容
+      if (widget.news!.type == NewsEnum.article) ...[
+        _buildTextFirstGroup(widget.news!.richContent ?? ''),
+        if (widget.news!.postImgList != null &&
+            widget.news!.postImgList!.isNotEmpty) ...[
+          ...widget.news!.postImgList!.map((group) {
+            return _buildImageFirstGroup(group);
+          }),
+        ],
+      ] else if (widget.news!.type == NewsEnum.post) ...[
+        Padding(
+          padding: const EdgeInsets.symmetric(
+              horizontal: Constants.SPACE_16, vertical: Constants.SPACE_0),
+          child: ArticleTextEllipsis(
+            text: widget.news!.title,
+            fontSizeRatio: widget.fontSizeRatio,
+            enableExpand: false,
+            searchKey: widget.news!.extraInfo?['searchKey'] ?? '',
+            maxLines: null,
+          ),
+        ),
+        if (widget.news!.postImgList != null &&
+            widget.news!.postImgList!.isNotEmpty) ...[
+          _buildPostImageGrid(widget.news!.postImgList!),
+        ],
+      ],
+      // 互动栏（评论/点赞/分享）
+      Padding(
+        padding: const EdgeInsets.symmetric(
+            horizontal: Constants.SPACE_16, vertical: Constants.SPACE_12),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: [
+            _buildInteractiveButton(
+                iconPath: widget.news!.isLiked
+                    ? Constants.likeActiveImagePath
+                    : Constants.likeImagePath,
+                isLiked: _isLike,
+                text: widget.news!.likeCount.toString(),
+                onTap: () {
+                  final loginVM = login_vm.LoginVM.getInstance();
+                  if (!loginVM.accountInstance.userInfoModel.isLogin) {
+                    VideoSheet.showLoginSheet(context);
+                    return;
+                  }
+                  _handleLike(context);
+                }),
+            _buildInteractiveButton(
+              iconPath: Constants.icWechatImage,
+              text:
+                  NumberFormatter.formatCompact(widget.news!.commentCount ?? 0),
+              onTap: () async {
+                final Map<String, String> params = {
+                  "params": widget.news!.title
+                };
+                await NativeNavigationUtils.pushToShareWX(params: params);
+              },
+            ),
+          ],
+        ),
+      ),
+      Container(
+        key: commentDividerKey,
+        height: Constants.SPACE_10,
+        color: ThemeColors.getBackgroundTertiary(settingInfo.darkSwitch),
+      ),
+      // 推荐列表
+      RecommendList(
+        requestListDataList:
+            HomeServiceApi.getRecommendList(MockFlexLayout.recommendList) ?? [],
+        titleStyle: const TextStyle(
+          fontSize: Constants.FONT_16,
+          fontWeight: FontWeight.w500,
+          color: Colors.blue,
+        ),
+        subtitleStyle: const TextStyle(
+          fontSize: Constants.FONT_11,
+          color: Colors.grey,
+          fontStyle: FontStyle.italic,
+        ),
+        imageWidth: Constants.SPACE_120,
+        imageHeight: Constants.SPACE_90,
+        padding: const EdgeInsets.all(Constants.SPACE_10),
+      ),
+      Container(
+        height: Constants.SPACE_10,
+        color: ThemeColors.getBackgroundTertiary(settingInfo.darkSwitch),
+      ),
+    ];
+  }
+
+  // 评论区域（仅评论列表）
+  List<Widget> _buildCommentArea() {
+    final screenHeight = MediaQuery.of(context).size.height;
+    return [
+      ConstrainedBox(
+        constraints: BoxConstraints(
+          minHeight: isSplit
+              ? 0
+              : screenHeight - bottomSheetHeight * 2 - Constants.SPACE_10,
+        ),
+        child: CommentList(
+          cardData: widget.news,
+          key: commentListKey,
+          showInteractiveButtons: false,
+          onPullUpKeyboard: () => showCommond('', ''),
+          commentResponse: commentResponse,
+          onCommentLike: (String commentId, bool isLiked) {
+            final loginVM = login_vm.LoginVM.getInstance();
+            if (!loginVM.accountInstance.userInfoModel.isLogin) {
+              VideoSheet.showLoginSheet(context);
+              return;
+            }
+            if (isLiked) {
+              CommentServiceApi.addCommentLike(commentId);
+            } else {
+              CommentServiceApi.cancelCommentLike(commentId);
+            }
+          },
+          onReplyToComment: ({
+            required CommentResponse targetComment,
+            CommentResponse? targetReply,
+          }) {
+            showCommond(
+                targetReply!.author!.authorNickName, targetComment.commentId);
+          },
+        ),
+      ),
+    ];
   }
 
   Widget _buildBottomCommentInput() {
@@ -356,15 +512,21 @@ class _NewsDetailPageState extends State<NewsDetailPage>
       child: Container(
         width: MediaQuery.of(context).size.width,
         height: Constants.SPACE_80,
-        color: Colors.white,
+        color: ThemeColors.getBackgroundColor(settingInfo.darkSwitch),
         child: CommentInputBar(
           news: widget.news!,
           onSendComment: () {
-            _scrollToCommentList();
+            if (!isSplit) {
+              _scrollToCommentList();
+            }
             showCommond('', '');
           },
           onScrollToComment: () {
-            _scrollToCommentList();
+            if (!isSplit) {
+              _scrollToCommentList();
+              return;
+            }
+            showCommond('', '');
           },
           onLike: () {
             _handleLike(context);
@@ -390,7 +552,6 @@ class _NewsDetailPageState extends State<NewsDetailPage>
     setState(() {
       _isCommentSheetOpen = true;
     });
-
     // 打开评论弹窗
     showModalBottomSheet(
       context: context,
@@ -898,7 +1059,7 @@ class _NewsDetailPageState extends State<NewsDetailPage>
               text,
               style: TextStyle(
                 fontSize: Constants.FONT_16 * widget.fontSizeRatio,
-                color: Colors.black87,
+                color: ThemeColors.getFontPrimary(settingInfo.darkSwitch),
                 height: Constants.SPACE_1_5,
               ),
             ),
@@ -920,7 +1081,7 @@ class _NewsDetailPageState extends State<NewsDetailPage>
         height: Constants.SPACE_30,
         width: Constants.SPACE_150,
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: ThemeColors.getBackgroundColor(settingInfo.darkSwitch),
           borderRadius: BorderRadius.circular(Constants.SPACE_8),
         ),
         child: Center(
@@ -928,13 +1089,17 @@ class _NewsDetailPageState extends State<NewsDetailPage>
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               if (iconPath.contains('svg'))
-                SvgPicture.asset(
-                  'packages/module_newsfeed/assets/$iconPath',
-                  key: ValueKey(iconPath),
-                  width: Constants.SPACE_18,
-                  height: Constants.SPACE_18,
-                  fit: BoxFit.contain,
-                )
+                SvgPicture.asset('packages/module_newsfeed/assets/$iconPath',
+                    key: ValueKey(iconPath),
+                    width: Constants.SPACE_18,
+                    height: Constants.SPACE_18,
+                    fit: BoxFit.contain,
+                    colorFilter: (isLiked ?? false)
+                        ? null
+                        : ColorFilter.mode(
+                            ThemeColors.getFontPrimary(settingInfo.darkSwitch),
+                            BlendMode.srcIn,
+                          ))
               else
                 Image.asset(
                   'packages/module_newsfeed/assets/$iconPath',
@@ -1006,6 +1171,7 @@ class _AnimatedHeadsetButtonState extends State<_AnimatedHeadsetButton> {
   DateTime? _lastClickTime;
   static const int _clickIntervalThreshold = 500;
   int _rapidClickCount = 0;
+  final settingInfo = SettingModel.getInstance();
 
   @override
   void dispose() {
@@ -1016,11 +1182,12 @@ class _AnimatedHeadsetButtonState extends State<_AnimatedHeadsetButton> {
   @override
   Widget build(BuildContext context) {
     return IconButton(
-      icon: SvgPicture.asset(
-        Constants.icHeadsetImage,
-        width: Constants.SPACE_36,
-        height: Constants.SPACE_36,
-      ),
+      icon: SvgPicture.asset(Constants.icHeadsetImage,
+          width: Constants.SPACE_36,
+          height: Constants.SPACE_36,
+          colorFilter: ColorFilter.mode(
+              ThemeColors.getFontPrimary(settingInfo.darkSwitch),
+              BlendMode.srcIn)),
       onPressed: _handlePress,
       splashColor: Colors.transparent,
       highlightColor: Colors.transparent,

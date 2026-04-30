@@ -5,11 +5,13 @@ import 'package:flutter/services.dart';
 import 'package:business_home/business_home.dart';
 import 'package:business_video/business_video.dart';
 import 'package:business_interaction/business_interaction.dart';
-import 'package:lib_common/constants/common_constants.dart';
+import 'package:lib_common/lib_common.dart';
+import 'package:newsflutterstemplate/notifier/fullScreenProvider.dart';
 import 'constants/constants.dart';
 import 'package:business_mine/business_mine.dart';
 import 'package:lib_common/dialogs/common_toast_dialog.dart';
 import 'package:business_video/models/video_enevtbus.dart';
+import 'package:get/get.dart';
 
 class VideoPlayEvent {
   final bool play;
@@ -27,13 +29,7 @@ class _IndexPageState extends State<IndexPage>
     with SingleTickerProviderStateMixin {
   int currentIndex = 0;
   bool _hasShownReminder = false;
-
-  final List<Widget> pages = [
-    const HomePage(),
-    const VideoPage(),
-    const InteractionPage(),
-    const MinePage(),
-  ];
+  late final List<Widget> pages;
 
   StreamSubscription? _tabbarSub;
   StreamSubscription? _connectivitySubscription;
@@ -46,6 +42,14 @@ class _IndexPageState extends State<IndexPage>
   @override
   void initState() {
     super.initState();
+    pages = [
+      HomePage(
+        onCallParentChangeIndex: callParentChangeIndex,
+      ),
+      const VideoPage(),
+      const InteractionPage(),
+      const MinePage(),
+    ];
     _tabbarSub = eventBus.on().listen((event) {
       setState(() {
         if (event is ShowTabbarEvent) isShowTabbar = event.isShow;
@@ -54,8 +58,30 @@ class _IndexPageState extends State<IndexPage>
         if (event is IsCommendEvent) isComment = event.isCommend;
       });
     });
-
+    ShortcutUtils.addFormCardDataListener(_handleFormCardDataChanged);
     _initializeNetworkListener();
+  }
+
+  void callParentChangeIndex() {
+    setState(() {
+      currentIndex = 2;
+    });
+    EventHubUtils.getInstance().emit(EventEnum.actionIndexChange, []);
+  }
+
+  void _handleFormCardDataChanged(dynamic data) {
+    RouterUtils.of.clearStack();
+    if (data['pageName'] == 'FollowPage') {
+      setState(() {
+        currentIndex = 0;
+      });
+      EventHubUtils.getInstance().emit(EventEnum.homeIndexChange, []);
+    } else if (data['pageName'] == 'ActionPage') {
+      setState(() {
+        currentIndex = 2;
+      });
+      EventHubUtils.getInstance().emit(EventEnum.actionIndexChange, []);
+    }
   }
 
   @override
@@ -155,9 +181,8 @@ class _IndexPageState extends State<IndexPage>
   bool _onBackPressed() {
     if (currentIndex == 1) {
       if (!isShowTabbar) {
-        Orientation orientation = MediaQuery.of(context).orientation;
-        bool isLandscape = orientation == Orientation.portrait;
-        if (isLandscape) {
+        final fullScreen = FullScreenProvider().isFullScreen;
+        if (!fullScreen) {
           setState(() {
             isShowTabbar = true;
           });
@@ -182,8 +207,6 @@ class _IndexPageState extends State<IndexPage>
 
   @override
   Widget build(BuildContext context) {
-    Orientation orientation = MediaQuery.of(context).orientation;
-    bool isLandscape = orientation == Orientation.portrait;
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
     final isSpecialVideo = isVideo && isBlack;
     final backgroundColor = isSpecialVideo
@@ -197,42 +220,112 @@ class _IndexPageState extends State<IndexPage>
         : (isDarkMode
             ? AppConstants.unselectedItemDarkColor
             : AppConstants.unselectedItemColor);
-    return PopScope(
-      canPop: false,
-      onPopInvoked: (bool didPop) {
-        if (!didPop) {
-          final shouldExit = !_onBackPressed();
-          if (shouldExit) {
-            SystemNavigator.pop();
-          }
-        }
-      },
-      child: Scaffold(
-        body: Stack(
-          children: [
-            IndexedStack(index: currentIndex, children: pages),
-            if (isShowTabbar && isLandscape && !isComment)
-              Positioned(
-                bottom: AppConstants.SPACE_0,
-                left: AppConstants.SPACE_0,
-                right: AppConstants.SPACE_0,
-                child: BottomNavigationBar(
-                  backgroundColor: backgroundColor,
-                  selectedItemColor: selectedItemColor,
-                  unselectedItemColor: unselectedItemColor,
-                  selectedFontSize: AppConstants.FONT_12,
-                  type: BottomNavigationBarType.fixed,
-                  currentIndex: currentIndex,
-                  onTap: _onTabTapped,
-                  items: List.generate(
-                    AppConstants.tabTitles.length,
-                    (index) => _buildTabItem(index),
+
+    final breakpointCtrl = Get.find<BreakpointController>();
+
+    return ListenableBuilder(
+      listenable: FullScreenProvider(),
+      builder: (context, child) {
+        final fullScreen = FullScreenProvider().isFullScreen;
+
+        return PopScope(
+          canPop: false,
+          onPopInvoked: (bool didPop) {
+            if (!didPop) {
+              final shouldExit = !_onBackPressed();
+              if (shouldExit) {
+                SystemNavigator.pop();
+              }
+            }
+          },
+          child: Scaffold(
+            body: Obx(() {
+              final bool isVertical = breakpointCtrl.isTabVertical;
+              final double leftNavWidth =
+                  (isShowTabbar && !fullScreen && !isComment) && isVertical
+                      ? 70
+                      : 0;
+
+              return Stack(
+              children: [
+                  AnimatedPadding(
+                    duration: const Duration(milliseconds: 300),
+                    padding: EdgeInsets.only(left: leftNavWidth),
+                    child: IndexedStack(index: currentIndex, children: pages),
                   ),
-                ),
-              ),
-          ],
-        ),
-      ),
+
+                if (isShowTabbar && !fullScreen && !isComment)
+                    isVertical
+                        ? Positioned(
+                            left: 0,
+                            top: 0,
+                            bottom: 0,
+                            width: leftNavWidth,
+                            child: AnimatedContainer(
+                              duration: const Duration(milliseconds: 300),
+                              color: backgroundColor,
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: List.generate(
+                                  AppConstants.tabTitles.length,
+                                  (index) => InkWell(
+                                    onTap: () => _onTabTapped(index),
+                                    child: Container(
+                                      width: double.infinity,
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 18),
+                                      child: Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          currentIndex == index
+                                              ? _buildTabItem(index).activeIcon
+                                              : _buildTabItem(index).icon,
+                                          const SizedBox(height: 6),
+                                          Text(
+                                            AppConstants.tabTitles[index],
+                                            style: TextStyle(
+                                              color: currentIndex == index
+                                                  ? selectedItemColor
+                                                  : unselectedItemColor,
+                                              fontSize: 12,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          )
+                        : Positioned(
+                            bottom: 0,
+                            left: 0,
+                            right: 0,
+                            child: AnimatedContainer(
+                              duration: const Duration(milliseconds: 300),
+                              child: BottomNavigationBar(
+                                backgroundColor: backgroundColor,
+                                selectedItemColor: selectedItemColor,
+                                unselectedItemColor: unselectedItemColor,
+                                selectedFontSize: 12,
+                                type: BottomNavigationBarType.fixed,
+                                currentIndex: currentIndex,
+                                onTap: _onTabTapped,
+                                items: List.generate(
+                                  AppConstants.tabTitles.length,
+                                  (index) => _buildTabItem(index),
+                                ),
+                              ),
+                            ),
+                          ),
+                ],
+              );
+            }),
+          ),
+        );
+      },
     );
   }
 

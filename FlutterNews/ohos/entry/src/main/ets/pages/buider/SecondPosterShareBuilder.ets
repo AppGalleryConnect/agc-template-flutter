@@ -15,7 +15,7 @@ export struct SecondPosterShare {
   @Local wxShareViewModel: WxShareViewModel = WxShareViewModel.instance
 
   aboutToAppear(): void {
-    this.posterShare.setContext(getContext(this))
+    this.posterShare.setContext(this.getUIContext().getHostContext()!)
   }
 
   build() {

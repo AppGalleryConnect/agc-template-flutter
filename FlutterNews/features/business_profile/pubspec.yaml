@@ -12,18 +12,24 @@ dependencies:
   flutter:
     sdk: flutter
   plugin_platform_interface: 2.1.8
+  get:
+    git:
+      url: "https://gitcode.com/openharmony-sig/fluttertpc_get.git"
+  flutter_staggered_grid_view:
+    git:
+      url: https://github.com/letsar/flutter_staggered_grid_view.git
   lib_common:
     path: ../../commons/lib_common
-  
+
   lib_news_api:
     path: ../../commons/lib_news_api
-  
+
   lib_widget:
     path: ../../commons/lib_widget
-  
+
   business_mine:
     path: ../business_mine
-  
+
   lib_account:
     path: ../../commons/lib_account
   module_imagepreview:

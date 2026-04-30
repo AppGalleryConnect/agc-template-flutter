@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:lib_common/constants/common_constants.dart';
-import 'package:lib_common/utils/router_utils.dart';
+import 'package:lib_common/lib_common.dart';
 import 'package:provider/provider.dart';
 import './huawei_login_page.dart';
 import '../components/agree_privacy_box.dart';
@@ -33,7 +32,7 @@ class OtherLoginPage extends StatefulWidget {
 
 class _OtherLoginPageState extends State<OtherLoginPage> {
   bool _hasCheckedRouteParams = false;
-
+  final settingInfo = SettingModel.getInstance();
   @override
   void initState() {
     super.initState();
@@ -64,7 +63,7 @@ class _OtherLoginPageState extends State<OtherLoginPage> {
     // 半模态模式
     if (loginVM.isHalfModal) {
       return Scaffold(
-        backgroundColor: Colors.transparent,
+        backgroundColor: ThemeColors.getBackgroundColor(settingInfo.darkSwitch),
         body: NotificationListener<DraggableScrollableNotification>(
           onNotification: (notification) {
             if (notification.extent == Constants.SHEET_MIN_EXTENT) {
@@ -75,6 +74,7 @@ class _OtherLoginPageState extends State<OtherLoginPage> {
           },
           child: Container(
             alignment: Alignment.bottomCenter,
+            color: ThemeColors.getBackgroundColor(settingInfo.darkSwitch),
             child: DraggableScrollableSheet(
               initialChildSize: Constants.SHEET_INITIAL_EXTENT,
               minChildSize: Constants.SHEET_MIN_EXTENT,
@@ -198,13 +198,16 @@ class _OtherLoginPageState extends State<OtherLoginPage> {
                                         decoration: InputDecoration(
                                           hintText:
                                               Constants.TOAST_INPUT_ACCOUNT,
-                                          hintStyle: const TextStyle(
+                                          hintStyle: TextStyle(
                                             fontSize: 16,
-                                            color: Constants.TEXT_HINT_COLOR,
+                                            color: ThemeColors.getFontSecondary(
+                                                settingInfo.darkSwitch),
                                           ),
                                           filled: true,
                                           fillColor:
-                                              Constants.BACKGROUND_COLOR_F5,
+                                              ThemeColors
+                                              .getBackgroundSecondary(
+                                                  settingInfo.darkSwitch),
                                           border: OutlineInputBorder(
                                             borderRadius:
                                                 BorderRadius.circular(20),
@@ -231,13 +234,16 @@ class _OtherLoginPageState extends State<OtherLoginPage> {
                                         decoration: InputDecoration(
                                           hintText:
                                               Constants.TOAST_INPUT_PASSWORD,
-                                          hintStyle: const TextStyle(
+                                          hintStyle: TextStyle(
                                             fontSize: 16,
-                                            color: Constants.TEXT_HINT_COLOR,
+                                            color: ThemeColors.getFontSecondary(
+                                                settingInfo.darkSwitch),
                                           ),
                                           filled: true,
                                           fillColor:
-                                              Constants.BACKGROUND_COLOR_F5,
+                                              ThemeColors
+                                              .getBackgroundSecondary(
+                                                  settingInfo.darkSwitch),
                                           border: OutlineInputBorder(
                                             borderRadius:
                                                 BorderRadius.circular(20),
@@ -332,10 +338,10 @@ class _OtherLoginPageState extends State<OtherLoginPage> {
                                                             content = Stack(
                                                               children: [
                                                                 Container(
-                                                                  color: Colors
-                                                                      .black
-                                                                      .withOpacity(
-                                                                          0.5),
+                                                                  color: ThemeColors
+                                                                      .getFontPrimary(
+                                                                          settingInfo
+                                                                              .darkSwitch),
                                                                 ),
                                                                 content,
                                                               ],
@@ -481,12 +487,14 @@ class _OtherLoginPageState extends State<OtherLoginPage> {
                       onChanged: (value) => loginVM.accountInput = value,
                       decoration: InputDecoration(
                         hintText: Constants.TOAST_INPUT_ACCOUNT,
-                        hintStyle: const TextStyle(
+                        hintStyle: TextStyle(
                           fontSize: 16,
-                          color: Constants.TEXT_HINT_COLOR,
+                          color: ThemeColors.getFontSecondary(
+                              settingInfo.darkSwitch),
                         ),
                         filled: true,
-                        fillColor: Constants.BACKGROUND_COLOR_F5,
+                        fillColor: ThemeColors.getBackgroundSecondary(
+                            settingInfo.darkSwitch),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(20),
                           borderSide: BorderSide.none,
@@ -496,9 +504,10 @@ class _OtherLoginPageState extends State<OtherLoginPage> {
                           horizontal: CommonConstants.PADDING_L,
                         ),
                       ),
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 16,
-                        color: Constants.TEXT_NORMAL_COLOR,
+                        color:
+                            ThemeColors.getFontPrimary(settingInfo.darkSwitch),
                       ),
                     ),
                     TextField(
@@ -508,12 +517,14 @@ class _OtherLoginPageState extends State<OtherLoginPage> {
                       obscureText: true,
                       decoration: InputDecoration(
                         hintText: Constants.TOAST_INPUT_PASSWORD,
-                        hintStyle: const TextStyle(
+                        hintStyle: TextStyle(
                           fontSize: 16,
-                          color: Constants.TEXT_HINT_COLOR,
+                          color: ThemeColors.getFontSecondary(
+                              settingInfo.darkSwitch),
                         ),
                         filled: true,
-                        fillColor: Constants.BACKGROUND_COLOR_F5,
+                        fillColor: ThemeColors.getBackgroundSecondary(
+                            settingInfo.darkSwitch),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(20),
                           borderSide: BorderSide.none,
@@ -523,9 +534,10 @@ class _OtherLoginPageState extends State<OtherLoginPage> {
                           horizontal: CommonConstants.PADDING_L,
                         ),
                       ),
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 16,
-                        color: Constants.TEXT_NORMAL_COLOR,
+                        color:
+                            ThemeColors.getFontPrimary(settingInfo.darkSwitch),
                       ),
                     ).marginOnly(
                       top: CommonConstants.PADDING_L,
@@ -653,7 +665,7 @@ class _OtherLoginPageState extends State<OtherLoginPage> {
           bottom: CommonConstants.PADDING_XXS,
         ),
       ),
-      backgroundColor: loginVM.pageBgColor(),
+      backgroundColor: ThemeColors.getBackgroundColor(settingInfo.darkSwitch),
     );
   }
 }

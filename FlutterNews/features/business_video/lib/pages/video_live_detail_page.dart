@@ -143,6 +143,7 @@ class _VideoLiveDetailPageState extends State<VideoLiveDetailPage>
                     isFullScreen = value;
                   });
                 },
+                isLive: isLive,
               ),
               if (!isFullScreen)
                 Positioned(
@@ -225,6 +226,7 @@ class _VideoLiveDetailPageState extends State<VideoLiveDetailPage>
             color: ThemeColors.getBackgroundSecondary(settingInfo.darkSwitch),
             child: CustomTabBar(
               listScroller: listScroller,
+              fontColor: ThemeColors.getFontPrimary(settingInfo.darkSwitch),
               myChannels: Constants.channelsList,
               fontSizeRatio: 1,
               currentIndex: currentIndex,
@@ -625,6 +627,9 @@ class _VideoLiveDetailPageState extends State<VideoLiveDetailPage>
         });
       },
       false,
+      null, ThemeColors.getFontPrimary(settingInfo.darkSwitch),
+        ThemeColors.getBackgroundColor(settingInfo.darkSwitch),
+        ThemeColors.getBackgroundSecondary(settingInfo.darkSwitch)
     );
   }
 

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:lib_common/constants/common_constants.dart';
+import 'package:lib_common/lib_common.dart';
 import 'package:lib_common/utils/time_utils.dart';
-import 'package:lib_common/models/window_model.dart';
 import 'package:lib_widget/components/nav_header_bar.dart';
 import 'package:lib_widget/components/custom_image.dart';
 import 'package:module_setfontsize/utils/font_scale_utils.dart';
@@ -22,7 +21,7 @@ class CommentPage extends StatefulWidget {
 class _CommentPageState extends State<CommentPage> {
   late CommentViewModel _vm;
   late WindowModel _windowModel;
-
+  final settingInfo = SettingModel.getInstance();
   @override
   void initState() {
     super.initState();
@@ -43,19 +42,28 @@ class _CommentPageState extends State<CommentPage> {
               showBackBtn: true,
               rightPartBuilder: (BuildContext context) => _rightPartBuilder(),
               windowModel: _windowModel,
+              titleColor: ThemeColors.getFontPrimary(settingInfo.darkSwitch),
+              bgColor: ThemeColors.getBackgroundColor(settingInfo.darkSwitch),
               onBack: () {
                 Navigator.pop(context);
               },
               backButtonBackgroundColor:
-                  MineConstants.Constants.backgroundLightGrayColor,
+                  ThemeColors.getCompBackgroundSecondary(
+                  settingInfo.darkSwitch),
               backButtonPressedBackgroundColor:
-                  MineConstants.Constants.dividerColor,
+                  ThemeColors.getCompBackgroundSecondary(
+                      settingInfo.darkSwitch),
               customTitleSize: MineConstants.Constants.textHeaderSize *
                   FontScaleUtils.fontSizeRatio,
             ),
             Expanded(
-              child:
-                  _vm.list.isNotEmpty ? _buildCommentList() : _buildEmptyView(),
+              child: Consumer<CommentViewModel>(
+                builder: (context, vm, child) {
+                  return vm.list.isNotEmpty
+                      ? _buildCommentList()
+                      : _buildEmptyView();
+                },
+              ),
             ),
           ],
         ),
@@ -64,24 +72,32 @@ class _CommentPageState extends State<CommentPage> {
   }
 
   Widget _buildCommentList() {
+    final settingInfo = SettingModel.getInstance();
     return Consumer<CommentViewModel>(
       builder: (context, vm, child) {
         return Column(
           children: [
             Expanded(
-              child: ListView.builder(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: CommonConstants.PADDING_PAGE,
-                  vertical: CommonConstants.SPACE_M,
+              child: Container(
+                color: ThemeColors.getBackgroundColor(settingInfo.darkSwitch),
+                child: ListView.builder(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: CommonConstants.PADDING_PAGE,
+                    vertical: CommonConstants.SPACE_M,
+                  ),
+                  itemCount: vm.list.length,
+                  itemBuilder: (context, index) {
+                    final item = vm.list[index];
+                    return _contentItemBuilder(item);
+                  },
                 ),
-                itemCount: vm.list.length,
-                itemBuilder: (context, index) {
-                  final item = vm.list[index];
-                  return _contentItemBuilder(item);
-                },
               ),
             ),
-            if (vm.isEditMode) _toolBarBuilder(),
+            if (vm.isEditMode)
+              Container(
+                color: ThemeColors.getBackgroundColor(settingInfo.darkSwitch),
+                child: _toolBarBuilder(),
+              ),
           ],
         );
       },
@@ -89,7 +105,11 @@ class _CommentPageState extends State<CommentPage> {
   }
 
   Widget _buildEmptyView() {
-    return Center(
+    return Container(
+      color: ThemeColors.getBackgroundColor(settingInfo.darkSwitch),
+      width: double.infinity,
+      height: double.infinity,
+      child: Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
@@ -108,6 +128,7 @@ class _CommentPageState extends State<CommentPage> {
             ),
           ),
         ],
+      ),
       ),
     );
   }
@@ -260,7 +281,7 @@ class _CommentPageState extends State<CommentPage> {
         child: Container(
           width: double.infinity,
           decoration: BoxDecoration(
-            color: MineConstants.Constants.backgroundLightGrayColor,
+            color: ThemeColors.getBackgroundSecondary(settingInfo.darkSwitch),
             borderRadius: BorderRadius.circular(
                 MineConstants.Constants.newsCardBorderRadius),
           ),

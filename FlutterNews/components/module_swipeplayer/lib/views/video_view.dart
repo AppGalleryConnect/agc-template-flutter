@@ -49,7 +49,6 @@ class _VideoViewState extends State<VideoView> {
   @override
   void initState() {
     super.initState();
-
     videoUrl = widget.videoModel.videoUrl;
     settingInfo.initPreferences();
     settingInfo.addListener(_onSettingChanged);
@@ -123,6 +122,7 @@ class _VideoViewState extends State<VideoView> {
     if (!_controller.value.isInitialized || !_controller.value.isPlaying) {
       return;
     }
+    print('_controller.pause');
     await _controller.pause();
   }
 
@@ -153,80 +153,83 @@ class _VideoViewState extends State<VideoView> {
       child: Container(
         color: Colors.transparent,
         width: MediaQuery.of(context).size.width,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Stack(children: [
-              GestureDetector(
-                onTap: () {
-                  setState(() {
-                    if (_isPlaying) {
-                      _onPause();
-                      widget.onPushDetail(_currentDuration);
-                    } else {
-                      _onPlay();
-                      widget.onClick();
-                    }
-                  });
-                },
-                child: _isInitialized
-                    ? AspectRatio(
-                        aspectRatio: _controller.value.aspectRatio,
-                        child: VideoPlayer(
-                          _controller,
-                        ),
-                      )
-                    : Image.network(widget.videoModel.coverUrl),
+        child: SingleChildScrollView(
+          physics: const NeverScrollableScrollPhysics(),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Stack(children: [
+                GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      if (_isPlaying) {
+                        _onPause();
+                        widget.onPushDetail(_currentDuration);
+                      } else {
+                        _onPlay();
+                        widget.onClick();
+                      }
+                    });
+                  },
+                  child: _isInitialized
+                      ? AspectRatio(
+                          aspectRatio: _controller.value.aspectRatio,
+                          child: VideoPlayer(_controller),
+                        )
+                      : Image.network(widget.videoModel.coverUrl),
+                ),
+                if (!_isPlaying && _isInitialized) _buildPlayBuilder(),
+                if (!_isPlaying && _isInitialized) _buildTimeBuilder(),
+                if (_isInitialized && _isBuffering && widget.canPlayVideo)
+                  _buildBufferBuilder(),
+                if (_isPlaying) _buildSliderBuilder(),
+                if (widget.videoModel.videoType == VideoEnum.Ad) _adBuilder(),
+              ]),
+              SizedBox(
+                width: MediaQuery.of(context).size.width,
+                child: Padding(
+                  padding: const EdgeInsets.only(
+                      left: Constants.SPACE_16,
+                      right: Constants.SPACE_16,
+                      top: Constants.SPACE_8),
+                  child: Text(
+                    widget.videoModel.title,
+                    textAlign: TextAlign.left,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                        fontWeight: FontWeight.w500,
+                        fontSize: Constants.FONT_16,
+                        color: widget.isDark ? Colors.white : Colors.black),
+                  ),
+                ),
               ),
-              if (!_isPlaying && _isInitialized) _buildPlayBuilder(),
-              if (!_isPlaying && _isInitialized) _buildTimeBuilder(),
-              if (_isInitialized && _isBuffering && widget.canPlayVideo)
-                _buildBufferBuilder(),
-              if (_isPlaying) _buildSliderBuilder(),
-              if (widget.videoModel.videoType == VideoEnum.Ad) _adBuilder(),
-            ]),
-            SizedBox(
-              width: MediaQuery.of(context).size.width,
-              child: Padding(
-                padding: const EdgeInsets.only(
+              SizedBox(
+                width: MediaQuery.of(context).size.width,
+                child: Padding(
+                  padding: const EdgeInsets.only(
                     left: Constants.SPACE_16,
                     right: Constants.SPACE_16,
-                    top: Constants.SPACE_8),
-                child: Text(
-                  widget.videoModel.title,
-                  textAlign: TextAlign.left,
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                  style: TextStyle(
-                      fontWeight: FontWeight.w500,
-                      fontSize: Constants.FONT_16,
-                      color: widget.isDark ? Colors.white : Colors.black),
-                ),
-              ),
-            ),
-            SizedBox(
-              width: MediaQuery.of(context).size.width,
-              child: Padding(
-                padding: const EdgeInsets.only(
-                  left: Constants.SPACE_16,
-                  right: Constants.SPACE_16,
-                  bottom: Constants.SPACE_5,
-                ),
-                child: Row(
-                  children: [
-                    Text(
-                      '${widget.videoModel.author} ${DateFormat('yyyy-MM-dd HH:mm').format(DateTime.fromMillisecondsSinceEpoch(widget.videoModel.createTime))}',
-                      textAlign: TextAlign.left,
-                      style: TextStyle(
-                        fontSize: Constants.FONT_12,
-                        color: widget.isDark ? Colors.white : Colors.black,
+                    bottom: Constants.SPACE_5,
+                  ),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                          '${widget.videoModel.author} ${DateFormat('yyyy-MM-dd HH:mm').format(DateTime.fromMillisecondsSinceEpoch(widget.videoModel.createTime))}',
+                          textAlign: TextAlign.left,
+                          style: TextStyle(
+                            fontSize: Constants.FONT_12,
+                            color: widget.isDark ? Colors.white : Colors.black,
+                          ),
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

@@ -1,7 +1,9 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import '../models/setting_model.dart';
 import '../utils/logger.dart';
 import '../utils/global_context.dart';
+import '../utils/theme_colors.dart';
 
 /// 轻弹窗参数接口
 abstract class IToastDialogParams {
@@ -45,15 +47,15 @@ class CommonToastView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final settingInfo = SettingModel.getInstance();
     // 设置默认样式
-    const defaultTextStyle = TextStyle(
+    final defaultTextStyle = TextStyle(
       fontSize: 14,
-      color: Colors.black,
+      color: ThemeColors.getFontPrimary(settingInfo.darkSwitch),
       fontWeight: FontWeight.w500,
       decoration: TextDecoration.none,
     );
 
-    const defaultBackgroundColor = Colors.white;
 
     const defaultBorderRadius = BorderRadius.all(Radius.circular(20.0));
 
@@ -63,7 +65,8 @@ class CommonToastView extends StatelessWidget {
         vertical: 12,
       ),
       decoration: BoxDecoration(
-        color: params.backgroundColor ?? defaultBackgroundColor,
+        color: params.backgroundColor ??
+            ThemeColors.getCompBackgroundSecondary(settingInfo.darkSwitch),
         borderRadius: params.borderRadius ?? defaultBorderRadius,
         boxShadow: [
           BoxShadow(

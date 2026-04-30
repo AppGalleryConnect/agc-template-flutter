@@ -6,6 +6,10 @@ import { uniformTypeDescriptor as utd } from '@kit.ArkData';
 import * as wXOpenSdk from '@tencent/wechat_open_sdk';
 import { JSON } from '@kit.ArkTS';
 import { ReadStateCode, TextReader } from '@kit.SpeechKit';
+import { BreakpointUtils } from '../utils/BreakpointUtils';
+import { SystemShareUtils } from '../utils/SystemShareUtils';
+import { PushUtils } from '../push/PushUtils';
+import { mockArticle } from '../push/MockArticle';
 
 
 interface HoveringEventData {
@@ -52,15 +56,25 @@ struct Index {
   @State isReading: boolean = false;
   @State showFloatingComponent: boolean = false;
   @State isMonitoringHinge: boolean = false
+  breakpoint: BreakpointUtils | null = null;
 
+  registerBreakpointListener(context: UIContext) {
+    this.breakpoint = new BreakpointUtils(context.getMediaQuery(),this.getUIContext());
+    this.breakpoint?.register();
+  }
 
+  unregisterBreakpointListener() {
+    this.breakpoint?.unRegister();
+  }
 
   async aboutToAppear() {
+    this.registerBreakpointListener(this.getUIContext());
     // 初始化TextReader
     await this.initTextReader();
     // 开始朗读
     this.setActionListener();
-
+    this.sendPushMessage()
+    SystemShareUtils.instance.init(this.getUIContext())
     let event: emitter.InnerEvent = {
       eventId: 10000,
       priority: emitter.EventPriority.IMMEDIATE,
@@ -80,13 +94,8 @@ struct Index {
         console.info('Share panel closed');
       });
       controller.show(context, {
-        anchor: 'shareButtonId'
-      });
-      controller.show(context, {
-        anchor: {
-          windowOffset: { x: 100, y: 100 },
-          size: { width: 0, height: 0 }
-        }
+        previewMode: systemShare.SharePreviewMode.DETAIL,
+        selectionMode: systemShare.SelectionMode.SINGLE,
       });
     })
     let wxEvent: emitter.InnerEvent = {
@@ -150,6 +159,11 @@ struct Index {
       }
     })
     this.cleanupTextReader();
+  }
+
+  // mock 开启推送
+  sendPushMessage() {
+    PushUtils.randomPushMessage(mockArticle)
   }
 
   /**
@@ -236,6 +250,7 @@ struct Index {
 
   aboutToDisappear(): void {
     console.log('开始清理资源...');
+    this.unregisterBreakpointListener()
     if (this.isReading) {
       TextReader.stop().then(() => {
         TextReader.release();

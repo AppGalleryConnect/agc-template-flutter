@@ -40,94 +40,94 @@
 
 ```text
 综合新闻Flutter模板
-  ├──首页                           
-  │   ├──顶部栏-搜索  
-  │   │   ├── 历史搜索                          
-  │   │   └── 热门搜索                      
-  │   │         
-  │   ├──顶部栏-扫码         
-  │   │                    
-  │   ├──顶部栏-导航栏    
-  │   │   ├── 关注、推荐、热榜、本地等                                             
+  ├──首页
+  │   ├──顶部栏-搜索
+  │   │   ├── 历史搜索
+  │   │   └── 热门搜索
+  │   │
+  │   ├──顶部栏-扫码
+  │   │
+  │   ├──顶部栏-导航栏
+  │   │   ├── 关注、推荐、热榜、本地等
   │   │   └── 频道编辑
   │   │
-  │   ├──新闻列表    
-  │   │   ├── 动态布局                                             
-  │   │   └── 信息流                         
-  │   │  
+  │   ├──新闻列表
+  │   │   ├── 动态布局
+  │   │   └── 信息流
   │   │
-  │   └──新闻详情    
-  │       ├── 图文                                             
-  │       ├── 视频文                         
+  │   │
+  │   └──新闻详情
+  │       ├── 图文
+  │       ├── 视频文
   │       ├── 听新闻
-  │       ├── 收藏、点赞、评论（评论、回复）、评论详情                         
+  │       ├── 收藏、点赞、评论（评论、回复）、评论详情
   │       ├── 分享（微信、QQ、复制链接等）
-  │       └── 相关推荐 
+  │       └── 相关推荐
   │
-  ├──视频                           
-  │   ├──顶部栏  
-  │   │   ├── 关注 
+  ├──视频
+  │   ├──顶部栏
+  │   │   ├── 关注
   │   │   ├── 精选
   │   │   ├── 本地
-  │   │   ├── 推荐 
-  │   │   ├── 直播                        
-  │   │   └── 搜索                      
-  │   │         
-  │   └──视频详情页         
+  │   │   ├── 推荐
+  │   │   ├── 直播
+  │   │   └── 搜索
+  │   │
+  │   └──视频详情页
   │       ├── 竖屏播放
   │       ├── 横屏播放
   │       ├── 播放、暂停、进度调节、倍速
-  │       └── 关注、点赞、收藏、评论、分享                            
-  │                        
-  ├──互动                           
-  │   ├──顶部栏  
-  │   │   ├── 搜索                          
-  │   │   ├── 发帖                                                   
-  │   │   ├── 关注
-  │   │   ├── 推荐                       
-  │   │   └── 附近                      
-  │   │         
-  │   ├──帖子列表         
-  │   │   ├── 图文                               
-  │   │   └── 关注、点赞、评论、分享                            
-  │   │                    
-  │   └──帖子详情    
-  │       ├── 图文                                             
-  │       ├── 语音播报                         
-  │       ├── 收藏/点赞/评论/分享                                 
-  │       └── 相关推荐                       
+  │       └── 关注、点赞、收藏、评论、分享
   │
-  └──我的                           
-      ├──登录  
-      │   ├── 华为账号一键登录                          
-      │   ├── 微信登录                                                   
+  ├──互动
+  │   ├──顶部栏
+  │   │   ├── 搜索
+  │   │   ├── 发帖
+  │   │   ├── 关注
+  │   │   ├── 推荐
+  │   │   └── 附近
+  │   │
+  │   ├──帖子列表
+  │   │   ├── 图文
+  │   │   └── 关注、点赞、评论、分享
+  │   │
+  │   └──帖子详情
+  │       ├── 图文
+  │       ├── 语音播报
+  │       ├── 收藏/点赞/评论/分享
+  │       └── 相关推荐
+  │
+  └──我的
+      ├──登录
+      │   ├── 华为账号一键登录
+      │   ├── 微信登录
       │   ├── 账密登录
-      │   └── 用户隐私协议同意                       
-      │         
-      ├──个人主页         
+      │   └── 用户隐私协议同意
+      │
+      ├──个人主页
       │   ├── 头像、昵称、简介
       │   ├── 关注、粉丝、获赞
       │   └── 文章、视频、动态
-      │                    
-      ├──分类导航栏    
-      │   ├── 评论                                        
-      │   ├── 消息                   
-      │   ├── 收藏                             
+      │
+      ├──分类导航栏
+      │   ├── 评论
+      │   ├── 消息
+      │   ├── 收藏
       │   └── 点赞
       │
-      └──常用服务    
-          ├── 浏览历史                                        
-          ├── 意见反馈                   
+      └──常用服务
+          ├── 浏览历史
+          ├── 意见反馈
           └── 设置
-               ├── 编辑个人信息             
-               ├── 隐私设置           
-               ├── 通知开关  
-               ├── 播放与网络设置             
-               ├── 清理缓存           
-               ├── 字体大小 
-               ├── 检测版本 
-               ├── 关于我们 
-               └── 退出登录                               
+               ├── 编辑个人信息
+               ├── 隐私设置
+               ├── 通知开关
+               ├── 播放与网络设置
+               ├── 清理缓存
+               ├── 字体大小
+               ├── 检测版本
+               ├── 关于我们
+               └── 退出登录
 ```
 
 本模板工程代码结构如下所示：
@@ -141,44 +141,44 @@ newsflutter
 │  └──pages                                                // 页面
 │
 ├──commons                                                 // 公共工具库
-│  ├──lib_account                                          // 账号登录模块             
+│  ├──lib_account                                          // 账号登录模块
 │  │    ├──lib
 │  │    │   ├──components
-│  │    │   │   └──agree_privacy_box.dart                  // 隐私同意勾选                  
-│  │    │   ├──pages  
+│  │    │   │   └──agree_privacy_box.dart                  // 隐私同意勾选
+│  │    │   ├──pages
 │  │    │   │   ├──huawei_login_page.dart                  // 华为账号登录页面
 │  │    │   │   ├──other_login_page.dart                   // 其他方式登录页面
-│  │    │   │   └──protocol_webview.dart                   // 协议H5                  
-│  │    │   └──utils  
+│  │    │   │   └──protocol_webview.dart                   // 协议H5
+│  │    │   └──utils
 │  │    │       ├──error_code_helper.dart                  // 错误码处理工具类
 │  │    │       ├──huawei_auth_utils.dart                  // 华为认证工具类
 │  │    │       ├──login_sheet_utils.dart                  // 统一登录弹窗
-│  │    │       └──wx_api_utils.dart                       // 微信登录事件处理类 
+│  │    │       └──wx_api_utils.dart                       // 微信登录事件处理类
 │  │    └──pubspec.yaml                                    // 模块依赖配置
 │  │
-│  ├──lib_common                                           // 基础模块             
+│  ├──lib_common                                           // 基础模块
 │  │    ├──lib
-│  │    │   ├──constants                                   // 通用常量 
+│  │    │   ├──constants                                   // 通用常量
 │  │    │   ├──datasource                                  // 数据源
-│  │    │   ├──dialogs                                     // 通用弹窗 
+│  │    │   ├──dialogs                                     // 通用弹窗
 │  │    │   ├──models                                      // 数据模型
 │  │    │   ├──push                                        // 推送
 │  │    │   ├──styles                                      // 样式
-│  │    │   └──utils                                       // 通用方法     
+│  │    │   └──utils                                       // 通用方法
 │  │    └──pubspec.yaml                                    // 模块依赖配置
 │  │
-│  ├──lib_flex_layout                                      // 动态布局模块             
+│  ├──lib_flex_layout                                      // 动态布局模块
 │  │    ├──lib
 │  │    │   ├──components
 │  │    │   │   ├──load_more_footer.dart                   // 加载更多
 │  │    │   │   ├──news_tab_content.dart                   // Tab视图
 │  │    │   │   ├──no_login_page.dart                      // 未登录视图
-│  │    │   │   └──flex_layout_page.dart                   // 动态布局入口    
+│  │    │   │   └──flex_layout_page.dart                   // 动态布局入口
 │  │    │   └──views
-│  │    │       └──flex_layout.dart                        // 动态布局列表页 
+│  │    │       └──flex_layout.dart                        // 动态布局列表页
 │  │    └──pubspec.yaml                                    // 模块依赖配置
 │  │
-│  ├──lib_native_components                                // 原生组件桥接模块             
+│  ├──lib_native_components                                // 原生组件桥接模块
 │  │    ├──lib
 │  │    │   ├──components
 │  │    │   │   ├──advertisement_card.dart                 // 广告卡片
@@ -190,37 +190,37 @@ newsflutter
 │  │    │   │   ├──top_text_bottom_image_card.dart         // 上文下图卡片
 │  │    │   │   ├──top_text_bottom_video_card.dart         // 上文下视频卡片
 │  │    │   │   └──vertical_big_image_card.dart            // 上下布局大图
-│  │    │   └──utils 
-│  │    │       └──card_utils.dart                         // 卡片工具类         
+│  │    │   └──utils
+│  │    │       └──card_utils.dart                         // 卡片工具类
 │  │    └──pubspec.yaml                                    // 模块依赖配置
 │  │
-│  ├──lib_news_api                                         // 服务端api模块             
+│  ├──lib_news_api                                         // 服务端api模块
 │  │    ├──lib
-│  │    │   ├──constants                                   // 常量文件    
-│  │    │   ├──database                                    // 数据库 
-│  │    │   ├──models                                      // 数据模型  
-│  │    │   ├──params                                      // 请求响应参数 
-│  │    │   ├──services                                    // 服务api  
-│  │    │   └──utils                                       // 工具utils 
+│  │    │   ├──constants                                   // 常量文件
+│  │    │   ├──database                                    // 数据库
+│  │    │   ├──models                                      // 数据模型
+│  │    │   ├──params                                      // 请求响应参数
+│  │    │   ├──services                                    // 服务api
+│  │    │   └──utils                                       // 工具utils
 │  │    └──pubspec.yaml                                    // 模块依赖配置
 │  │
-│  ├──lib_news_feed_details                                // 新闻详情模块             
+│  ├──lib_news_feed_details                                // 新闻详情模块
 │  │    ├──lib
 │  │    │   ├──components
 │  │    │   │   ├──article_details_footer.dart             // 文章底部区域
 │  │    │   │   ├──news_content.dart                       // 新闻主体内容
-│  │    │   │   └──recommend_area.dart                     // 相关推荐                  
-│  │    │   └──views  
-│  │    │       └──article_feed_details.dart               // 新闻详情页      
+│  │    │   │   └──recommend_area.dart                     // 相关推荐
+│  │    │   └──views
+│  │    │       └──article_feed_details.dart               // 新闻详情页
 │  │    └──pubspec.yaml                                    // 模块依赖配置
 │  │
-│  ├──lib_preview_page                                     // 预览模块             
+│  ├──lib_preview_page                                     // 预览模块
 │  │    ├──lib
 │  │    │   └──components
-│  │    │       └──image_preview_page.dart                 // 图片预览视图                  
+│  │    │       └──image_preview_page.dart                 // 图片预览视图
 │  │    └──pubspec.yaml                                    // 模块依赖配置
-│  │ 
-│  └──lib_widget                                           // 通用UI模块             
+│  │
+│  └──lib_widget                                           // 通用UI模块
 │      ├──lib
 │      │   └──components
 │      │       ├──button_group.dart                        // 组合按钮
@@ -241,29 +241,29 @@ newsflutter
 │  ├──module_setfontsize                                   // 字体大小调节组件
 │  ├──module_share                                         // 分享组件
 │  └──module_swipeplayer                                   // 视频组件
-│      
+│
 ├──features                                                // 业务功能层
-│  ├──business_home                                        // 首页模块             
+│  ├──business_home                                        // 首页模块
 │  │    ├──lib
 │  │    │   ├──components
-│  │    │   │   └──news_search.dart                        // 搜索页面                  
+│  │    │   │   └──news_search.dart                        // 搜索页面
 │  │    │   └──pages
 │  │    │       └──home_page.dart                          // 首页页面
 │  │    └──pubspec.yaml                                    // 模块依赖配置
 │  │
-│  ├──business_interaction                                 // 互动模块             
+│  ├──business_interaction                                 // 互动模块
 │  │    ├──lib
 │  │    │   ├──components
 │  │    │   │   ├──interaction_feed_card.dart              // 动态卡片
 │  │    │   │   ├──interaction_tab_content.dart            // 动态列表
 │  │    │   │   ├──no_watcher.dart                         // 暂无关注
-│  │    │   │   └──top_bar.dart                            // 顶部Tab                  
-│  │    │   └──pages 
+│  │    │   │   └──top_bar.dart                            // 顶部Tab
+│  │    │   └──pages
 │  │    │       ├──interaction_page.dart                   // 互动主页面
-│  │    │       └──publish_post_page.dart                  // 发帖页面                  
+│  │    │       └──publish_post_page.dart                  // 发帖页面
 │  │    └──pubspec.yaml                                    // 模块依赖配置
 │  │
-│  ├──business_mine                                        // 我的模块             
+│  ├──business_mine                                        // 我的模块
 │  │    ├──lib
 │  │    │   ├──components
 │  │    │   │   ├──base_history_comment.dart               // 历史、评论基础页面
@@ -275,8 +275,8 @@ newsflutter
 │  │    │   │   ├──im_item.dart                            // 私信单元
 │  │    │   │   ├──message_item.dart                       // 消息单元
 │  │    │   │   ├──set_read_icon.dart                      // 标记已读
-│  │    │   │   └──uniform_news_card.dart                  // 统一新闻卡片                
-│  │    │   └──pages 
+│  │    │   │   └──uniform_news_card.dart                  // 统一新闻卡片
+│  │    │   └──pages
 │  │    │       ├──comment_page.dart                       // 评论页面
 │  │    │       ├──history_page.dart                       // 我的历史
 │  │    │       ├──like_page.dart                          // 我的点赞
@@ -288,10 +288,10 @@ newsflutter
 │  │    │       ├──message_page.dart                       // 消息页面
 │  │    │       ├──message_single_comment_list.dart        // 全部回复页面
 │  │    │       ├──message_system_page.dart                // 系统消息
-│  │    │       └──mine_page.dart                          // 我的页面              
+│  │    │       └──mine_page.dart                          // 我的页面
 │  │    └──pubspec.yaml                                    // 模块依赖配置
 │  │
-│  ├──business_profile                                     // 个人主页模块             
+│  ├──business_profile                                     // 个人主页模块
 │  │    ├──lib
 │  │    │   ├──components
 │  │    │   │   ├──author_item.dart                        // 作者单元
@@ -300,18 +300,18 @@ newsflutter
 │  │    │   │   ├──tab_bar.dart                            // 顶部Tab
 │  │    │   │   ├──uniform_news.dart                       // 统一新闻卡片
 │  │    │   │   ├──user_intro.dart                         // 用户信息
-│  │    │   │   └──watch_button.dart                       // 关注按钮                
+│  │    │   │   └──watch_button.dart                       // 关注按钮
 │  │    │   └──pages
 │  │    │       ├──follower_page.dart                      // 粉丝页面
 │  │    │       ├──personal_home_page.dart                 // 个人主页
-│  │    │       └──watch_page.dart                         // 关注页面  
+│  │    │       └──watch_page.dart                         // 关注页面
 │  │    └──pubspec.yaml                                    // 模块依赖配置
 │  │
-│  ├──business_setting                                     // 设置模块             
+│  ├──business_setting                                     // 设置模块
 │  │    ├──lib
 │  │    │   ├──components
 │  │    │   │   ├──setting_card.dart                       // 设置卡片
-│  │    │   │   └──setting_select_dialog.dart              // 设置选项弹窗               
+│  │    │   │   └──setting_select_dialog.dart              // 设置选项弹窗
 │  │    │   └──pages
 │  │    │       ├──setting_about.dart                      // 关于页面
 │  │    │       ├──setting_font.dart                       // 字体大小设置页面
@@ -319,10 +319,10 @@ newsflutter
 │  │    │       ├──setting_network.dart                    // 播放与网络设置页面
 │  │    │       ├──setting_page.dart                       // 设置页面
 │  │    │       ├──setting_personal.dart                   // 编辑个人信息页面
-│  │    │       └──setting_privacy.dart                    // 隐私设置页面   
+│  │    │       └──setting_privacy.dart                    // 隐私设置页面
 │  │    └──pubspec.yaml                                    // 模块依赖配置
-│  │ 
-│  └──business_video                                       // 视频模块             
+│  │
+│  └──business_video                                       // 视频模块
 │      ├──lib
 │      │   ├──components
 │      │   │   ├──comment_view.dart                        // 评论视图
@@ -339,7 +339,7 @@ newsflutter
 │      │   │   ├──video_detail_page.dart                   // 视频详情页
 │      │   │   └──video_page.dart                          // 视频首页
 │      │   └──views
-│      │       ├──featured_page.dart                       // 精选页面               
+│      │       ├──featured_page.dart                       // 精选页面
 │      │       ├──follow_page.dart                         // 关注页面
 │      │       ├──introduction_view.dart                   // 直播介绍视图
 │      │       ├──live_comment_view.dart                   // 直播评论视图
@@ -388,34 +388,39 @@ newsflutter
 ├──.metadata                                               // Flutter元数据
 ├──Untitled-1.json                                         // JSON配置文件
 └──devtools_options.yaml                                   // DevTools配置
- 
+
 ```
 
 ## 约束与限制
 
 ### 环境
 
-- DevEco Studio版本：DevEco Studio 5.1.0 Release及以上
-- HarmonyOS SDK版本：HarmonyOS  5.1.0 Release SDK及以上
-- 设备类型：华为手机（包括双折叠）
-- 系统版本：HarmonyOS 5.1.0(18)及以上（模板配置编译版本需要flutter和DevEco Studio侧版本一致）
+- DevEco Studio版本：DevEco Studio 6.0.0 Release及以上
+- HarmonyOS SDK版本：HarmonyOS  6.0.0 Release SDK及以上
+- 设备类型：华为手机（包括双折叠和阔折叠）、平板
+- 系统版本：HarmonyOS 6.0.0(20)及以上（模板配置编译版本需要flutter和DevEco Studio侧版本一致）
 - Flutter SDK版本：基于Flutter 3.22.1适配的OpenHarmony发行版本，tag:3.22.1-ohos-1.0.4
 - Dart版本：Dart 3.4.0及以上
 
 ### 权限
 
-- 网络权限: ohos.permission.INTERNET, 
+- 网络权限: ohos.permission.INTERNET,
 - 网络状态权限：ohos.permission.GET_NETWORK_INFO
 - 跨应用关联权限: ohos.permission.APP_TRACKING_CONSENT
 - 存储权限：用于保存图片、视频、缓存数据
 - 相册权限：用于选择图片、视频上传
 - 相机权限：用于拍照、录像功能
 
-### 限制
+### 使用约束
 
-- 仅支持HarmonyOS 5.1.0(18)及以上系统版本。
+- 仅支持HarmonyOS 6.0.0(20)及以上系统版本。
 - 部分功能不支持模拟器运行（如相机、相册、定位、语音播报等）。
+- 碰一碰分享，使用约束如下，详细参考：[手机与手机碰一碰分享](https://developer.huawei.com/consumer/cn/doc/harmonyos-guides/knock-share-between-phones-overview#section184317615456)
+- 任意一端设备不支持碰一碰能力时，轻碰无任何响应
 
+- 使用隔空传送功能前，需要先打开隔空传送开关，开启路径：设置 > 系统 > 快捷启动和手势 > 隔空传送。详细参考：[打开设备侧隔空传送开关](https://developer.huawei.com/consumer/cn/doc/harmonyos-guides/gestures-share-open)
+
+- 暂不支持模拟器的功能：小艺朗读、隔空传送
 
 
 ## 快速入门
@@ -426,7 +431,7 @@ newsflutter
 
 1. 配置HarmonyOS SDK和环境变量
 
-   - API18, deveco-studio-5.1 或 command-line-tools-5.1 (推荐使用5.1.0 Beta1或更新版本)
+   - API20, deveco-studio-6.0 或 command-line-tools-6.0 (推荐使用6.0.0 Beta1或更新版本)
    - 配置 Java17
    - 配置环境变量 (SDK, node, ohpm, hvigor)
 
@@ -467,6 +472,8 @@ newsflutter
 
    c. 将模板工程根目录下ohos/AppScope/app.json5文件中的bundleName替换为创建应用的包名。
 
+   d. 将products/phone/src/main/resources/base/profile/shortcuts_config.json中的bundleName替换为创建应用的包名。
+
 2. 配置华为账号服务(跨端需做插件配置)。
 
    a. 将应用的Client ID配置到ohos/products/phone/src/main路径下的module.json5文件中，
@@ -482,11 +489,53 @@ newsflutter
 
    前往QQ开放平台申请`AppID`并配置鸿蒙应用信息，详情参考：[鸿蒙接入指南](https://wiki.connect.qq.com/sdk%e4%b8%8b%e8%bd%bd)。
 
+5. 配置预加载服务。
+
+   a. [开通预加载](https://developer.huawei.com/consumer/cn/doc/harmonyos-guides/cloudfoundation-enable-prefetch)。
+
+   b. [开通云函数](https://developer.huawei.com/consumer/cn/doc/harmonyos-guides/cloudfoundation-enable-function)。
+
+   c. 打包云函数包：进入ohos工程preload目录，将目录下的文件压缩为zip文件，注意进入文件夹中，全选文件，右击压缩。
+
+   d. [创建云函数](https://developer.huawei.com/consumer/cn/doc/harmonyos-guides/cloudfoundation-create-and-config-function)。
+
+    * “函数名称”为“preload”
+    * “触发方式”为“事件调用”
+    * “触发器类型”为“HTTP触发器”，其他保持默认
+    * “代码输入类型”为“*.zip文件”，代码文件上传上一步打包的zip文件
+
+    <img src="screenshots/clound_function.png" width="1200">
+
+   e. [配置安装预加载](https://developer.huawei.com/consumer/cn/doc/harmonyos-guides/cloudfoundation-prefetch-config)
+
+   安装预加载函数名称配置为上一步创建的云函数
+
+    <img src="screenshots/preload.png" width="1200">
+
+6. 配置推送服务。
+
+   a. [开启推送服务](https://developer.huawei.com/consumer/cn/doc/harmonyos-guides/push-config-setting)。
+
+   b. 按照需要的权益[申请通知消息自分类权益](https://developer.huawei.com/consumer/cn/doc/harmonyos-guides/push-apply-right)。
+
+   c. [端云调试](https://developer.huawei.com/consumer/cn/doc/harmonyos-guides/push-server)。
+
+7. 配置App Linking服务。
+
+   a. [开通App Linking服务](https://developer.huawei.com/consumer/cn/doc/harmonyos-guides/applinking-enable-applinking)
+
+   b. [在开发者网站上关联应用](https://developer.huawei.com/consumer/cn/doc/harmonyos-guides/app-linking-startupapp#section6903241628)
+
+   c. [在AGC为应用创建关联的网址域名](https://developer.huawei.com/consumer/cn/doc/harmonyos-guides/app-linking-startupapp#section1101111611317)
+
+   d. 在products/phone/src/main路径下的module.json5中配置关联的网址域名，详细参考：[在module.json5中配置关联的网址域名](https://developer.huawei.com/consumer/cn/doc/harmonyos-guides/app-linking-startupapp#section13808113610362)
+
+   e. 在products/phone/src/main/ets/common/WantUtils.ets#WantUtils.handleAppLinkingWant方法中处理传入的链接，详细参考：[处理传入的链接](https://developer.huawei.com/consumer/cn/doc/harmonyos-guides/app-linking-startupapp#section1620481746)
 
 
 ### 运行调试工程
 
-1. 进入本组件的flutter工程目录，通过终端执行 `flutter pub get`和 `flutter build hap`。
+1. 进入本模或组件的flutter工程目录，通过终端执行 `flutter pub get`和 `flutter build hap`。
 2. 通过DevEco Studio打开工程目录中 `ohos`工程，连接模拟器或者真机，[手工配置签名](https://developer.huawei.com/consumer/cn/doc/harmonyos-guides/ide-signing#section297715173233)。
 3. 添加手工签名所用证书对应的公钥指纹，详细参考：[配置应用签名证书指纹](https://developer.huawei.com/consumer/cn/doc/app/agc-help-cert-fingerprint-0000002278002933)。
 4. 在flutter工程目录或者子目录 `ohos`中，通过 `flutter devices`指令发现ohos设备。
